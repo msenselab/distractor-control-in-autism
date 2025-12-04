@@ -1,0 +1,856 @@
+---
+title: "Distractor Control in Autism: Data Analysis"
+subtitle: "Predictability isn't enough: Disengagement limits distractor control in ASD"
+author: "MSense lab and NEVIA lab"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-summary: "Show code"
+    fig-width: 10
+    fig-height: 6
+    theme: cosmo
+    embed-resources: false
+  pdf:
+    toc: true
+    number-sections: true
+    fig-width: 8
+    fig-height: 5
+    geometry: margin=1in
+execute:
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r setup}
+#| include: false
+
+# Load required libraries
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(lme4)
+library(lmerTest)
+library(afex)
+library(emmeans)
+library(effectsize)
+library(broom.mixed)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+library(scales)
+library(ggsci)
+library(grid)
+
+# Load helper functions from external file
+source('helper_functions.R')
+
+# Set global options
+options(dplyr.summarise.inform = FALSE)
+theme_set(theme_minimal(base_size = 12))
+
+# Define project directory - UPDATE THIS PATH FOR YOUR LOCAL ENVIRONMENT
+proj_dir <- '.'
+data_dir <- file.path(proj_dir, 'data')
+output_dir <- file.path(proj_dir, 'figures')
+
+# Create output directory if it doesn't exist
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+```
+
+# Abstract
+
+This analysis examines distractor suppression mechanisms in autism spectrum disorder (ASD) compared to typically developing (TD) individuals using an additional singleton search task with precueing. We investigate reaction time patterns, eye movement behavior, and attentional deployment strategies across different distractor prevalence conditions.
+
+# Introduction
+
+The ability to suppress irrelevant visual information is crucial for efficient visual search. Previous research suggests that individuals with ASD may show altered patterns of attentional control and distractor suppression. This study examines these mechanisms using behavioral and eye movement measures in a precued visual search task.
+
+# Methods
+
+## Participants and Design
+
+The study included participants from two groups: - **ASD group**: Individuals diagnosed with autism spectrum disorder - **TD group**: Typically developing control participants
+
+## Task and Procedure
+
+Participants performed an additional singleton search task with the following manipulations: - **Distractor prevalence**: Low (50%) vs. High (90%) distractor frequency - **Singleton presence**: Distractor present vs. absent trials - **Precueing**: 100% valid spatial cues indicating potential distractor locations
+
+## Data Analysis
+
+All analyses were conducted using mixed-effects models with participants as random effects. Effect sizes are reported as partial eta-squared (η²p) for ANOVAs and Cohen's d for t-tests.
+
+# Results
+
+## Data Loading and Preprocessing
+
+```{r data-loading}
+#| echo: true
+#| code-fold: false
+
+# Load behavioral and eye movement data
+behav <- read_csv(file.path(data_dir, 'behav.csv'), show_col_types = FALSE)
+fix_with_behav <- read_csv(file.path(data_dir, 'fix_with_behav.csv'), show_col_types = FALSE)
+
+# Data preprocessing
+behav <- behav %>%
+  mutate(
+    group = factor(group, levels = c("TD", "ASD")),
+    distractor_prevalence = factor(distractor_prevalence,
+                                 levels = c(0.5, 0.9),
+                                 labels = c("Low", "High")),
+    singleton = factor(singleton,
+                      levels = c(0, 1),
+                      labels = c("Absent", "Present"))
+  )
+
+fix_with_behav <- fix_with_behav %>%
+  mutate(
+    group = factor(group, levels = c("TD", "ASD")),
+    singleton = factor(singleton),
+    close_to = factor(close_to)
+  )
+
+# Display data summary
+cat("Behavioral data dimensions:", dim(behav), "\n")
+cat("Eye movement data dimensions:", dim(fix_with_behav), "\n")
+cat("Participants per group:\n")
+table(behav$group, behav$subj) %>%
+  apply(1, function(x) sum(x > 0)) %>%
+  print()
+```
+
+## Reaction Time Analysis
+
+### Data Preparation
+
+```{r rt-preparation}
+#| echo: true
+
+# Calculate mean RTs for correct trials, excluding outliers
+mRTs <- behav %>%
+  filter(corr == 1, outlier == FALSE) %>%
+  group_by(group, subj, distractor_prevalence, singleton) %>%
+  summarise(RT = mean(rt, na.rm = TRUE) * 1000, .groups = 'drop') %>%
+  rename(Group = group,
+         Subj = subj,
+         Prevalence = distractor_prevalence,
+         Singleton = singleton)
+
+# Display summary statistics
+mRTs %>%
+  group_by(Group, Prevalence, Singleton) %>%
+  summarise(
+    N = n(),
+    Mean_RT = round(mean(RT), 1),
+    SD_RT = round(sd(RT), 1),
+    SE_RT = round(sd(RT)/sqrt(n()), 1),
+    .groups = 'drop'
+  ) %>%
+  kable(caption = "Mean reaction times (ms) by experimental condition") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### Statistical Analysis
+
+```{r rt-mixed-model}
+#| echo: true
+
+# Repeated measures ANOVA using aov_ez
+rt_aov <- aov_ez(id = "Subj",
+                 dv = "RT",
+                 data = mRTs,
+                 within = c("Prevalence", "Singleton"),
+                 between = "Group",
+                 type = 3)
+
+# ANOVA table
+create_anova_table(rt_aov, "Repeated measures ANOVA for reaction time analysis")
+
+```
+
+The mixed ANOVA revealed a significant main effect of Group, and singleton, but not Prevalence. There was a significant interaction between Group and singleton. The rest interactions were non-significant. 
+
+Based on mRTs table above, the ASD group showed generally slower RTs, and both groups exhibited the expected singleton effect (slower RTs when distractor present). The interaction was mainly driven by a larger distractor capture effect in the ASD group, but not in the TD group (see below post-hoc tests).
+
+```{r rt_post-hoc-tests}
+
+# Post-hoc tests for Group x Singleton interaction
+rt_emm <- emmeans(rt_aov, ~ Singleton | Group)
+rt_contrasts <- pairs(rt_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences within each Singleton condition\n")
+create_posthoc_table(rt_contrasts, "Group differences within Singleton conditions")
+```
+
+The above post-hoc tests indicated that the presence of a distractor singleton significantly slowed RTs in the ASD group (p < .001), but not in the TD group (p = .332), suggesting that TD individuals effectively suppressed the distractor with perfect cue validity, but not with individuals with ASD.
+
+### Visualization
+
+```{r rt-visualization}
+#| fig-cap: "Mean reaction times across experimental conditions. Error bars represent standard errors. The singleton effect (slower RTs when distractor present) shows significant group differences."
+#| fig-width: 10
+#| fig-height: 6
+
+# Create bar plot with Prevalence as x-axis, color for Singleton, separate by Group
+rt_plot <- mRTs %>%
+  group_by(Group, Prevalence, Singleton) %>%
+  summarise(
+    mean_RT = mean(RT),
+    se_RT = sd(RT)/sqrt(n()),
+    .groups = 'drop'
+  ) %>%
+  ggplot(aes(x = Prevalence, y = mean_RT, fill = Singleton)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, alpha = 0.8) +
+  geom_errorbar(aes(ymin = mean_RT - se_RT, ymax = mean_RT + se_RT),
+                position = position_dodge(width = 0.8), width = 0.2) +
+  facet_wrap(~ Group, labeller = label_both) +
+  scale_fill_npg() +
+  coord_cartesian(ylim = c(500, 1500)) +
+  labs(
+    x = "Distractor Prevalence",
+    y = "Reaction Time (ms)",
+    fill = "Singleton Distractor",
+    title = "Reaction Time by Prevalence and Singleton Condition"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "top",
+    panel.grid.minor = element_blank(),
+    strip.text = element_text(size = 12, face = "bold")
+  )
+
+print(rt_plot)
+
+# Save the plot
+ggsave(file.path(output_dir, 'fig_mRT.png'), rt_plot,
+       width = 10, height = 6, dpi = 300)
+```
+
+## Distractor Interference Analysis
+
+To better show the group differences in distractor suppression, we calculated the distractor interference effect (RT difference between distractor present and absent trials) for each participant in each prevalence condition.
+
+### Interference Effect Calculation
+
+```{r interference-calculation}
+#| echo: true
+
+# Calculate distractor interference (Present - Absent)
+mRTs_wide <- mRTs %>%
+  pivot_wider(names_from = Singleton, values_from = RT) %>%
+  mutate(interference = Present - Absent) %>%
+  filter(!is.na(interference))
+
+# Summary statistics for interference
+mRTs_wide %>%
+  group_by(Group, Prevalence) %>%
+  summarise(
+    N = n(),
+    Mean_Interference = round(mean(interference), 1),
+    SD_Interference = round(sd(interference), 1),
+    SE_Interference = round(sd(interference)/sqrt(n()), 1),
+    .groups = 'drop'
+  ) %>%
+  kable(caption = "Distractor interference effects (ms) by group and prevalence") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### Statistical Analysis of Interference
+
+```{r interference-analysis}
+#| echo: true
+
+# Repeated measures ANOVA for interference effect using aov_ez
+interference_aov <- aov_ez(id = "Subj",
+                          dv = "interference",
+                          data = mRTs_wide,
+                          within = "Prevalence",
+                          between = "Group",
+                          type = 3)
+
+create_anova_table(interference_aov, "Repeated measures ANOVA for distractor interference")
+
+# Post-hoc tests for Group differences
+interference_emm <- emmeans(interference_aov, ~ Group)
+interference_contrasts <- pairs(interference_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in interference\n")
+create_posthoc_table(interference_contrasts, "Group differences in interference effects")
+
+
+```
+
+```{r}
+# Test if TD group interference differs from zero
+td_interference <- mRTs_wide %>% filter(Group == "TD")
+t_test_result <- t.test(td_interference$interference, mu = 0)
+
+cat("One-sample t-test for TD group interference:\n")
+cat("t =", round(t_test_result$statistic, 2),
+    ", df =", t_test_result$parameter,
+    ", p =", round(t_test_result$p.value, 3), "\n")
+cat("95% CI: [", round(t_test_result$conf.int[1], 2), ", ",
+    round(t_test_result$conf.int[2], 2), "]\n")
+```
+The above test confirmed that the TD did not show significant distractor interference, but the ASD group did. 
+
+### Interference Visualization
+
+```{r interference-plot}
+#| fig-cap: "Distractor interference effects by group and prevalence condition. The ASD group shows significantly larger interference effects than the TD group across both prevalence conditions."
+#| fig-width: 8
+#| fig-height: 5
+
+interference_plot <- mRTs_wide %>%
+  group_by(Group, Prevalence) %>%
+  summarise(
+    mean_interference = mean(interference),
+    se_interference = sd(interference)/sqrt(n()),
+    .groups = 'drop'
+  ) %>%
+  ggplot(aes(x = Prevalence, y = mean_interference, fill = Group)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, alpha = 0.8) +
+  geom_errorbar(aes(ymin = mean_interference - se_interference,
+                    ymax = mean_interference + se_interference),
+                position = position_dodge(width = 0.8), width = 0.2) +
+  scale_fill_manual(values = c("TD" = "#1f77b4", "ASD" = "#ff7f0e")) +
+  labs(
+    x = "Distractor Prevalence",
+    y = "Interference Effect (ms)",
+    fill = "Group",
+    title = "Distractor Interference by Group and Prevalence"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "top",
+    panel.grid.minor = element_blank()
+  )
+
+print(interference_plot)
+
+ggsave(file.path(output_dir, 'fig_mInterference.png'), interference_plot,
+       width = 8, height = 5, dpi = 300)
+```
+
+## Eye Movement Analysis
+
+Motivation: While manual responses (RTs) clearly showed more substantial distractor interference in the ASD group than the TD group, the timeline of attentional processing in which this occurred remained unclear. The pattern of eye movements across the whole search trial, from display onset to response, might. To better understand distractor interference, we further looked into several metrics derived from eye movement data.
+
+### Example Fixation Patterns
+
+To illustrate the differences in eye movement behavior between groups, we first show example fixation sequences for individual trials from representative participants.
+
+```{r example-fixation-patterns}
+#| fig-cap: "Example fixation patterns for individual trials. Top row: ASD participant, bottom row: TD participant. Each panel shows one trial with fixation sequence (connected dots), fixation numbers, target locations (squares), and distractor locations (triangles). Colors indicate whether fixations landed on target (red), distractor (blue), or other locations (gray)."
+#| fig-width: 12
+#| fig-height: 6
+
+# Select representative subjects and trials
+subjects <- data.frame(
+  subj = c('ASD001', 'TD001'),
+  group = c('ASD', 'TD'),
+  stringsAsFactors = FALSE
+)
+
+trials <- c(6, 7, 8, 9)
+
+# Create a list to store plots
+plot_list <- list()
+
+for (i in 1:nrow(subjects)) {
+  for (j in 1:length(trials)) {
+    subj_id <- subjects$subj[i]
+    group_id <- subjects$group[i]
+    trial_id <- trials[j]
+
+    # Filter data for this specific subject and trial
+    fix_trial <- fix_with_behav %>%
+      filter(subj == subj_id, trialNo == trial_id, session == 1)
+
+    # Create title
+    if (i == 1) {
+      title <- paste("Trial", trial_id)
+    } else {
+      title <- NULL
+    }
+
+    # Create plot
+    p <- plot_fixations_and_items(fix_trial, title = title)
+
+    # Add axis labels for leftmost plots
+    if (j == 1) {
+      p <- p +
+        coord_cartesian(xlim = c(-8, 8), ylim = c(-8, 8), clip = "off") +
+        theme(plot.margin = margin(5, 5, 5, 35)) +
+        annotation_custom(
+          grob = textGrob(group_id, rot = 90,
+                         gp = gpar(fontsize = 12, fontface = "bold")),
+          xmin = -10, xmax = -10, ymin = -Inf, ymax = Inf
+        )
+    }
+
+    # Store plot in list
+    plot_list[[paste(i, j, sep = "_")]] <- p
+  }
+}
+
+# Combine all plots
+combined_plot <- wrap_plots(plot_list, nrow = 2, ncol = 4)
+
+print(combined_plot)
+
+# Save the plot
+ggsave(file.path(output_dir, 'fixations_example.png'), combined_plot,
+       width = 10, height = 5, dpi = 300)
+```
+
+The example trials illustrate typical differences between groups: ASD participants often show more fixations to distractor locations and longer fixation sequences, while TD participants demonstrate more efficient search patterns with fewer distractors fixations when distractors are present.
+
+### First Fixation Analysis
+
+```{r first-fixation-data}
+#| echo: true
+
+# Analyze first fixation after central fixation (fixationNo == 2)
+close_to_summary <- fix_with_behav %>%
+  filter(fixationNo == 2) %>%
+  group_by(subj, distractor_prevalence, singleton, group, close_to) %>%
+  summarise(n_trials = n(), .groups = 'drop') %>%
+  group_by(subj, singleton, group) %>%
+  mutate(
+    total_trials = sum(n_trials),
+    percentage = n_trials / total_trials
+  ) %>%
+  ungroup()
+
+# Focus on Target and Distractor fixations (exclude "Other")
+close_to_dt <- close_to_summary %>%
+  filter(close_to != "Other")
+
+# Summary statistics
+close_to_dt %>%
+  group_by(group, distractor_prevalence, singleton, close_to) %>%
+  summarise(
+    N = n(),
+    Mean_Percentage = round(mean(percentage), 3),
+    SD_Percentage = round(sd(percentage), 3),
+    .groups = 'drop'
+  ) %>%
+  kable(caption = "First fixation landing positions by experimental condition") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### First Fixation Visualization
+
+```{r first-fixation-combined-plot}
+#| fig-cap: "Combined first fixation analysis. Top row: percentage of first fixations to target and distractor locations. Bottom row: first fixation dwell times. Both measures show group differences in attentional deployment patterns."
+#| fig-width: 12
+#| fig-height: 8
+
+# Create percentage plot data
+perc_plot_data <- close_to_dt %>%
+  group_by(group, distractor_prevalence, singleton, close_to) %>%
+  summarise(
+    mean_percentage = mean(percentage),
+    se = sd(percentage)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+first_fix_perc_plot <- create_line_plot(
+  data = perc_plot_data,
+  x_var = "singleton",
+  y_var = "mean_percentage",
+  group_var = "group",
+  line_var = "distractor_prevalence",
+  facet_var = "close_to",
+  title = "First Fixation Landing Positions",
+  x_label = "Singleton Distractor",
+  y_label = "Percentage of First Fixations",
+  group_label = "Group",
+  line_label = "Distractor Prevalence"
+) + scale_y_continuous(labels = scales::percent_format())
+
+# Analyze first fixation dwell times
+dwell_time1 <- fix_with_behav %>%
+  filter(fixationNo == 2, close_to != "Other") %>%
+  mutate(duration_ms = duration * 1000) %>%
+  group_by(subj, distractor_prevalence, singleton, group, close_to) %>%
+  summarise(mean_duration = mean(duration_ms, na.rm = TRUE), .groups = 'drop')
+
+# Create dwell time plot data
+dwell_plot_data <- dwell_time1 %>%
+  group_by(group, distractor_prevalence, singleton, close_to) %>%
+  summarise(
+    mean_dwell = mean(mean_duration),
+    se = sd(mean_duration)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+first_fix_dwell_plot <- create_line_plot(
+  data = dwell_plot_data,
+  x_var = "singleton",
+  y_var = "mean_dwell",
+  group_var = "group",
+  line_var = "distractor_prevalence",
+  facet_var = "close_to",
+  title = "First Fixation Dwell Times",
+  x_label = "Singleton Distractor",
+  y_label = "First Fixation Duration (ms)",
+  group_label = "Group",
+  line_label = "Distractor Prevalence"
+) + coord_cartesian(ylim = c(100, 260))
+
+# Combine plots
+combined_first_fix_plot <- first_fix_perc_plot / first_fix_dwell_plot +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "top")
+
+print(combined_first_fix_plot)
+
+ggsave(file.path(output_dir, 'fig_first_fixation_combined.png'), combined_first_fix_plot,
+       width = 8, height = 6, dpi = 300)
+```
+
+
+### First Fixation Statistical Analysis
+
+```{r first-fixation-analysis}
+#| echo: true
+
+# Repeated measures ANOVA for first fixation percentages using aov_car
+fixation_aov <- aov_car(percentage ~ group * close_to * singleton*distractor_prevalence+ Error(subj/(close_to * singleton*distractor_prevalence)),
+                       data = close_to_dt,
+                       type = 3)
+
+create_anova_table(fixation_aov, "Repeated measures ANOVA for first fixation analysis")
+
+```
+
+The anova test revealed that the main effect of singleton, but not the group or close_to or distractor prevalence effects, was significant. The interaction between close_to (Fixation location) and singleton was also significant. And the singletone and distractor prevalence interaction was significant. The rest was non-significant. 
+
+This suggests that both groups showed similar proportion of initial capture effects by the distractor. 
+
+When the singleton was present, participants were more likely to fixate the distractor first, regardless of group. 
+The interaction between fixation location (close_to) and singleton originates that the percentage of first fixation to the distractor causes the decreases to the percentage of first fixation to the target when the singleton is present. 
+
+The interaction between singleton and distractor prevalence was clearly visible in the plot above (crossing lines). When the distractor was present, the percentage of the first fixation to the target and the distractor both increased in the high prevalence condition compared to the low prevalence condition. Increasing toward the distractor was due to the higher frequency of distractor appearance, and the increase toward the target may reflect effective suppression of the distractor (relative to the increase of the distractor prevalence), allowing more saccades to the target.
+
+```{r first-fixation-posthoc}
+
+# Post-hoc tests for group x close_to x singleton interaction
+fixation_emm <- emmeans(fixation_aov, ~ close_to | singleton)
+fixation_contrasts <- pairs(fixation_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: \n")
+create_posthoc_table(fixation_contrasts, "Singleton differences in first fixation patterns")
+
+```
+The post hoc test revealed the interaction between close_to and singleton was primarily driven by the difference in the singleton present condition. 
+
+```{r first-fixation-posthoc_2}
+
+# Post-hoc tests for distractor_prevalence x singleton interaction
+fixation_emm2 <- emmeans(fixation_aov, ~   singleton | distractor_prevalence)
+fixation_contrasts2 <- pairs(fixation_emm2, adjust = "bonferroni")
+
+create_posthoc_table(fixation_contrasts2, "Singleton differences in first fixation patterns between prevalence conditions")
+
+# show marginal means
+cat("Marginal means for distractor prevalence x singleton interaction:\n")
+marginal_means <- summary(fixation_emm2)
+print(marginal_means)
+```
+The interaction between singleton and distractor prevalence was due to lower fixation toward the cued and target locations in the high prevalence condition than in the low prevalence condition in the distractor absent trials, but higher fixation when the distractor was present in the high prevalence condition. 
+
+### Dwell Time Analysis
+
+```{r dwell-time-analysis}
+#| echo: true
+
+# Repeated measures ANOVA for dwell time using aov_car
+dwell_aov <- aov_car(mean_duration ~ group * close_to * singleton*distractor_prevalence + Error(subj/(close_to * singleton*distractor_prevalence)),
+                    data = dwell_time1,
+                    type = 3)
+
+create_anova_table(dwell_aov, "Repeated measures ANOVA for first fixation dwell time")
+
+```
+
+Another ANVOA on dwell time revealed significant main effects of close_to and marignal of the group (p = .073), but not singleton. The interaction between group and distractor prevalence was also significant. And three-way interaction between group, close_to and singleton was significant. The rest was non-significant. 
+
+- ASD group fixated longer than TD group overall.
+- Fixation on the target (close to the target) led to longer dwell times than fixation on the distractor. This may indicate more target processing.
+- The interaction between group and distractor prevalence 
+
+
+Let check what drives the interaction between group and singleton.
+
+```{r dwell-time-posthoc}
+
+# Post-hoc tests for dwell time
+dwell_emm <- emmeans(dwell_aov, ~ group | distractor_prevalence )
+dwell_contrasts <- pairs(dwell_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in dwell times by condition\n")
+create_posthoc_table(dwell_contrasts, "Group differences in first fixation dwell times")
+
+```
+The above post-hoc tests revealed that group differences in dwell time were primarily driven in the low prevalence condition, where the ASD group showed significantly longer dwell times than the TD group. With higher distractor uncertainty (low prevalence), ASD individuals may have difficulty disengaging from the first fixation, leading to prolonged processing times.
+
+
+### Number of Fixations Analysis
+
+What happens after the first fixation? We next examined the total number of fixations made during each trial.
+
+```{r nfixations-analysis}
+#| echo: true
+
+# Calculate number of fixations per trial
+max_fixation <- fix_with_behav %>%
+  group_by(subj, group, singleton, distractor_prevalence, trialNo) %>%
+  summarise(max_fixation = max(fixationNo, na.rm = TRUE), .groups = 'drop') %>%
+  mutate(nfixation = max_fixation - 1) %>%
+  group_by(subj, group, singleton, distractor_prevalence) %>%
+  summarise(mean_nfixation = mean(nfixation, na.rm = TRUE), .groups = 'drop')
+
+# Statistical analysis using aov_ez
+nfix_aov <- aov_ez(id = "subj",
+                   dv = "mean_nfixation",
+                   data = max_fixation,
+                   within = c("singleton","distractor_prevalence"),
+                   between = "group",
+                   type = 3)
+
+create_anova_table(nfix_aov, "Repeated measures ANOVA for number of fixations")
+
+```
+The ANOVA revealed significant main effects of group and singleton, but not distractor prevalence. The interaction between group and singleton was also significant. The rest was non-significant. There was no significant difference between prevalence conditions, which is consistent with the RT results.
+
+```{r}
+
+# Post-hoc tests for number of fixations
+nfix_emm <- emmeans(nfix_aov, ~ group | singleton)
+nfix_contrasts <- pairs(nfix_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in number of fixations by singleton condition\n")
+create_posthoc_table(nfix_contrasts, "Group differences in number of fixations")
+```
+The interaction was due to increased number of fixation in the ASD group when the distractor was present, but not in the TD group. This suggests that the presence of a distractor led to less efficient search patterns in the ASD group, resulting in more fixations to locate the target.
+
+
+
+### Number of Fixations Visualization
+
+```{r nfixations-plot}
+#| fig-cap: "Mean number of fixations per trial. The ASD group makes more fixations overall, particularly when distractors are present, indicating less efficient search strategies."
+#| fig-width: 8
+#| fig-height: 5
+
+nfix_plot_data <- max_fixation %>%
+  group_by(group, distractor_prevalence, singleton) %>%
+  summarise(
+    mean_nfix = mean(mean_nfixation),
+    se = sd(mean_nfixation)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+# Store the number of fixations plot for later combination
+nfix_plot <- create_line_plot(
+  data = nfix_plot_data,
+  x_var = "singleton",
+  y_var = "mean_nfix",
+  group_var = "group",
+  line_var = "distractor_prevalence",
+  facet_var = NULL,
+  title = "Total Fixations per Trial",
+  x_label = "Singleton Distractor",
+  y_label = "Mean Number of Fixations",
+  group_label = "Group",
+  line_label = "Distractor Prevalence"
+) + coord_cartesian(ylim = c(2.5, 4))
+```
+
+## Refixation Analysis
+
+### Target Refixations
+
+```{r target-refixations}
+#| echo: true
+
+# Analyze refixations to target locations
+target_refixations <- fix_with_behav %>%
+  filter(close_to == "Target") %>%
+  group_by(subj, singleton, group, distractor_prevalence, trialNo) %>%
+  summarise(n_target_fix = n(), .groups = 'drop') %>%
+  group_by(subj, singleton, distractor_prevalence, group) %>%
+  summarise(mean_target_fix = mean(n_target_fix, na.rm = TRUE), .groups = 'drop')
+
+# Statistical analysis using aov_ez
+target_aov <- aov_ez(id = "subj",
+                    dv = "mean_target_fix",
+                    data = target_refixations,
+                    within = c("singleton","distractor_prevalence"),
+                    between = "group",
+                    type = 3)
+
+create_anova_table(target_aov, "Target refixation analysis")
+
+# Post-hoc tests for target refixations
+target_emm <- emmeans(target_aov, ~ group | singleton)
+target_contrasts <- pairs(target_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in target refixations by singleton condition\n")
+create_posthoc_table(target_contrasts, "Group differences in target refixations")
+```
+
+There was only one signficant main effect of group, indicating that the ASD group made more refixations to the target location than the TD group overall. The rest was non-significant.
+
+### Distractor Refixations
+
+```{r distractor-refixations}
+#| echo: true
+
+# Analyze refixations to distractor locations
+distractor_refixations <- fix_with_behav %>%
+  filter(close_to == "Distractor") %>%
+  group_by(subj, singleton, group, distractor_prevalence, trialNo) %>%
+  summarise(n_distractor_fix = n(), .groups = 'drop') %>%
+  group_by(subj, singleton, distractor_prevalence, group) %>%
+  summarise(mean_distractor_fix = mean(n_distractor_fix, na.rm = TRUE), .groups = 'drop')
+
+# Statistical analysis using aov_ez
+distractor_aov <- aov_ez(id = "subj",
+                        dv = "mean_distractor_fix",
+                        data = distractor_refixations,
+                        within = c("singleton", "distractor_prevalence"),
+                        between = "group",
+                        type = 3)
+
+create_anova_table(distractor_aov, "Distractor refixation analysis")
+
+# Post-hoc tests for distractor refixations
+distractor_emm <- emmeans(distractor_aov, ~ group | singleton)
+distractor_contrasts <- pairs(distractor_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in distractor refixations by singleton condition\n")
+create_posthoc_table(distractor_contrasts, "Group differences in distractor refixations")
+```
+
+The ANOVA revealed a significant main effect of singleton and distractor prevalence, but not group. The interaction between distractor prevalence and singleton was also significant. The rest was non-significant. Refixations to the distractor location were similar between groups. The interaction was mainly due to the increase of distractor refixations when the distractor was present in the high prevalence condition compared to the low prevalence condition.
+
+### Refixation Visualization
+
+```{r fixation-combined-plots}
+#| fig-cap: "Fixation patterns analysis. Left: total number of fixations per trial. Center: refixations to target locations. Right: refixations to distractor locations. The ASD group shows more fixations overall and increased target refixations, suggesting compensatory search strategies."
+#| fig-width: 15
+#| fig-height: 5
+
+# Create target refixation plot data
+target_plot_data <- target_refixations %>%
+  group_by(group, distractor_prevalence, singleton) %>%
+  summarise(
+    mean_fix = mean(mean_target_fix),
+    se = sd(mean_target_fix)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+target_plot <- create_line_plot(
+  data = target_plot_data,
+  x_var = "singleton",
+  y_var = "mean_fix",
+  group_var = "group",
+  line_var = "distractor_prevalence",
+  facet_var = NULL,
+  title = "Target Refixations",
+  x_label = "Singleton Distractor",
+  y_label = "Mean Fixations to Target",
+  group_label = "Group",
+  line_label = "Distractor Prevalence"
+) + coord_cartesian(ylim = c(1, 1.5))
+
+# Create distractor refixation plot data
+distractor_plot_data <- distractor_refixations %>%
+  group_by(group, distractor_prevalence, singleton) %>%
+  summarise(
+    mean_fix = mean(mean_distractor_fix),
+    se = sd(mean_distractor_fix)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+distractor_plot <- create_line_plot(
+  data = distractor_plot_data,
+  x_var = "singleton",
+  y_var = "mean_fix",
+  group_var = "group",
+  line_var = "distractor_prevalence",
+  facet_var = NULL,
+  title = "Distractor Refixations",
+  x_label = "Singleton Distractor",
+  y_label = "Mean Fixations to Distractor",
+  group_label = "Group",
+  line_label = "Distractor Prevalence"
+) + coord_cartesian(ylim = c(1, 1.15))
+
+# Combine all three plots: total fixations, target refixations, distractor refixations
+combined_fixation_plot <- nfix_plot + target_plot + distractor_plot +
+  plot_layout(guides = "collect", ncol = 3) &
+  theme(legend.position = "top")
+
+print(combined_fixation_plot)
+
+ggsave(file.path(output_dir, 'fig_fixations_combined.png'), combined_fixation_plot,
+       width = 9, height = 3, dpi = 300)
+```
+
+# Discussion
+
+## Key Findings
+
+Our analysis reveals several important differences between ASD and TD groups in distractor suppression mechanisms:
+
+### Behavioral Performance
+
+1.  **Increased Distractor Interference**: The ASD group showed significantly larger distractor interference effects compared to the TD group. Post-hoc tests confirmed that distractor presence significantly slowed RTs in the ASD group (p < .001), but not in the TD group (p = .332), indicating that TD individuals effectively suppressed distractors with perfect cue validity while ASD individuals did not.
+
+2.  **Group-Specific Suppression Deficits**: One-sample t-tests revealed that the TD group showed no significant distractor interference (not different from zero), while the ASD group demonstrated significant interference effects, highlighting fundamental differences in suppression mechanisms.
+
+### Eye Movement Patterns
+
+1.  **Comparable Initial Capture**: Both groups showed similar patterns of initial attentional capture by salient distractors. The main effect of singleton was significant (both groups more likely to fixate distractors when present), but no significant group differences in first fixation patterns were observed.
+
+2.  **Context-Dependent Dwell Time Differences**: Group differences in first fixation dwell times were primarily driven by the low prevalence condition, where the ASD group showed significantly longer dwell times than the TD group. This suggests that with higher distractor uncertainty (low prevalence), ASD individuals have difficulty disengaging from fixations, leading to prolonged processing times.
+
+3.  **Inefficient Search Strategies**: The ASD group made significantly more fixations overall, particularly when distractors were present (significant Group × Singleton interaction). This indicates less efficient search patterns in ASD, requiring more fixations to locate targets when distractors are present.
+
+4.  **Compensatory Target Processing**: The ASD group showed significantly more refixations to target locations overall (significant main effect of group), suggesting compensatory mechanisms to overcome attentional difficulties, while distractor refixations were similar between groups.
+
+5.  **Prevalence-Modulated Distractor Processing**: Distractor refixations showed a significant interaction between singleton presence and distractor prevalence, with increased distractor refixations when distractors were present in high prevalence conditions compared to low prevalence conditions, affecting both groups similarly.
+
+## Theoretical Implications
+
+These findings support the enhanced perceptual functioning theory in autism, which suggests that individuals with ASD show increased sensitivity to local features and details. The prolonged engagement with distractors may reflect this enhanced processing of salient visual information, even when it is task-irrelevant.
+
+The comparable initial capture but prolonged engagement suggests that the primary difference lies not in bottom-up attentional capture mechanisms, but in top-down control processes responsible for disengaging attention from irrelevant information.
+
+# Conclusion
+
+This study provides compelling evidence for altered distractor suppression mechanisms in autism spectrum disorder. While individuals with ASD show comparable initial attentional capture by salient distractors, they demonstrate significant difficulties in disengaging attention from irrelevant information. These findings advance our understanding of attentional differences in autism and highlight potential targets for intervention.
+
+The combination of behavioral and eye movement measures provides a comprehensive picture of the temporal dynamics of attentional control, revealing that the primary challenge for individuals with ASD lies in the later stages of attentional processing rather than initial capture mechanisms.
+
+```{r session-info}
+#| echo: false
+
+# Document computational environment
+cat("Analysis completed on:", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n\n")
+cat("R Session Information:\n")
+sessionInfo()
+```

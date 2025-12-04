@@ -1,0 +1,72 @@
+participant_id	group	gender	age	session1	session2	embrace_id	outlier	exclusion_reason
+ASD001	ASD	M	24	0.9	0.5	35	False	
+ASD002	ASD	M	40	0.5	0.9	24	False	
+ASD003	ASD	M	31	0.5	0.9	33	False	
+ASD004	ASD	M	22	0.5	0.9	42	False	
+ASD005	ASD	M	44	0.9	0.5	22	False	
+ASD006	ASD	F	25	0.5	0.9	27	False	
+ASD007	ASD	M	22	0.5	0.9	41	False	
+ASD008	ASD	M	34	0.5	0.9	29	False	
+ASD009	ASD	F	22	0.9	0.5	56	False	
+ASD010	ASD	M	20	0.9	0.5	26	False	
+ASD011	ASD	M	26	0.5	0.9	51	False	
+ASD012	ASD	F	34	0.9	0.5	38	False	
+ASD013	ASD	F	21	0.5	0.9	14	False	
+ASD014	ASD	M	39	0.9	0.5	15	False	
+ASD015	ASD	F	33	0.9	0.5	47	False	
+ASD016	ASD	M	36	0.9	0.5	28	False	
+ASD017	ASD	F	34	0.5	0.9	31	False	
+ASD018	ASD	F	37	0.9	0.5	50	False	
+ASD019	ASD	M	34	0.9	0.5	62	False	
+ASD020	ASD	M	39	0.5	0.9	63	False	
+ASD021	ASD	F	26	0.5	0.9	64	False	
+ASD022	ASD	F	23	0.9	0.5	68	False	
+ASD023	ASD	M	35	0.5	0.9	73	True	lots of missing data in edf1
+ASD024	ASD	M	21	0.5	0.9	74	False	
+ASD025	ASD	F	35	0.5	0.9	75	False	
+ASD026	ASD	F	27	0.5	0.9	76	False	
+ASD027	ASD	M	18	0.5	0.9	77	True	lots of missing data in edf1 and edf2
+ASD028	ASD	F	22	0.5	0.9	78	False	
+ASD029	ASD	M	27	0.9	0.5	79	False	
+ASD030	ASD	M	39	0.9	0.5	80	False	
+ASD031	ASD	F	26	0.5	0.9	16	True	missing edf1
+ASD032	ASD	M	33	0.9	0.5	32	True	poor edf2 due to improper calibration and validation
+TD001	TD	F	26	0.9	0.5	30	False	
+TD002	TD	F	31	0.9	0.5	21	False	-missing_AVRO-files
+TD003	TD	F	22	0.5	0.9	13	False	
+TD004	TD	M	35	0.9	0.5	25	False	
+TD005	TD	M	41	0.9	0.5	6	False	
+TD006	TD	M	26	0.9	0.5	19	False	
+TD007	TD	F	25	0.9	0.5	39	False	
+TD008	TD	F	30	0.9	0.5	10	False	
+TD009	TD	F	25	0.5	0.9	11	False	-missing_AVRO-files
+TD010	TD	F	20	0.9	0.5	40	False	
+TD011	TD	F	25	0.9	0.5	12	False	-missing_AVRO-files
+TD012	TD	F	22	0.5	0.9	58	False	
+TD013	TD	F	32	0.5	0.9	45	True	poor edf2 due to poor calibration
+TD014	TD	F	24	0.5	0.9	18	False	
+TD015	TD	M	30	0.5	0.9	23	False	
+TD016	TD	M	26	0.5	0.9	46	False	
+TD017	TD	M	36	0.5	0.9	7	False	
+TD018	TD	M	33	0.5	0.9	9	False	-missing_AVRO-files
+TD019	TD	M	26	0.5	0.9	57	True	scored too high on RAADS
+TD020	TD	M	34	0.5	0.9	55	False	
+TD021	TD	F	28	0.5	0.9	48	False	
+TD022	TD	F	35	0.5	0.9	49	False	
+TD023	TD	F	26	0.9	0.5	52	False	
+TD024	TD	F	21	0.5	0.9	53	True	scored too high on RAADS
+TD025	TD	M	20	0.9	0.5	54	True	scored too high on RAADS
+TD026	TD	M	27	0.5	0.9	59	False	
+TD027	TD	F	19	0.9	0.5	60	False	
+TD028	TD	M	31	0.5	0.9	61	False	
+TD029	TD	F	34	0.9	0.5	65	False	
+TD030	TD	M	37	0.9	0.5	66	False	
+TD031	TD	M	25	0.9	0.5	67	False	
+TD032	TD	M	24	0.5	0.9	69	False	
+TD033	TD	F	23	0.9	0.5	70	False	
+TD034	TD	F	24	0.5	0.9	72	True	lots of missing data in edf1, poor calibration in edf2
+TD035	TD	F	23	0.9	0.5	17	False	missing edf2
+TD036	TD	F	28	0.5	0.9	20	True	missing edf1 and edf2
+TD037	TD	F	28	0.9	0.5	44	True	impersonator
+TD038	TD	M	36	0.9	0.5	71	False	missing edf1 and edf2
+TD039	TD	M	23	0.9	0.5	8	True	colour-blindness

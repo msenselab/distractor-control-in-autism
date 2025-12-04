@@ -1,0 +1,63 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# R/RStudio
+.Rhistory
+.RData
+.Rproj.user/
+.Rapp.history
+.httr-oauth
+*.Rproj
+*.rds
+*.RDS
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.ipynb_checkpoints/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Quarto
+/.quarto/
+_site/
+_book/
+*_files/
+*_cache/
+
+
+# Output/Results
+*.log
+*.aux
+*.out
+*.toc
+AGENTS.md
+
+# Environment
+.env
+.venv/
+venv/
+env/
