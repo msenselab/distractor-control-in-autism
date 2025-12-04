@@ -57,6 +57,7 @@ install.packages(c("tidyverse", "ggplot2", "readr", "dplyr", "lme4",
 2. Install required R packages (see above)
 3. Open `data_ana.qmd` in RStudio or your preferred editor
 4. Render the document:
+
    ```r
    quarto::quarto_render("data_ana.qmd")
    ```
@@ -94,7 +95,7 @@ If you use this data or code, please cite:
 ```bibtex
 @misc{msenselab2025distractor,
   title = {Predictability Isn't Enough: Disengagement Limits Distractor Control in Autism},
-  author = {{Yun Wai Foo1}, {Sonja Coenen1}, {Christine M. Falter-Wagner}, and {Zhuanghua Sh}},
+  author = {{Yun Wai Foo}, {Sonja Coenen1}, {Christine M. Falter-Wagner}, and {Zhuanghua Shi}},
   year = {2025},
   howpublished = {\url{https://github.com/msenselab/distractor-control-in-autism}},
   note = {Data and analysis code for distractor control study in autism spectrum disorder}
@@ -115,8 +116,6 @@ This work is licensed under a [Creative Commons Attribution 4.0 International Li
 **Under the following terms:**
 
 - Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made
-
-See the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
