@@ -43,12 +43,12 @@ library(broom.mixed)
 library(knitr)
 library(kableExtra)
 library(patchwork)
+library(cowplot)
 library(scales)
 library(ggsci)
+library(ggsignif)
 library(grid)
 
-# Load helper functions from external file
-source('helper_functions.R')
 
 # Set global options
 options(dplyr.summarise.inform = FALSE)
@@ -81,7 +81,7 @@ The study included participants from two groups: - **ASD group**: Individuals di
 
 ## Task and Procedure
 
-Participants performed an additional singleton search task with the following manipulations: - **Distractor prevalence**: Low (50%) vs. High (90%) distractor frequency - **Singleton presence**: Distractor present vs. absent trials - **Precueing**: 100% valid spatial cues indicating potential distractor locations
+Participants performed an additional singleton search task with the following manipulations: - **Singleton prevalence**: Low (50%) vs. High (90%) singleton frequency - **Singleton presence**: Singleton present vs. absent trials - **Precueing**: 100% valid spatial cues indicating potential singleton locations
 
 ## Data Analysis
 
@@ -195,43 +195,86 @@ The above post-hoc tests indicated that the presence of a distractor singleton s
 ### Visualization
 
 ```{r rt-visualization}
-#| fig-cap: "Mean reaction times across experimental conditions. Error bars represent standard errors. The singleton effect (slower RTs when distractor present) shows significant group differences."
+#| fig-cap: "Mean reaction times across experimental conditions. Error bars represent standard errors. Brackets with *** indicate significant singleton effect within ASD group (p < .001). ** at top indicates significant group difference (p < .01)."
 #| fig-width: 10
 #| fig-height: 6
 
-# Create bar plot with Prevalence as x-axis, color for Singleton, separate by Group
-rt_plot <- mRTs %>%
+# Prepare summary data for plotting
+rt_summary <- mRTs %>%
   group_by(Group, Prevalence, Singleton) %>%
   summarise(
     mean_RT = mean(RT),
     se_RT = sd(RT)/sqrt(n()),
     .groups = 'drop'
-  ) %>%
-  ggplot(aes(x = Prevalence, y = mean_RT, fill = Singleton)) +
-  geom_col(position = position_dodge(width = 0.8), width = 0.7, alpha = 0.8) +
-  geom_errorbar(aes(ymin = mean_RT - se_RT, ymax = mean_RT + se_RT),
-                position = position_dodge(width = 0.8), width = 0.2) +
-  facet_wrap(~ Group, labeller = label_both) +
-  scale_fill_npg() +
-  coord_cartesian(ylim = c(500, 1500)) +
-  labs(
-    x = "Distractor Prevalence",
-    y = "Reaction Time (ms)",
-    fill = "Singleton Distractor",
-    title = "Reaction Time by Prevalence and Singleton Condition"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    legend.position = "top",
-    panel.grid.minor = element_blank(),
-    strip.text = element_text(size = 12, face = "bold")
   )
 
-print(rt_plot)
+# Create bar plot with APA style and custom colors
+# Color scheme: Blue for TD, Orange for ASD; Light for Absent, Dark for Present
+rt_plot <- rt_summary %>%
+  ggplot(aes(x = Prevalence, y = mean_RT, fill = interaction(Singleton, Group))) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  geom_errorbar(aes(ymin = mean_RT - se_RT, ymax = mean_RT + se_RT),
+                position = position_dodge(width = 0.8), width = 0.2) +
+  scale_fill_manual(
+    values = c(
+      "Absent.ASD" = "#FFB366",    # Light orange for ASD Absent
+      "Present.ASD" = "#E76F51",   # Dark orange for ASD Present
+      "Absent.TD" = "#A8DADC",     # Light blue for TD Absent
+      "Present.TD" = "#457B9D"     # Dark blue for TD Present
+    ),
+    labels = c(
+      "Absent.ASD" = "ASD - Absent",
+      "Present.ASD" = "ASD - Present",
+      "Absent.TD" = "TD - Absent",
+      "Present.TD" = "TD - Present"
+    )
+  ) +
+  labs(
+    x = "Session (Distractor Prevalence)",
+    y = "Reaction Time (ms)",
+    fill = ""
+  ) +
+  theme_classic(base_size = 12) +  # APA style: white background with axes
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(size = 12, face = "bold"),
+    strip.background = element_blank(),  # Remove box around facet labels
+    axis.line = element_line(color = "black"),
+    axis.ticks = element_line(color = "black")
+  ) +
+  # Add significance brackets for singleton effect in ASD group
+  # Using ggsignif with manual positioning for dodged bars
+  geom_signif(
+    xmin = 0.8, xmax = 1.2,  # Dodged bar positions for Low prevalence
+      y_position = 1570,
+      annotation = "p=.003",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.8, xmax = 2.2,  # Dodged bar positions for High prevalence
+    y_position = 1570,
+    annotation = "p=.003",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.1, xmax = 1.3,
+    y_position = 1490,
+    annotation = 'p<.001',
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 2.1, xmax = 2.3,
+    y_position = 1490,
+    annotation = 'p<.001',
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  coord_cartesian(ylim = c(500, 1600))
 
-# Save the plot
-ggsave(file.path(output_dir, 'fig_mRT.png'), rt_plot,
-       width = 10, height = 6, dpi = 300)
+# Note: Plot will be combined with interference plot below
 ```
 
 ## Distractor Interference Analysis
@@ -316,28 +359,73 @@ interference_plot <- mRTs_wide %>%
     se_interference = sd(interference)/sqrt(n()),
     .groups = 'drop'
   ) %>%
-  ggplot(aes(x = Prevalence, y = mean_interference, fill = Group)) +
-  geom_col(position = position_dodge(width = 0.8), width = 0.7, alpha = 0.8) +
+  ggplot(aes(x = Group, y = mean_interference, fill = interaction(Prevalence, Group))) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
   geom_errorbar(aes(ymin = mean_interference - se_interference,
                     ymax = mean_interference + se_interference),
                 position = position_dodge(width = 0.8), width = 0.2) +
-  scale_fill_manual(values = c("TD" = "#1f77b4", "ASD" = "#ff7f0e")) +
-  labs(
-    x = "Distractor Prevalence",
-    y = "Interference Effect (ms)",
-    fill = "Group",
-    title = "Distractor Interference by Group and Prevalence"
+  scale_fill_manual(
+    values = c(
+      "Low.TD" = "#9eceecff",      # Light blue for TD Low
+      "High.TD" = "#457B9D",     # Dark blue for TD High
+      "Low.ASD" = "#f2ad9bff",     # Light orange for ASD Low
+      "High.ASD" = "#E76F51"     # Dark orange for ASD High
+    ),
+    labels = c(
+      "Low.TD" = "TD - Low",
+      "High.TD" = "TD - High",
+      "Low.ASD" = "ASD - Low",
+      "High.ASD" = "ASD - High"
+    )
   ) +
-  theme_minimal(base_size = 12) +
+  # Add significance bracket between groups
+  geom_signif(
+    comparisons = list(c("TD", "ASD")),
+    annotation = "p < .001",
+    y_position = 100,  # Adjust this value based on your data range
+    tip_length = 0.02,
+    textsize = 4
+  ) +
+  labs(
+    x = "Group",
+    y = "Interference Effect (ms)",
+    fill = ""
+  ) +
+  theme_classic(base_size = 12) +
   theme(
-    legend.position = "top",
+    strip.text = element_text(size = 12, face = "bold"),
+    strip.background = element_blank(),
+    legend.position = "bottom",
     panel.grid.minor = element_blank()
-  )
+  ) 
 
-print(interference_plot)
+# Note: Plot will be combined with RT plot below
+```
 
-ggsave(file.path(output_dir, 'fig_mInterference.png'), interference_plot,
-       width = 8, height = 5, dpi = 300)
+### Combined Figure: RT and Interference
+
+```{r combined-rt-interference}
+#| fig-cap: "Reaction time and distractor interference effects. (A) Mean reaction times across conditions. (B) Distractor interference effects by group and prevalence. Error bars represent standard errors."
+#| fig-width: 12
+#| fig-height: 6
+
+# Combine plots A and B using cowplot
+combined_plot <- plot_grid(
+  rt_plot,
+  interference_plot,
+  labels = c("A", "B"),
+  label_size = 14,
+  label_fontface = "bold",
+  ncol = 2,
+  rel_widths = c(1.2, 1)
+) 
+
+print(combined_plot)
+
+# Save combined figure
+ggsave(file.path(output_dir, 'fig_combined_RT_interference.png'),
+       combined_plot,
+       width = 12, height = 6, dpi = 300)
 ```
 
 ## Eye Movement Analysis
