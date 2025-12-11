@@ -46,7 +46,7 @@ create_posthoc_table <- function(contrasts_result, caption) {
 #' @param group_var Name of grouping variable for color (quoted string)
 #' @param line_var Optional name of grouping variable for linetype (quoted string, default NULL)
 #' @param facet_var Optional variable for faceting (quoted string, default NULL)
-#' @param title Plot title
+#' @param title Optional plot title (default NULL)
 #' @param x_label X-axis label
 #' @param y_label Y-axis label
 #' @param group_label Legend label for color grouping
@@ -60,7 +60,7 @@ create_posthoc_table <- function(contrasts_result, caption) {
 #' - Error bars require 'se' column in data
 #' - Uses position_dodge to separate overlapping points/lines
 create_line_plot <- function(data, x_var, y_var, group_var, line_var = NULL, facet_var = NULL,
-                            title, x_label, y_label, group_label, line_label = NULL) {
+                            title = NULL, x_label, y_label, group_label, line_label = NULL) {
 
   # Handle two-way grouping (color + linetype)
   if (!is.null(line_var)) {
@@ -86,7 +86,7 @@ create_line_plot <- function(data, x_var, y_var, group_var, line_var = NULL, fac
       scale_color_npg() +
       scale_linetype_manual(values = c("solid", "dashed")) +
       labs(x = x_label, y = y_label, color = group_label,
-           linetype = line_label %||% line_var, title = title)
+           linetype = line_label %||% line_var)
   } else {
     # Simple one-way grouping (color only)
     p <- data %>%
@@ -96,17 +96,103 @@ create_line_plot <- function(data, x_var, y_var, group_var, line_var = NULL, fac
       geom_errorbar(aes(ymin = !!sym(y_var) - se, ymax = !!sym(y_var) + se),
                     width = 0.1, position = position_dodge(width = 0.1)) +
       scale_color_npg() +
-      labs(x = x_label, y = y_label, color = group_label, title = title)
+      labs(x = x_label, y = y_label, color = group_label)
   }
 
   # Apply minimal theme
   p <- p +
-    theme_minimal(base_size = 11) +
-    theme(legend.position = "top", panel.grid.minor = element_blank())
+    theme_classic(base_size = 11) +
+    theme(legend.position = "bottom", panel.grid.minor = element_blank(), 
+        strip.background = element_blank())
+
+  # Add title if provided
+  if (!is.null(title)) {
+    p <- p + ggtitle(title)
+  }
 
   # Add faceting if requested
   if (!is.null(facet_var)) {
-    p <- p + facet_wrap(as.formula(paste("~", facet_var)), labeller = label_both) +
+    p <- p + facet_wrap(as.formula(paste("~", facet_var)), labeller = label_value) +
+      theme(strip.text = element_text(size = 10, face = "bold"))
+  }
+
+  return(p)
+}
+
+#' Create bar plot with error bars for experimental data
+#'
+#' This function creates a publication-ready bar plot with error bars,
+#' supporting up to two grouping variables (fill and pattern) and optional faceting.
+#'
+#' @param data Data frame containing the variables to plot
+#' @param x_var Name of x-axis variable (quoted string)
+#' @param y_var Name of y-axis variable (quoted string)
+#' @param group_var Name of grouping variable for fill color (quoted string)
+#' @param pattern_var Optional name of grouping variable for bar patterns (quoted string, default NULL)
+#' @param facet_var Optional variable for faceting (quoted string, default NULL)
+#' @param title Optional plot title (default NULL)
+#' @param x_label X-axis label
+#' @param y_label Y-axis label
+#' @param group_label Legend label for fill grouping
+#' @param pattern_label Legend label for pattern grouping (default NULL)
+#'
+#' @return A ggplot object with NPG color palette and minimal theme
+#'
+#' @details
+#' - Automatically converts numeric pattern_var to factor with custom labels
+#' - Creates interaction groups for proper positioning when using two grouping variables
+#' - Error bars require 'se' column in data
+#' - Uses position_dodge to separate grouped bars
+create_bar_plot <- function(data, x_var, y_var, group_var, pattern_var = NULL, facet_var = NULL,
+                           title = NULL, x_label, y_label, group_label, pattern_label = NULL) {
+
+  # Handle two-way grouping (fill + alpha/pattern)
+  if (!is.null(pattern_var)) {
+    # Convert numeric pattern_var to factor with readable labels
+    # (e.g., distractor_prevalence: 0.5 -> "Low (0.5)", 0.9 -> "High (0.9)")
+    if (is.numeric(data[[pattern_var]])) {
+      data[[pattern_var]] <- factor(data[[pattern_var]],
+                                levels = sort(unique(data[[pattern_var]])),
+                                labels = c("Low (0.5)", "High (0.9)"))
+    }
+
+    # Create interaction group to ensure proper bar positioning
+    data$interaction_group <- interaction(data[[group_var]], data[[pattern_var]])
+
+    p <- data %>%
+      ggplot(aes_string(x = x_var, y = y_var, fill = group_var,
+                       alpha = pattern_var, group = "interaction_group")) +
+      geom_col(position = position_dodge(width = 0.9), color = "black", linewidth = 0.3) +
+      geom_errorbar(aes(ymin = !!sym(y_var) - se, ymax = !!sym(y_var) + se),
+                    width = 0.2, position = position_dodge(width = 0.9)) +
+      scale_fill_npg() +
+      scale_alpha_manual(values = c(0.5, 1)) +
+      labs(x = x_label, y = y_label, fill = group_label,
+           alpha = pattern_label %||% pattern_var)
+  } else {
+    # Simple one-way grouping (fill only)
+    p <- data %>%
+      ggplot(aes_string(x = x_var, y = y_var, fill = group_var)) +
+      geom_col(position = position_dodge(width = 0.9), color = "black", linewidth = 0.3) +
+      geom_errorbar(aes(ymin = !!sym(y_var) - se, ymax = !!sym(y_var) + se),
+                    width = 0.2, position = position_dodge(width = 0.9)) +
+      scale_fill_npg() +
+      labs(x = x_label, y = y_label, fill = group_label)
+  }
+
+  # Apply minimal theme
+  p <- p +
+    theme_classic(base_size = 11) +
+    theme(legend.position = "bottom", panel.grid.minor = element_blank(), strip.background = element_blank())
+
+  # Add title if provided
+  if (!is.null(title)) {
+    p <- p + ggtitle(title)
+  }
+
+  # Add faceting if requested
+  if (!is.null(facet_var)) {
+    p <- p + facet_wrap(as.formula(paste("~", facet_var)), labeller = label_value) +
       theme(strip.text = element_text(size = 10, face = "bold"))
   }
 

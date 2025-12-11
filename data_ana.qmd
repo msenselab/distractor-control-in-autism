@@ -48,7 +48,7 @@ library(scales)
 library(ggsci)
 library(ggsignif)
 library(grid)
-
+source('helper_functions.R')
 
 # Set global options
 options(dplyr.summarise.inform = FALSE)
@@ -75,7 +75,7 @@ The ability to suppress irrelevant visual information is crucial for efficient v
 
 # Methods
 
-## Participants and Design
+## Participants and Designf
 
 The study included participants from two groups: - **ASD group**: Individuals diagnosed with autism spectrum disorder - **TD group**: Typically developing control participants
 
@@ -114,7 +114,9 @@ behav <- behav %>%
 fix_with_behav <- fix_with_behav %>%
   mutate(
     group = factor(group, levels = c("TD", "ASD")),
-    singleton = factor(singleton),
+    distractor_prevalence = factor(distractor_prevalence,
+                                 levels = c(0.5, 0.9),
+                                 labels = c("Low", "High")),
     close_to = factor(close_to)
   )
 
@@ -507,21 +509,41 @@ The example trials illustrate typical differences between groups: ASD participan
 ```{r first-fixation-data}
 #| echo: true
 
+# Calculate actual total trials per condition (using fixationNo == 1 as it exists for every trial)
+actual_total_trials <- fix_with_behav %>%
+  filter(fixationNo == 1) %>%
+  group_by(subj, distractor_prevalence, singleton, group) %>%
+  summarise(total_trials = n(), .groups = 'drop')
+
 # Analyze first fixation after central fixation (fixationNo == 2)
-close_to_summary <- fix_with_behav %>%
+close_to_counts <- fix_with_behav %>%
   filter(fixationNo == 2) %>%
   group_by(subj, distractor_prevalence, singleton, group, close_to) %>%
-  summarise(n_trials = n(), .groups = 'drop') %>%
-  group_by(subj, singleton, group) %>%
-  mutate(
-    total_trials = sum(n_trials),
-    percentage = n_trials / total_trials
-  ) %>%
+  summarise(n_trials = n(), .groups = 'drop')
+
+# Complete missing combinations with 0 first (before calculating percentages)
+# Get all subjects and all possible condition combinations
+all_subjects <- close_to_counts %>%
+  distinct(subj, group)
+
+all_conditions <- close_to_counts %>%
+  distinct(distractor_prevalence, singleton, close_to)
+
+# Create complete grid
+close_to_summary <- all_subjects %>%
+  crossing(all_conditions) %>%
+  left_join(close_to_counts, by = c("subj", "group", "distractor_prevalence", "singleton", "close_to")) %>%
+  mutate(n_trials = replace_na(n_trials, 0)) %>%
+  # Join with actual total trials
+  left_join(actual_total_trials, by = c("subj", "group", "distractor_prevalence", "singleton")) %>%
+  # Now calculate percentage with correct total_trials
+  mutate(percentage = if_else(total_trials > 0, n_trials / total_trials, 0)) %>%
   ungroup()
 
 # Focus on Target and Distractor fixations (exclude "Other")
 close_to_dt <- close_to_summary %>%
-  filter(close_to != "Other")
+  filter(close_to != "Other") 
+
 
 # Summary statistics
 close_to_dt %>%
@@ -552,96 +574,118 @@ perc_plot_data <- close_to_dt %>%
     .groups = 'drop'
   )
 
-first_fix_perc_plot <- create_line_plot(
+first_fix_perc_plot <- create_bar_plot(
   data = perc_plot_data,
   x_var = "singleton",
   y_var = "mean_percentage",
   group_var = "group",
-  line_var = "distractor_prevalence",
-  facet_var = "close_to",
-  title = "First Fixation Landing Positions",
-  x_label = "Singleton Distractor",
+  pattern_var = "close_to",
+  facet_var = "distractor_prevalence",
+  title = "",
+  x_label = "Distractor Presence",
   y_label = "Percentage of First Fixations",
   group_label = "Group",
-  line_label = "Distractor Prevalence"
-) + scale_y_continuous(labels = scales::percent_format())
+  pattern_label = "close_to"
+) + scale_y_continuous(labels = scales::percent_format()) 
 
-# Analyze first fixation dwell times
-dwell_time1 <- fix_with_behav %>%
-  filter(fixationNo == 2, close_to != "Other") %>%
-  mutate(duration_ms = duration * 1000) %>%
-  group_by(subj, distractor_prevalence, singleton, group, close_to) %>%
-  summarise(mean_duration = mean(duration_ms, na.rm = TRUE), .groups = 'drop')
 
-# Create dwell time plot data
-dwell_plot_data <- dwell_time1 %>%
-  group_by(group, distractor_prevalence, singleton, close_to) %>%
-  summarise(
-    mean_dwell = mean(mean_duration),
-    se = sd(mean_duration)/sqrt(n()),
-    .groups = 'drop'
-  )
+ggsave(file.path(output_dir, 'fig_first_fixation_perc.png'), first_fix_perc_plot,
+       width = 8, height = 4, dpi = 300)
 
-first_fix_dwell_plot <- create_line_plot(
-  data = dwell_plot_data,
-  x_var = "singleton",
-  y_var = "mean_dwell",
-  group_var = "group",
-  line_var = "distractor_prevalence",
-  facet_var = "close_to",
-  title = "First Fixation Dwell Times",
-  x_label = "Singleton Distractor",
-  y_label = "First Fixation Duration (ms)",
-  group_label = "Group",
-  line_label = "Distractor Prevalence"
-) + coord_cartesian(ylim = c(100, 260))
-
-# Combine plots
-combined_first_fix_plot <- first_fix_perc_plot / first_fix_dwell_plot +
-  plot_layout(guides = "collect") &
-  theme(legend.position = "top")
-
-print(combined_first_fix_plot)
-
-ggsave(file.path(output_dir, 'fig_first_fixation_combined.png'), combined_first_fix_plot,
-       width = 8, height = 6, dpi = 300)
+first_fix_perc_plot
 ```
 
+#### Stacked Bar Chart: First Fixation Distribution
+
+```{r first-fixation-stacked-bars}
+#| fig-cap: "Distribution of first saccadic fixations across all possible landing locations by experimental condition. Each horizontal bar represents one combination of singleton presence (Absent/Present), distractor prevalence (Low/High), and group (TD/ASD), showing the percentage breakdown of first fixations landing on the Target (blue), Distractor (red), or Other locations (gray). Bars sum to approximately 100% within each condition. The stacked format reveals how attentional deployment differs across conditions, with target-directed saccades competing with capture by salient distractors and fixations to non-cued locations."
+#| fig-width: 10
+#| fig-height: 8
+
+# Prepare data for stacked bar chart using close_to_summary (includes "Other")
+stacked_data <- close_to_summary %>%
+  group_by(singleton, distractor_prevalence, group, close_to) %>%
+  summarise(mean_percentage = mean(percentage), .groups = 'drop') %>%
+  # Create a combined label for each condition: Singleton - Prevalence - Group
+  mutate(condition = paste(singleton, distractor_prevalence, group, sep = " - "))
+
+# Create ordered factor for condition to control row ordering
+stacked_data$condition <- factor(stacked_data$condition,
+                                levels = c("Absent - Low - TD", "Absent - Low - ASD",
+                                          "Absent - High - TD", "Absent - High - ASD",
+                                          "Present - Low - TD", "Present - Low - ASD",
+                                          "Present - High - TD", "Present - High - ASD"))
+
+# Reorder close_to factor for better stacking order (Target at bottom)
+stacked_data$close_to <- factor(stacked_data$close_to,
+                               levels = c("Other", "Distractor", "Target"))
+
+# Create horizontal stacked bar chart
+stacked_bar_plot <- stacked_data %>%
+  ggplot(aes(x = condition, y = mean_percentage, fill = close_to)) +
+  geom_col(position = "stack", color = "black", linewidth = 0.2) +
+  coord_flip() +  # Make bars horizontal
+  scale_fill_manual(
+    values = c(
+      "Target" = "#4DBBD5FF",      # NPG blue for Target
+      "Distractor" = "#E64B35FF",  # NPG red for Distractor
+      "Other" = "#8491B4FF"        # NPG gray for Other
+    ),
+    name = "Fixation Location"
+  ) +
+  scale_y_continuous(labels = scales::percent_format(),
+                    limits = c(0, 1),
+                    expand = c(0, 0)) +
+  labs(
+    x = "Experimental Condition",
+    y = "Percentage of First Fixations"
+  ) +
+  theme_classic(base_size = 11) +
+  theme(
+    legend.position = "right",
+    panel.grid.major.x = element_line(color = "gray90"),
+    axis.text.y = element_text(size = 9)
+  )
+
+print(stacked_bar_plot)
+
+# Save the plot
+ggsave(file.path(output_dir, 'fig_first_fixation_stacked.png'),
+       stacked_bar_plot,
+       width = 10, height = 6, dpi = 300)
+```
 
 ### First Fixation Statistical Analysis
 
-```{r first-fixation-analysis}
+```{r first-fixation-analysis1}
 #| echo: true
 
 # Repeated measures ANOVA for first fixation percentages using aov_car
-fixation_aov <- aov_car(percentage ~ group * close_to * singleton*distractor_prevalence+ Error(subj/(close_to * singleton*distractor_prevalence)),
-                       data = close_to_dt,
+fixation_aov <- aov_ez(id = "subj",
+                       dv = "percentage",
+                       data = close_to_summary %>% filter(close_to == "Distractor"),
+                       within = c("singleton", "distractor_prevalence"),
+                       between = "group",
                        type = 3)
+#fixation_aov <- aov_car(percentage ~ group * close_to * singleton*distractor_prevalence+ Error(subj/(c#lose_to * singleton*distractor_prevalence)),
+##                      type = 3)
 
 create_anova_table(fixation_aov, "Repeated measures ANOVA for first fixation analysis")
 
 ```
 
-The anova test revealed that the main effect of singleton, but not the group or close_to or distractor prevalence effects, was significant. The interaction between close_to (Fixation location) and singleton was also significant. And the singletone and distractor prevalence interaction was significant. The rest was non-significant. 
+```{r first-fixation-analysis2}
+fixation_aov_target <- aov_ez(id = "subj",
+                       dv = "percentage",
+                       data = close_to_summary %>% filter(close_to == "Target"),
+                       within = c("singleton", "distractor_prevalence"),
+                       between = "group",
+                       type = 3)
 
-This suggests that both groups showed similar proportion of initial capture effects by the distractor. 
-
-When the singleton was present, participants were more likely to fixate the distractor first, regardless of group. 
-The interaction between fixation location (close_to) and singleton originates that the percentage of first fixation to the distractor causes the decreases to the percentage of first fixation to the target when the singleton is present. 
-
-The interaction between singleton and distractor prevalence was clearly visible in the plot above (crossing lines). When the distractor was present, the percentage of the first fixation to the target and the distractor both increased in the high prevalence condition compared to the low prevalence condition. Increasing toward the distractor was due to the higher frequency of distractor appearance, and the increase toward the target may reflect effective suppression of the distractor (relative to the increase of the distractor prevalence), allowing more saccades to the target.
-
-```{r first-fixation-posthoc}
-
-# Post-hoc tests for group x close_to x singleton interaction
-fixation_emm <- emmeans(fixation_aov, ~ close_to | singleton)
-fixation_contrasts <- pairs(fixation_emm, adjust = "bonferroni")
-
-cat("Post-hoc tests: \n")
-create_posthoc_table(fixation_contrasts, "Singleton differences in first fixation patterns")
-
+create_anova_table(fixation_aov_target, "Repeated measures ANOVA for first fixation analysis (Target)")
 ```
-The post hoc test revealed the interaction between close_to and singleton was primarily driven by the difference in the singleton present condition. 
+
+
 
 ```{r first-fixation-posthoc_2}
 
@@ -664,9 +708,13 @@ The interaction between singleton and distractor prevalence was due to lower fix
 #| echo: true
 
 # Repeated measures ANOVA for dwell time using aov_car
-dwell_aov <- aov_car(mean_duration ~ group * close_to * singleton*distractor_prevalence + Error(subj/(close_to * singleton*distractor_prevalence)),
-                    data = dwell_time1,
-                    type = 3)
+
+dwell_aov <- aov_ez(id = "subj",
+                     dv = "mean_duration",
+                     data = dwell_time1,
+                     within = c("singleton","close_to", "distractor_prevalence"),
+                     between = "group",
+                     type = 3)
 
 create_anova_table(dwell_aov, "Repeated measures ANOVA for first fixation dwell time")
 
@@ -708,6 +756,18 @@ max_fixation <- fix_with_behav %>%
   mutate(nfixation = max_fixation - 1) %>%
   group_by(subj, group, singleton, distractor_prevalence) %>%
   summarise(mean_nfixation = mean(nfixation, na.rm = TRUE), .groups = 'drop')
+
+# Complete missing combinations (if any) for number of fixations
+all_nfix_combinations <- max_fixation %>%
+  distinct(subj, group) %>%
+  crossing(
+    distractor_prevalence = unique(max_fixation$distractor_prevalence),
+    singleton = unique(max_fixation$singleton)
+  )
+
+max_fixation <- all_nfix_combinations %>%
+  left_join(max_fixation, by = c("subj", "group", "distractor_prevalence", "singleton")) %>%
+  mutate(mean_nfixation = replace_na(mean_nfixation, 0))
 
 # Statistical analysis using aov_ez
 nfix_aov <- aov_ez(id = "subj",
@@ -781,6 +841,18 @@ target_refixations <- fix_with_behav %>%
   group_by(subj, singleton, distractor_prevalence, group) %>%
   summarise(mean_target_fix = mean(n_target_fix, na.rm = TRUE), .groups = 'drop')
 
+# Complete missing combinations with 0 for target refixations
+all_target_combinations <- target_refixations %>%
+  distinct(subj, group) %>%
+  crossing(
+    distractor_prevalence = unique(target_refixations$distractor_prevalence),
+    singleton = unique(target_refixations$singleton)
+  )
+
+target_refixations <- all_target_combinations %>%
+  left_join(target_refixations, by = c("subj", "group", "distractor_prevalence", "singleton")) %>%
+  mutate(mean_target_fix = replace_na(mean_target_fix, 0))
+
 # Statistical analysis using aov_ez
 target_aov <- aov_ez(id = "subj",
                     dv = "mean_target_fix",
@@ -813,6 +885,18 @@ distractor_refixations <- fix_with_behav %>%
   summarise(n_distractor_fix = n(), .groups = 'drop') %>%
   group_by(subj, singleton, distractor_prevalence, group) %>%
   summarise(mean_distractor_fix = mean(n_distractor_fix, na.rm = TRUE), .groups = 'drop')
+
+# Complete missing combinations with 0 for distractor refixations
+all_distractor_combinations <- distractor_refixations %>%
+  distinct(subj, group) %>%
+  crossing(
+    distractor_prevalence = unique(distractor_refixations$distractor_prevalence),
+    singleton = unique(distractor_refixations$singleton)
+  )
+
+distractor_refixations <- all_distractor_combinations %>%
+  left_join(distractor_refixations, by = c("subj", "group", "distractor_prevalence", "singleton")) %>%
+  mutate(mean_distractor_fix = replace_na(mean_distractor_fix, 0))
 
 # Statistical analysis using aov_ez
 distractor_aov <- aov_ez(id = "subj",

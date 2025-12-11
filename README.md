@@ -33,7 +33,7 @@ The analysis requires R (≥ 4.0) with the following packages:
 
 ```r
 # Data manipulation and visualization
-tidyverse, ggplot2, readr, dplyr, patchwork, scales, ggsci
+tidyverse, ggplot2, readr, dplyr, patchwork, cowplot, scales, ggsci, ggsignif
 
 # Statistical analysis
 lme4, lmerTest, afex, emmeans, effectsize, broom.mixed
@@ -48,7 +48,7 @@ Install all dependencies with:
 install.packages(c("tidyverse", "ggplot2", "readr", "dplyr", "lme4",
                    "lmerTest", "afex", "emmeans", "effectsize",
                    "broom.mixed", "knitr", "kableExtra", "patchwork",
-                   "scales", "ggsci", "grid"))
+                   "cowplot", "scales", "ggsci", "ggsignif", "grid"))
 ```
 
 ## Reproducing the Analysis
