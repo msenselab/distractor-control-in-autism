@@ -157,7 +157,7 @@ create_bar_plot <- function(data, x_var, y_var, group_var, pattern_var = NULL, f
     }
 
     # Create interaction group to ensure proper bar positioning
-    data$interaction_group <- interaction(data[[group_var]], data[[pattern_var]])
+    data$interaction_group <- interaction(data[[pattern_var]],data[[group_var]])
 
     p <- data %>%
       ggplot(aes_string(x = x_var, y = y_var, fill = group_var,

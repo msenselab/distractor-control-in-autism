@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="MSense lab and NEVIA lab">
-<meta name="dcterms.date" content="2025-12-04">
+<meta name="dcterms.date" content="2025-12-12">
 
 <title>Distractor Control in Autism: Data Analysis</title>
 <style>
@@ -90,7 +90,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">2</span> Introduction</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods"><span class="header-section-number">3</span> Methods</a>
   <ul class="collapse">
-  <li><a href="#participants-and-design" id="toc-participants-and-design" class="nav-link" data-scroll-target="#participants-and-design"><span class="header-section-number">3.1</span> Participants and Design</a></li>
+  <li><a href="#participants-and-designf" id="toc-participants-and-designf" class="nav-link" data-scroll-target="#participants-and-designf"><span class="header-section-number">3.1</span> Participants and Designf</a></li>
   <li><a href="#task-and-procedure" id="toc-task-and-procedure" class="nav-link" data-scroll-target="#task-and-procedure"><span class="header-section-number">3.2</span> Task and Procedure</a></li>
   <li><a href="#data-analysis" id="toc-data-analysis" class="nav-link" data-scroll-target="#data-analysis"><span class="header-section-number">3.3</span> Data Analysis</a></li>
   </ul></li>
@@ -108,6 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#interference-effect-calculation" id="toc-interference-effect-calculation" class="nav-link" data-scroll-target="#interference-effect-calculation"><span class="header-section-number">4.3.1</span> Interference Effect Calculation</a></li>
   <li><a href="#statistical-analysis-of-interference" id="toc-statistical-analysis-of-interference" class="nav-link" data-scroll-target="#statistical-analysis-of-interference"><span class="header-section-number">4.3.2</span> Statistical Analysis of Interference</a></li>
   <li><a href="#interference-visualization" id="toc-interference-visualization" class="nav-link" data-scroll-target="#interference-visualization"><span class="header-section-number">4.3.3</span> Interference Visualization</a></li>
+  <li><a href="#combined-figure-rt-and-interference" id="toc-combined-figure-rt-and-interference" class="nav-link" data-scroll-target="#combined-figure-rt-and-interference"><span class="header-section-number">4.3.4</span> Combined Figure: RT and Interference</a></li>
   </ul></li>
   <li><a href="#eye-movement-analysis" id="toc-eye-movement-analysis" class="nav-link" data-scroll-target="#eye-movement-analysis"><span class="header-section-number">4.4</span> Eye Movement Analysis</a>
   <ul class="collapse">
@@ -115,9 +116,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#first-fixation-analysis" id="toc-first-fixation-analysis" class="nav-link" data-scroll-target="#first-fixation-analysis"><span class="header-section-number">4.4.2</span> First Fixation Analysis</a></li>
   <li><a href="#first-fixation-visualization" id="toc-first-fixation-visualization" class="nav-link" data-scroll-target="#first-fixation-visualization"><span class="header-section-number">4.4.3</span> First Fixation Visualization</a></li>
   <li><a href="#first-fixation-statistical-analysis" id="toc-first-fixation-statistical-analysis" class="nav-link" data-scroll-target="#first-fixation-statistical-analysis"><span class="header-section-number">4.4.4</span> First Fixation Statistical Analysis</a></li>
-  <li><a href="#dwell-time-analysis" id="toc-dwell-time-analysis" class="nav-link" data-scroll-target="#dwell-time-analysis"><span class="header-section-number">4.4.5</span> Dwell Time Analysis</a></li>
-  <li><a href="#number-of-fixations-analysis" id="toc-number-of-fixations-analysis" class="nav-link" data-scroll-target="#number-of-fixations-analysis"><span class="header-section-number">4.4.6</span> Number of Fixations Analysis</a></li>
-  <li><a href="#number-of-fixations-visualization" id="toc-number-of-fixations-visualization" class="nav-link" data-scroll-target="#number-of-fixations-visualization"><span class="header-section-number">4.4.7</span> Number of Fixations Visualization</a></li>
+  <li><a href="#number-of-fixations-analysis" id="toc-number-of-fixations-analysis" class="nav-link" data-scroll-target="#number-of-fixations-analysis"><span class="header-section-number">4.4.5</span> Number of Fixations Analysis</a></li>
+  <li><a href="#number-of-fixations-visualization" id="toc-number-of-fixations-visualization" class="nav-link" data-scroll-target="#number-of-fixations-visualization"><span class="header-section-number">4.4.6</span> Number of Fixations Visualization</a></li>
+  <li><a href="#number-of-fixations-interference-analysis" id="toc-number-of-fixations-interference-analysis" class="nav-link" data-scroll-target="#number-of-fixations-interference-analysis"><span class="header-section-number">4.4.7</span> Number of Fixations Interference Analysis</a></li>
   </ul></li>
   <li><a href="#refixation-analysis" id="toc-refixation-analysis" class="nav-link" data-scroll-target="#refixation-analysis"><span class="header-section-number">4.5</span> Refixation Analysis</a>
   <ul class="collapse">
@@ -161,7 +162,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 4, 2025</p>
+      <p class="date">December 12, 2025</p>
     </div>
   </div>
   
@@ -183,13 +184,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="methods" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Methods</h1>
-<section id="participants-and-design" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="participants-and-design"><span class="header-section-number">3.1</span> Participants and Design</h2>
+<section id="participants-and-designf" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="participants-and-designf"><span class="header-section-number">3.1</span> Participants and Designf</h2>
 <p>The study included participants from two groups: - <strong>ASD group</strong>: Individuals diagnosed with autism spectrum disorder - <strong>TD group</strong>: Typically developing control participants</p>
 </section>
 <section id="task-and-procedure" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="task-and-procedure"><span class="header-section-number">3.2</span> Task and Procedure</h2>
-<p>Participants performed an additional singleton search task with the following manipulations: - <strong>Distractor prevalence</strong>: Low (50%) vs.&nbsp;High (90%) distractor frequency - <strong>Singleton presence</strong>: Distractor present vs.&nbsp;absent trials - <strong>Precueing</strong>: 100% valid spatial cues indicating potential distractor locations</p>
+<p>Participants performed an additional singleton search task with the following manipulations: - <strong>Singleton prevalence</strong>: Low (50%) vs.&nbsp;High (90%) singleton frequency - <strong>Singleton presence</strong>: Singleton present vs.&nbsp;absent trials - <strong>Precueing</strong>: 100% valid spatial cues indicating potential singleton locations</p>
 </section>
 <section id="data-analysis" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="data-analysis"><span class="header-section-number">3.3</span> Data Analysis</h2>
@@ -220,12 +221,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>fix_with_behav <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">factor</span>(group, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"TD"</span>, <span class="st">"ASD"</span>)),</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">singleton =</span> <span class="fu">factor</span>(singleton),</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">close_to =</span> <span class="fu">factor</span>(close_to)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Display data summary</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Behavioral data dimensions:"</span>, <span class="fu">dim</span>(behav), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">distractor_prevalence =</span> <span class="fu">factor</span>(distractor_prevalence,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">levels =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.9</span>),</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"High"</span>)),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">close_to =</span> <span class="fu">factor</span>(close_to)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Display data summary</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Behavioral data dimensions:"</span>, <span class="fu">dim</span>(behav), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Behavioral data dimensions: 23600 16 </code></pre>
 </div>
@@ -510,7 +513,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="data_ana_files/figure-html/rt-visualization-1.png" class="img-fluid figure-img" width="960"></p>
-<figcaption>Mean reaction times across experimental conditions. Error bars represent standard errors. The singleton effect (slower RTs when distractor present) shows significant group differences.</figcaption>
+<figcaption>Mean reaction times across experimental conditions. Error bars represent standard errors. Brackets with *** indicate significant singleton effect within ASD group (p &lt; .001). ** at top indicates significant group difference (p &lt; .01).</figcaption>
 </figure>
 </div>
 </div>
@@ -707,12 +710,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="interference-visualization" class="level3" data-number="4.3.3">
 <h3 data-number="4.3.3" class="anchored" data-anchor-id="interference-visualization"><span class="header-section-number">4.3.3</span> Interference Visualization</h3>
+</section>
+<section id="combined-figure-rt-and-interference" class="level3" data-number="4.3.4">
+<h3 data-number="4.3.4" class="anchored" data-anchor-id="combined-figure-rt-and-interference"><span class="header-section-number">4.3.4</span> Combined Figure: RT and Interference</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="data_ana_files/figure-html/interference-plot-1.png" class="img-fluid figure-img" width="768"></p>
-<figcaption>Distractor interference effects by group and prevalence condition. The ASD group shows significantly larger interference effects than the TD group across both prevalence conditions.</figcaption>
+<p><img src="data_ana_files/figure-html/combined-rt-interference-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Reaction time and distractor interference effects. (A) Mean reaction times across conditions. (B) Distractor interference effects by group and prevalence. Error bars represent standard errors.</figcaption>
 </figure>
 </div>
 </div>
@@ -742,33 +748,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze first fixation after central fixation (fixationNo == 2)</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>close_to_summary <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fixationNo <span class="sc">==</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, distractor_prevalence, singleton, group, close_to) <span class="sc">%&gt;%</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_trials =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, group) <span class="sc">%&gt;%</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_trials =</span> <span class="fu">sum</span>(n_trials),</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">percentage =</span> n_trials <span class="sc">/</span> total_trials</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate actual total trials per condition (using fixationNo == 1 as it exists for every trial)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>actual_total_trials <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fixationNo <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, distractor_prevalence, singleton, group) <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_trials =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze first fixation after central fixation (fixationNo == 2)</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>close_to_counts <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fixationNo <span class="sc">==</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, distractor_prevalence, singleton, group, close_to) <span class="sc">%&gt;%</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_trials =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
 <span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on Target and Distractor fixations (exclude "Other")</span></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>close_to_dt <span class="ot">&lt;-</span> close_to_summary <span class="sc">%&gt;%</span></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(close_to <span class="sc">!=</span> <span class="st">"Other"</span>)</span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>close_to_dt <span class="sc">%&gt;%</span></span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group, distractor_prevalence, singleton, close_to) <span class="sc">%&gt;%</span></span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="fu">n</span>(),</span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mean_Percentage =</span> <span class="fu">round</span>(<span class="fu">mean</span>(percentage), <span class="dv">3</span>),</span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">SD_Percentage =</span> <span class="fu">round</span>(<span class="fu">sd</span>(percentage), <span class="dv">3</span>),</span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">'drop'</span></span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"First fixation landing positions by experimental condition"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete missing combinations with 0 first (before calculating percentages)</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Get all subjects and all possible condition combinations</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>all_subjects <span class="ot">&lt;-</span> close_to_counts <span class="sc">%&gt;%</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(subj, group)</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>all_conditions <span class="ot">&lt;-</span> close_to_counts <span class="sc">%&gt;%</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(distractor_prevalence, singleton, close_to)</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Create complete grid</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>close_to_summary <span class="ot">&lt;-</span> all_subjects <span class="sc">%&gt;%</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(all_conditions) <span class="sc">%&gt;%</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(close_to_counts, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"subj"</span>, <span class="st">"group"</span>, <span class="st">"distractor_prevalence"</span>, <span class="st">"singleton"</span>, <span class="st">"close_to"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_trials =</span> <span class="fu">replace_na</span>(n_trials, <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Join with actual total trials</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(actual_total_trials, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"subj"</span>, <span class="st">"group"</span>, <span class="st">"distractor_prevalence"</span>, <span class="st">"singleton"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Now calculate percentage with correct total_trials</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percentage =</span> <span class="fu">if_else</span>(total_trials <span class="sc">&gt;</span> <span class="dv">0</span>, n_trials <span class="sc">/</span> total_trials, <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on Target and Distractor fixations (exclude "Other")</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>close_to_dt <span class="ot">&lt;-</span> close_to_summary <span class="sc">%&gt;%</span></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(close_to <span class="sc">!=</span> <span class="st">"Other"</span>) </span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>close_to_dt <span class="sc">%&gt;%</span></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group, distractor_prevalence, singleton, close_to) <span class="sc">%&gt;%</span></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mean_Percentage =</span> <span class="fu">round</span>(<span class="fu">mean</span>(percentage), <span class="dv">3</span>),</span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">SD_Percentage =</span> <span class="fu">round</span>(<span class="fu">sd</span>(percentage), <span class="dv">3</span>),</span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">'drop'</span></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"First fixation landing positions by experimental condition"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -776,7 +802,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">group</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">distractor_prevalence</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">distractor_prevalence</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">singleton</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">close_to</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">N</th>
@@ -787,147 +813,147 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">TD</td>
-<td style="text-align: right;">0.5</td>
+<td style="text-align: left;">Low</td>
 <td style="text-align: left;">Absent</td>
 <td style="text-align: left;">Distractor</td>
-<td style="text-align: right;">28</td>
+<td style="text-align: right;">31</td>
 <td style="text-align: right;">0.059</td>
-<td style="text-align: right;">0.034</td>
+<td style="text-align: right;">0.042</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">TD</td>
-<td style="text-align: right;">0.5</td>
+<td style="text-align: left;">Low</td>
 <td style="text-align: left;">Absent</td>
 <td style="text-align: left;">Target</td>
-<td style="text-align: right;">29</td>
-<td style="text-align: right;">0.065</td>
-<td style="text-align: right;">0.036</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.066</td>
+<td style="text-align: right;">0.044</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">TD</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: left;">Present</td>
-<td style="text-align: left;">Distractor</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">0.032</td>
-<td style="text-align: right;">0.020</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">TD</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: left;">Present</td>
-<td style="text-align: left;">Target</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">0.027</td>
-<td style="text-align: right;">0.017</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">TD</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: left;">Absent</td>
-<td style="text-align: left;">Distractor</td>
-<td style="text-align: right;">21</td>
-<td style="text-align: right;">0.019</td>
-<td style="text-align: right;">0.017</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">TD</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: left;">Absent</td>
-<td style="text-align: left;">Target</td>
-<td style="text-align: right;">25</td>
-<td style="text-align: right;">0.020</td>
-<td style="text-align: right;">0.016</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">TD</td>
-<td style="text-align: right;">0.9</td>
+<td style="text-align: left;">Low</td>
 <td style="text-align: left;">Present</td>
 <td style="text-align: left;">Distractor</td>
 <td style="text-align: right;">31</td>
-<td style="text-align: right;">0.063</td>
-<td style="text-align: right;">0.040</td>
+<td style="text-align: right;">0.080</td>
+<td style="text-align: right;">0.053</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">TD</td>
-<td style="text-align: right;">0.9</td>
+<td style="text-align: left;">Low</td>
 <td style="text-align: left;">Present</td>
 <td style="text-align: left;">Target</td>
 <td style="text-align: right;">31</td>
-<td style="text-align: right;">0.045</td>
-<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">0.062</td>
+<td style="text-align: right;">0.048</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Absent</td>
+<td style="text-align: left;">Distractor</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.064</td>
+<td style="text-align: right;">0.072</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Absent</td>
+<td style="text-align: left;">Target</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.078</td>
+<td style="text-align: right;">0.059</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Present</td>
+<td style="text-align: left;">Distractor</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.089</td>
+<td style="text-align: right;">0.052</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Present</td>
+<td style="text-align: left;">Target</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.064</td>
+<td style="text-align: right;">0.033</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ASD</td>
-<td style="text-align: right;">0.5</td>
+<td style="text-align: left;">Low</td>
 <td style="text-align: left;">Absent</td>
 <td style="text-align: left;">Distractor</td>
 <td style="text-align: right;">28</td>
-<td style="text-align: right;">0.054</td>
-<td style="text-align: right;">0.047</td>
+<td style="text-align: right;">0.062</td>
+<td style="text-align: right;">0.056</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ASD</td>
-<td style="text-align: right;">0.5</td>
+<td style="text-align: left;">Low</td>
 <td style="text-align: left;">Absent</td>
+<td style="text-align: left;">Target</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.066</td>
+<td style="text-align: right;">0.037</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">Present</td>
+<td style="text-align: left;">Distractor</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.091</td>
+<td style="text-align: right;">0.061</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">Present</td>
+<td style="text-align: left;">Target</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.060</td>
+<td style="text-align: right;">0.037</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Absent</td>
+<td style="text-align: left;">Distractor</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.045</td>
+<td style="text-align: right;">0.070</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Absent</td>
+<td style="text-align: left;">Target</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.066</td>
+<td style="text-align: right;">0.083</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Present</td>
+<td style="text-align: left;">Distractor</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.090</td>
+<td style="text-align: right;">0.056</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Present</td>
 <td style="text-align: left;">Target</td>
 <td style="text-align: right;">28</td>
 <td style="text-align: right;">0.058</td>
-<td style="text-align: right;">0.035</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ASD</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: left;">Present</td>
-<td style="text-align: left;">Distractor</td>
-<td style="text-align: right;">28</td>
-<td style="text-align: right;">0.034</td>
-<td style="text-align: right;">0.022</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ASD</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: left;">Present</td>
-<td style="text-align: left;">Target</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">0.024</td>
-<td style="text-align: right;">0.014</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ASD</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: left;">Absent</td>
-<td style="text-align: left;">Distractor</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">0.017</td>
-<td style="text-align: right;">0.013</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ASD</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: left;">Absent</td>
-<td style="text-align: left;">Target</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">0.023</td>
-<td style="text-align: right;">0.012</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ASD</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: left;">Present</td>
-<td style="text-align: left;">Distractor</td>
-<td style="text-align: right;">28</td>
-<td style="text-align: right;">0.059</td>
-<td style="text-align: right;">0.036</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ASD</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: left;">Present</td>
-<td style="text-align: left;">Target</td>
-<td style="text-align: right;">28</td>
-<td style="text-align: right;">0.039</td>
-<td style="text-align: right;">0.027</td>
+<td style="text-align: right;">0.040</td>
 </tr>
 </tbody>
 </table>
@@ -946,6 +972,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<section id="stacked-bar-chart-first-fixation-distribution" class="level4" data-number="4.4.3.1">
+<h4 data-number="4.4.3.1" class="anchored" data-anchor-id="stacked-bar-chart-first-fixation-distribution"><span class="header-section-number">4.4.3.1</span> Stacked Bar Chart: First Fixation Distribution</h4>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data_ana_files/figure-html/first-fixation-stacked-bars-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Distribution of first saccadic fixations across all possible landing locations by experimental condition. Each horizontal bar represents one combination of singleton presence (Absent/Present), distractor prevalence (Low/High), and group (TD/ASD), showing the percentage breakdown of first fixations landing on the Target (blue), Distractor (red), or Other locations (gray). Bars sum to approximately 100% within each condition. The stacked format reveals how attentional deployment differs across conditions, with target-directed saccades competing with capture by salient distractors and fixations to non-cued locations.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="first-fixation-statistical-analysis" class="level3" data-number="4.4.4">
 <h3 data-number="4.4.4" class="anchored" data-anchor-id="first-fixation-statistical-analysis"><span class="header-section-number">4.4.4</span> First Fixation Statistical Analysis</h3>
@@ -953,11 +992,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeated measures ANOVA for first fixation percentages using aov_car</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fixation_aov <span class="ot">&lt;-</span> <span class="fu">aov_car</span>(percentage <span class="sc">~</span> group <span class="sc">*</span> close_to <span class="sc">*</span> singleton<span class="sc">*</span>distractor_prevalence<span class="sc">+</span> <span class="fu">Error</span>(subj<span class="sc">/</span>(close_to <span class="sc">*</span> singleton<span class="sc">*</span>distractor_prevalence)),</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> close_to_dt,</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">type =</span> <span class="dv">3</span>)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(fixation_aov, <span class="st">"Repeated measures ANOVA for first fixation analysis"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fixation_aov <span class="ot">&lt;-</span> <span class="fu">aov_ez</span>(<span class="at">id =</span> <span class="st">"subj"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">dv =</span> <span class="st">"percentage"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> close_to_summary <span class="sc">%&gt;%</span> <span class="fu">filter</span>(close_to <span class="sc">==</span> <span class="st">"Distractor"</span>),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">within =</span> <span class="fu">c</span>(<span class="st">"singleton"</span>, <span class="st">"distractor_prevalence"</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">between =</span> <span class="st">"group"</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">type =</span> <span class="dv">3</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">#fixation_aov &lt;- aov_car(percentage ~ group * close_to * singleton*distractor_prevalence+ Error(subj/(c#lose_to * singleton*distractor_prevalence)),</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="do">##                      type = 3)</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(fixation_aov, <span class="st">"Repeated measures ANOVA for first fixation analysis"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -975,174 +1019,139 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">group</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">2.17</td>
-<td style="text-align: left;">.026</td>
-<td style="text-align: left;">.156</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">close_to</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">3.53 +</td>
-<td style="text-align: left;">.032</td>
-<td style="text-align: left;">.075</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:close_to</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">1.21</td>
-<td style="text-align: left;">.011</td>
-<td style="text-align: left;">.284</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.01</td>
+<td style="text-align: left;">0.01</td>
+<td style="text-align: left;">&lt;.001</td>
+<td style="text-align: left;">.915</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">singleton</td>
-<td style="text-align: left;">1, 20</td>
+<td style="text-align: left;">1, 57</td>
 <td style="text-align: left;">0.00</td>
-<td style="text-align: left;">8.25 **</td>
-<td style="text-align: left;">.019</td>
-<td style="text-align: left;">.009</td>
+<td style="text-align: left;">37.18 ***</td>
+<td style="text-align: left;">.063</td>
+<td style="text-align: left;">&lt;.001</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">group:singleton</td>
-<td style="text-align: left;">1, 20</td>
+<td style="text-align: left;">1, 57</td>
 <td style="text-align: left;">0.00</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">&lt;.001</td>
-<td style="text-align: left;">.964</td>
+<td style="text-align: left;">2.15</td>
+<td style="text-align: left;">.004</td>
+<td style="text-align: left;">.148</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">3.19 +</td>
-<td style="text-align: left;">.016</td>
-<td style="text-align: left;">.089</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">1.60</td>
-<td style="text-align: left;">.008</td>
-<td style="text-align: left;">.221</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">close_to:singleton</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">10.68 **</td>
-<td style="text-align: left;">.050</td>
-<td style="text-align: left;">.004</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:close_to:singleton</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">0.10</td>
-<td style="text-align: left;">&lt;.001</td>
-<td style="text-align: left;">.750</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">close_to:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">1.16</td>
-<td style="text-align: left;">.009</td>
-<td style="text-align: left;">.294</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:close_to:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
+<td style="text-align: left;">1, 57</td>
 <td style="text-align: left;">0.00</td>
 <td style="text-align: left;">0.01</td>
 <td style="text-align: left;">&lt;.001</td>
-<td style="text-align: left;">.930</td>
+<td style="text-align: left;">.908</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">group:distractor_prevalence</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.00</td>
+<td style="text-align: left;">0.91</td>
+<td style="text-align: left;">.005</td>
+<td style="text-align: left;">.344</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
+<td style="text-align: left;">1, 57</td>
 <td style="text-align: left;">0.00</td>
-<td style="text-align: left;">168.20 ***</td>
-<td style="text-align: left;">.404</td>
-<td style="text-align: left;">&lt;.001</td>
+<td style="text-align: left;">0.99</td>
+<td style="text-align: left;">.002</td>
+<td style="text-align: left;">.325</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">group:singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
+<td style="text-align: left;">1, 57</td>
 <td style="text-align: left;">0.00</td>
-<td style="text-align: left;">2.70</td>
-<td style="text-align: left;">.011</td>
-<td style="text-align: left;">.116</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">close_to:singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">0.26</td>
-<td style="text-align: left;">.001</td>
-<td style="text-align: left;">.614</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:close_to:singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">1.30</td>
-<td style="text-align: left;">.005</td>
-<td style="text-align: left;">.267</td>
+<td style="text-align: left;">0.35</td>
+<td style="text-align: left;">&lt;.001</td>
+<td style="text-align: left;">.557</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>The anova test revealed that the main effect of singleton, but not the group or close_to or distractor prevalence effects, was significant. The interaction between close_to (Fixation location) and singleton was also significant. And the singletone and distractor prevalence interaction was significant. The rest was non-significant.</p>
-<p>This suggests that both groups showed similar proportion of initial capture effects by the distractor.</p>
-<p>When the singleton was present, participants were more likely to fixate the distractor first, regardless of group. The interaction between fixation location (close_to) and singleton originates that the percentage of first fixation to the distractor causes the decreases to the percentage of first fixation to the target when the singleton is present.</p>
-<p>The interaction between singleton and distractor prevalence was clearly visible in the plot above (crossing lines). When the distractor was present, the percentage of the first fixation to the target and the distractor both increased in the high prevalence condition compared to the low prevalence condition. Increasing toward the distractor was due to the higher frequency of distractor appearance, and the increase toward the target may reflect effective suppression of the distractor (relative to the increase of the distractor prevalence), allowing more saccades to the target.</p>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Post-hoc tests: </code></pre>
-</div>
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
-<caption>Singleton differences in first fixation patterns</caption>
+<caption>Repeated measures ANOVA for first fixation analysis (Target)</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">contrast</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">singleton</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">estimate</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">df</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">t.ratio</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">p.value</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Effect</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">df</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">MSE</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">F</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ges</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">p.value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Distractor - Target</td>
-<td style="text-align: left;">Absent</td>
-<td style="text-align: right;">-0.002</td>
-<td style="text-align: right;">0.005</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">-0.44</td>
-<td style="text-align: right;">0.665</td>
+<td style="text-align: left;">group</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.01</td>
+<td style="text-align: left;">0.31</td>
+<td style="text-align: left;">.003</td>
+<td style="text-align: left;">.583</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Distractor - Target</td>
-<td style="text-align: left;">Present</td>
-<td style="text-align: right;">0.019</td>
-<td style="text-align: right;">0.006</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">3.21</td>
-<td style="text-align: right;">0.004</td>
+<td style="text-align: left;">singleton</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.00</td>
+<td style="text-align: left;">3.05 +</td>
+<td style="text-align: left;">.007</td>
+<td style="text-align: left;">.086</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">group:singleton</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.00</td>
+<td style="text-align: left;">0.04</td>
+<td style="text-align: left;">&lt;.001</td>
+<td style="text-align: left;">.842</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">distractor_prevalence</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.00</td>
+<td style="text-align: left;">0.27</td>
+<td style="text-align: left;">&lt;.001</td>
+<td style="text-align: left;">.602</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">group:distractor_prevalence</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.00</td>
+<td style="text-align: left;">0.37</td>
+<td style="text-align: left;">.001</td>
+<td style="text-align: left;">.543</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">singleton:distractor_prevalence</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.00</td>
+<td style="text-align: left;">0.59</td>
+<td style="text-align: left;">.001</td>
+<td style="text-align: left;">.445</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">group:singleton:distractor_prevalence</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.00</td>
+<td style="text-align: left;">0.21</td>
+<td style="text-align: left;">&lt;.001</td>
+<td style="text-align: left;">.651</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>The post hoc test revealed the interaction between close_to and singleton was primarily driven by the difference in the singleton present condition.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -1161,20 +1170,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Absent - Present</td>
-<td style="text-align: left;">X0.5</td>
-<td style="text-align: right;">0.032</td>
-<td style="text-align: right;">0.004</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">8.860</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: right;">-0.025</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">-4.484</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Absent - Present</td>
-<td style="text-align: left;">X0.9</td>
-<td style="text-align: right;">-0.045</td>
-<td style="text-align: right;">0.004</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">-11.726</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: right;">-0.035</td>
+<td style="text-align: right;">0.008</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">-4.292</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>
@@ -1184,245 +1193,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Marginal means for distractor prevalence x singleton interaction:</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>distractor_prevalence = X0.5:
+<pre><code>distractor_prevalence = Low:
  singleton emmean      SE df lower.CL upper.CL
- Absent    0.0618 0.00495 20   0.0514   0.0721
- Present   0.0295 0.00251 20   0.0243   0.0347
+ Absent    0.0603 0.00646 57   0.0474   0.0732
+ Present   0.0853 0.00746 57   0.0704   0.1003
 
-distractor_prevalence = X0.9:
+distractor_prevalence = High:
  singleton emmean      SE df lower.CL upper.CL
- Absent    0.0169 0.00153 20   0.0138   0.0201
- Present   0.0623 0.00448 20   0.0529   0.0716
+ Absent    0.0544 0.00928 57   0.0358   0.0730
+ Present   0.0893 0.00701 57   0.0752   0.1033
 
-Results are averaged over the levels of: group, close_to 
+Results are averaged over the levels of: group 
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <p>The interaction between singleton and distractor prevalence was due to lower fixation toward the cued and target locations in the high prevalence condition than in the low prevalence condition in the distractor absent trials, but higher fixation when the distractor was present in the high prevalence condition.</p>
 </section>
-<section id="dwell-time-analysis" class="level3" data-number="4.4.5">
-<h3 data-number="4.4.5" class="anchored" data-anchor-id="dwell-time-analysis"><span class="header-section-number">4.4.5</span> Dwell Time Analysis</h3>
-<div class="cell">
-<details class="code-fold">
-<summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeated measures ANOVA for dwell time using aov_car</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>dwell_aov <span class="ot">&lt;-</span> <span class="fu">aov_car</span>(mean_duration <span class="sc">~</span> group <span class="sc">*</span> close_to <span class="sc">*</span> singleton<span class="sc">*</span>distractor_prevalence <span class="sc">+</span> <span class="fu">Error</span>(subj<span class="sc">/</span>(close_to <span class="sc">*</span> singleton<span class="sc">*</span>distractor_prevalence)),</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> dwell_time1,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type =</span> <span class="dv">3</span>)</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(dwell_aov, <span class="st">"Repeated measures ANOVA for first fixation dwell time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<table class="table table-striped table-hover caption-top table-sm small">
-<caption>Repeated measures ANOVA for first fixation dwell time</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Effect</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">df</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">MSE</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">F</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">ges</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">group</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">8166.18</td>
-<td style="text-align: left;">3.57 +</td>
-<td style="text-align: left;">.071</td>
-<td style="text-align: left;">.073</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">close_to</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">2488.95</td>
-<td style="text-align: left;">48.29 ***</td>
-<td style="text-align: left;">.238</td>
-<td style="text-align: left;">&lt;.001</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:close_to</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">2488.95</td>
-<td style="text-align: left;">0.20</td>
-<td style="text-align: left;">.001</td>
-<td style="text-align: left;">.661</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">singleton</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">1468.50</td>
-<td style="text-align: left;">0.14</td>
-<td style="text-align: left;">&lt;.001</td>
-<td style="text-align: left;">.714</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:singleton</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">1468.50</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">&lt;.001</td>
-<td style="text-align: left;">.959</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">2443.45</td>
-<td style="text-align: left;">0.03</td>
-<td style="text-align: left;">&lt;.001</td>
-<td style="text-align: left;">.857</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">2443.45</td>
-<td style="text-align: left;">5.51 *</td>
-<td style="text-align: left;">.034</td>
-<td style="text-align: left;">.029</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">close_to:singleton</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">1271.30</td>
-<td style="text-align: left;">2.94</td>
-<td style="text-align: left;">.010</td>
-<td style="text-align: left;">.102</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:close_to:singleton</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">1271.30</td>
-<td style="text-align: left;">6.93 *</td>
-<td style="text-align: left;">.022</td>
-<td style="text-align: left;">.016</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">close_to:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">796.92</td>
-<td style="text-align: left;">0.73</td>
-<td style="text-align: left;">.002</td>
-<td style="text-align: left;">.404</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:close_to:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">796.92</td>
-<td style="text-align: left;">0.39</td>
-<td style="text-align: left;">&lt;.001</td>
-<td style="text-align: left;">.537</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">1477.46</td>
-<td style="text-align: left;">0.72</td>
-<td style="text-align: left;">.003</td>
-<td style="text-align: left;">.407</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">1477.46</td>
-<td style="text-align: left;">1.09</td>
-<td style="text-align: left;">.004</td>
-<td style="text-align: left;">.309</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">close_to:singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">1098.47</td>
-<td style="text-align: left;">1.38</td>
-<td style="text-align: left;">.004</td>
-<td style="text-align: left;">.254</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">group:close_to:singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 20</td>
-<td style="text-align: left;">1098.47</td>
-<td style="text-align: left;">0.72</td>
-<td style="text-align: left;">.002</td>
-<td style="text-align: left;">.407</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Another ANVOA on dwell time revealed significant main effects of close_to and marignal of the group (p = .073), but not singleton. The interaction between group and distractor prevalence was also significant. And three-way interaction between group, close_to and singleton was significant. The rest was non-significant.</p>
-<ul>
-<li>ASD group fixated longer than TD group overall.</li>
-<li>Fixation on the target (close to the target) led to longer dwell times than fixation on the distractor. This may indicate more target processing.</li>
-<li>The interaction between group and distractor prevalence</li>
-</ul>
-<p>Let check what drives the interaction between group and singleton.</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Post-hoc tests: Group differences in dwell times by condition</code></pre>
-</div>
-<div class="cell-output-display">
-<table class="table table-striped table-hover caption-top table-sm small">
-<caption>Group differences in first fixation dwell times</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">contrast</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">distractor_prevalence</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">estimate</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">df</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">t.ratio</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">TD - ASD</td>
-<td style="text-align: left;">X0.5</td>
-<td style="text-align: right;">-44.958</td>
-<td style="text-align: right;">15.984</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">-2.813</td>
-<td style="text-align: right;">0.011</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">TD - ASD</td>
-<td style="text-align: left;">X0.9</td>
-<td style="text-align: right;">-8.579</td>
-<td style="text-align: right;">16.295</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">-0.526</td>
-<td style="text-align: right;">0.604</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>The above post-hoc tests revealed that group differences in dwell time were primarily driven in the low prevalence condition, where the ASD group showed significantly longer dwell times than the TD group. With higher distractor uncertainty (low prevalence), ASD individuals may have difficulty disengaging from the first fixation, leading to prolonged processing times.</p>
-</section>
-<section id="number-of-fixations-analysis" class="level3" data-number="4.4.6">
-<h3 data-number="4.4.6" class="anchored" data-anchor-id="number-of-fixations-analysis"><span class="header-section-number">4.4.6</span> Number of Fixations Analysis</h3>
+<section id="number-of-fixations-analysis" class="level3" data-number="4.4.5">
+<h3 data-number="4.4.5" class="anchored" data-anchor-id="number-of-fixations-analysis"><span class="header-section-number">4.4.5</span> Number of Fixations Analysis</h3>
 <p>What happens after the first fixation? We next examined the total number of fixations made during each trial.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate number of fixations per trial</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>max_fixation <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, group, singleton, distractor_prevalence, trialNo) <span class="sc">%&gt;%</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">max_fixation =</span> <span class="fu">max</span>(fixationNo, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nfixation =</span> max_fixation <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, group, singleton, distractor_prevalence) <span class="sc">%&gt;%</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_nfixation =</span> <span class="fu">mean</span>(nfixation, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical analysis using aov_ez</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>nfix_aov <span class="ot">&lt;-</span> <span class="fu">aov_ez</span>(<span class="at">id =</span> <span class="st">"subj"</span>,</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">dv =</span> <span class="st">"mean_nfixation"</span>,</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> max_fixation,</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>                   <span class="at">within =</span> <span class="fu">c</span>(<span class="st">"singleton"</span>,<span class="st">"distractor_prevalence"</span>),</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>                   <span class="at">between =</span> <span class="st">"group"</span>,</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>                   <span class="at">type =</span> <span class="dv">3</span>)</span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(nfix_aov, <span class="st">"Repeated measures ANOVA for number of fixations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate number of fixations per trial</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>max_fixation <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, group, singleton, distractor_prevalence, trialNo) <span class="sc">%&gt;%</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">max_fixation =</span> <span class="fu">max</span>(fixationNo, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nfixation =</span> max_fixation <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, group, singleton, distractor_prevalence) <span class="sc">%&gt;%</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_nfixation =</span> <span class="fu">mean</span>(nfixation, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete missing combinations (if any) for number of fixations</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>all_nfix_combinations <span class="ot">&lt;-</span> max_fixation <span class="sc">%&gt;%</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(subj, group) <span class="sc">%&gt;%</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">distractor_prevalence =</span> <span class="fu">unique</span>(max_fixation<span class="sc">$</span>distractor_prevalence),</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">singleton =</span> <span class="fu">unique</span>(max_fixation<span class="sc">$</span>singleton)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>max_fixation <span class="ot">&lt;-</span> all_nfix_combinations <span class="sc">%&gt;%</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(max_fixation, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"subj"</span>, <span class="st">"group"</span>, <span class="st">"distractor_prevalence"</span>, <span class="st">"singleton"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mean_nfixation =</span> <span class="fu">replace_na</span>(mean_nfixation, <span class="dv">0</span>))</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical analysis using aov_ez</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>nfix_aov <span class="ot">&lt;-</span> <span class="fu">aov_ez</span>(<span class="at">id =</span> <span class="st">"subj"</span>,</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>                   <span class="at">dv =</span> <span class="st">"mean_nfixation"</span>,</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> max_fixation,</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>                   <span class="at">within =</span> <span class="fu">c</span>(<span class="st">"singleton"</span>,<span class="st">"distractor_prevalence"</span>),</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>                   <span class="at">between =</span> <span class="st">"group"</span>,</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>                   <span class="at">type =</span> <span class="dv">3</span>)</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(nfix_aov, <span class="st">"Repeated measures ANOVA for number of fixations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -1509,7 +1330,7 @@ Confidence level used: 0.95 </code></pre>
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">contrast</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">singleton</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">distractor_prevalence</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">estimate</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">df</th>
@@ -1520,21 +1341,21 @@ Confidence level used: 0.95 </code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">TD - ASD</td>
-<td style="text-align: left;">Absent</td>
-<td style="text-align: right;">-0.555</td>
-<td style="text-align: right;">0.273</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: right;">-0.857</td>
+<td style="text-align: right;">0.321</td>
 <td style="text-align: right;">57</td>
-<td style="text-align: right;">-2.029</td>
-<td style="text-align: right;">0.047</td>
+<td style="text-align: right;">-2.673</td>
+<td style="text-align: right;">0.010</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">TD - ASD</td>
-<td style="text-align: left;">Present</td>
-<td style="text-align: right;">-0.742</td>
-<td style="text-align: right;">0.284</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: right;">-0.439</td>
+<td style="text-align: right;">0.302</td>
 <td style="text-align: right;">57</td>
-<td style="text-align: right;">-2.617</td>
-<td style="text-align: right;">0.011</td>
+<td style="text-align: right;">-1.455</td>
+<td style="text-align: right;">0.151</td>
 </tr>
 </tbody>
 </table>
@@ -1542,8 +1363,335 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>The interaction was due to increased number of fixation in the ASD group when the distractor was present, but not in the TD group. This suggests that the presence of a distractor led to less efficient search patterns in the ASD group, resulting in more fixations to locate the target.</p>
 </section>
-<section id="number-of-fixations-visualization" class="level3" data-number="4.4.7">
-<h3 data-number="4.4.7" class="anchored" data-anchor-id="number-of-fixations-visualization"><span class="header-section-number">4.4.7</span> Number of Fixations Visualization</h3>
+<section id="number-of-fixations-visualization" class="level3" data-number="4.4.6">
+<h3 data-number="4.4.6" class="anchored" data-anchor-id="number-of-fixations-visualization"><span class="header-section-number">4.4.6</span> Number of Fixations Visualization</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data_ana_files/figure-html/nfixations-plot-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Mean number of fixations per trial. The ASD group makes more fixations overall, particularly when distractors are present, indicating less efficient search strategies.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="number-of-fixations-interference-analysis" class="level3" data-number="4.4.7">
+<h3 data-number="4.4.7" class="anchored" data-anchor-id="number-of-fixations-interference-analysis"><span class="header-section-number">4.4.7</span> Number of Fixations Interference Analysis</h3>
+<p>Similar to RT interference, we calculated the distractor interference effect for number of fixations (Present - Absent) to better visualize group differences in attentional efficiency.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate distractor interference for number of fixations (Present - Absent)</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>nfix_wide <span class="ot">&lt;-</span> max_fixation <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> singleton, <span class="at">values_from =</span> mean_nfixation) <span class="sc">%&gt;%</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">interference =</span> Present <span class="sc">-</span> Absent) <span class="sc">%&gt;%</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(interference))</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics for number of fixations interference</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>nfix_wide <span class="sc">%&gt;%</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group, distractor_prevalence) <span class="sc">%&gt;%</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="fu">n</span>(),</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mean_Interference =</span> <span class="fu">round</span>(<span class="fu">mean</span>(interference), <span class="dv">3</span>),</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">SD_Interference =</span> <span class="fu">round</span>(<span class="fu">sd</span>(interference), <span class="dv">3</span>),</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">SE_Interference =</span> <span class="fu">round</span>(<span class="fu">sd</span>(interference)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>()), <span class="dv">3</span>),</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">'drop'</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Distractor interference in number of fixations by group and prevalence"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Distractor interference in number of fixations by group and prevalence</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">group</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">distractor_prevalence</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">N</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean_Interference</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SD_Interference</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SE_Interference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">TD</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.126</td>
+<td style="text-align: right;">0.319</td>
+<td style="text-align: right;">0.057</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.031</td>
+<td style="text-align: right;">0.341</td>
+<td style="text-align: right;">0.061</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.238</td>
+<td style="text-align: right;">0.409</td>
+<td style="text-align: right;">0.077</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.295</td>
+<td style="text-align: right;">0.434</td>
+<td style="text-align: right;">0.082</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeated measures ANOVA for number of fixations interference</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>nfix_interference_aov <span class="ot">&lt;-</span> <span class="fu">aov_ez</span>(<span class="at">id =</span> <span class="st">"subj"</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">dv =</span> <span class="st">"interference"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">data =</span> nfix_wide,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                                <span class="at">within =</span> <span class="st">"distractor_prevalence"</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                                <span class="at">between =</span> <span class="st">"group"</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>                                <span class="at">type =</span> <span class="dv">3</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(nfix_interference_aov, <span class="st">"Repeated measures ANOVA for number of fixations interference"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Repeated measures ANOVA for number of fixations interference</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Effect</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">df</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">MSE</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">F</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ges</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">group</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.12</td>
+<td style="text-align: left;">8.32 **</td>
+<td style="text-align: left;">.060</td>
+<td style="text-align: left;">.006</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">distractor_prevalence</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.16</td>
+<td style="text-align: left;">0.07</td>
+<td style="text-align: left;">&lt;.001</td>
+<td style="text-align: left;">.796</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">group:distractor_prevalence</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.16</td>
+<td style="text-align: left;">1.08</td>
+<td style="text-align: left;">.010</td>
+<td style="text-align: left;">.303</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Post-hoc tests for Group differences</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>nfix_interference_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(nfix_interference_aov, <span class="sc">~</span> group)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>nfix_interference_contrasts <span class="ot">&lt;-</span> <span class="fu">pairs</span>(nfix_interference_emm, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Post-hoc tests: Group differences in number of fixations interference</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Post-hoc tests: Group differences in number of fixations interference</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">create_posthoc_table</span>(nfix_interference_contrasts, <span class="st">"Group differences in number of fixations interference"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Group differences in number of fixations interference</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">contrast</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">estimate</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">df</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">t.ratio</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">TD - ASD</td>
+<td style="text-align: right;">-0.188</td>
+<td style="text-align: right;">0.065</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">-2.884</td>
+<td style="text-align: right;">0.006</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># One-sample t-tests for each group x prevalence condition</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"One-sample t-tests: Testing if interference differs from zero</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>One-sample t-tests: Testing if interference differs from zero</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get unique combinations</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>conditions <span class="ot">&lt;-</span> nfix_wide <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(group, distractor_prevalence)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform t-tests for each condition</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>ttest_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(conditions)) {</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  grp <span class="ot">&lt;-</span> conditions<span class="sc">$</span>group[i]</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  prev <span class="ot">&lt;-</span> conditions<span class="sc">$</span>distractor_prevalence[i]</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter data for this condition</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  data_subset <span class="ot">&lt;-</span> nfix_wide <span class="sc">%&gt;%</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(group <span class="sc">==</span> grp, distractor_prevalence <span class="sc">==</span> prev)</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Perform t-test</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  t_result <span class="ot">&lt;-</span> <span class="fu">t.test</span>(data_subset<span class="sc">$</span>interference, <span class="at">mu =</span> <span class="dv">0</span>)</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store results</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>  ttest_results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ttest_results, <span class="fu">data.frame</span>(</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> grp,</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">distractor_prevalence =</span> prev,</span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">nrow</span>(data_subset),</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_interference =</span> <span class="fu">mean</span>(data_subset<span class="sc">$</span>interference),</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_interference =</span> <span class="fu">sd</span>(data_subset<span class="sc">$</span>interference),</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">t_statistic =</span> <span class="fu">as.numeric</span>(t_result<span class="sc">$</span>statistic),</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">df =</span> <span class="fu">as.numeric</span>(t_result<span class="sc">$</span>parameter),</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">p_value =</span> t_result<span class="sc">$</span>p.value,</span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_lower =</span> t_result<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_upper =</span> t_result<span class="sc">$</span>conf.int[<span class="dv">2</span>]</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Display results</span></span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>ttest_results <span class="sc">%&gt;%</span></span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">t_statistic =</span> <span class="fu">round</span>(t_statistic, <span class="dv">3</span>),</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">p_value =</span> <span class="fu">round</span>(p_value, <span class="dv">4</span>),</span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_lower =</span> <span class="fu">round</span>(ci_lower, <span class="dv">3</span>),</span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_upper =</span> <span class="fu">round</span>(ci_upper, <span class="dv">3</span>),</span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_interference =</span> <span class="fu">round</span>(mean_interference, <span class="dv">3</span>),</span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_interference =</span> <span class="fu">round</span>(sd_interference, <span class="dv">3</span>)</span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"One-sample t-tests for number of fixations interference (H0: interference = 0)"</span>,</span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Group"</span>, <span class="st">"Prevalence"</span>, <span class="st">"N"</span>, <span class="st">"Mean"</span>, <span class="st">"SD"</span>, <span class="st">"t"</span>, <span class="st">"df"</span>, <span class="st">"p"</span>, <span class="st">"CI Lower"</span>, <span class="st">"CI Upper"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>One-sample t-tests for number of fixations interference (H0: interference = 0)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Group</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Prevalence</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">N</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SD</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">t</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">df</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CI Lower</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CI Upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.238</td>
+<td style="text-align: right;">0.409</td>
+<td style="text-align: right;">3.078</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">0.0047</td>
+<td style="text-align: right;">0.079</td>
+<td style="text-align: right;">0.396</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ASD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0.295</td>
+<td style="text-align: right;">0.434</td>
+<td style="text-align: right;">3.596</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">0.0013</td>
+<td style="text-align: right;">0.127</td>
+<td style="text-align: right;">0.463</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TD</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.126</td>
+<td style="text-align: right;">0.319</td>
+<td style="text-align: right;">2.199</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0.0357</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">0.243</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">0.031</td>
+<td style="text-align: right;">0.341</td>
+<td style="text-align: right;">0.504</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0.6177</td>
+<td style="text-align: right;">-0.094</td>
+<td style="text-align: right;">0.156</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data_ana_files/figure-html/nfixations-interference-plot-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Distractor interference effect in number of fixations by group and prevalence condition. The ASD group shows significantly larger interference effects than the TD group, indicating less efficient search patterns when distractors are present.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="data_ana_files/figure-html/combined-nfixation-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="refixation-analysis" class="level2" data-number="4.5">
@@ -1553,23 +1701,35 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze refixations to target locations</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>target_refixations <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(close_to <span class="sc">==</span> <span class="st">"Target"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, group, distractor_prevalence, trialNo) <span class="sc">%&gt;%</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_target_fix =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, distractor_prevalence, group) <span class="sc">%&gt;%</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_target_fix =</span> <span class="fu">mean</span>(n_target_fix, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical analysis using aov_ez</span></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>target_aov <span class="ot">&lt;-</span> <span class="fu">aov_ez</span>(<span class="at">id =</span> <span class="st">"subj"</span>,</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dv =</span> <span class="st">"mean_target_fix"</span>,</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> target_refixations,</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">within =</span> <span class="fu">c</span>(<span class="st">"singleton"</span>,<span class="st">"distractor_prevalence"</span>),</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">between =</span> <span class="st">"group"</span>,</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type =</span> <span class="dv">3</span>)</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(target_aov, <span class="st">"Target refixation analysis"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze refixations to target locations</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>target_refixations <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(close_to <span class="sc">==</span> <span class="st">"Target"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, group, distractor_prevalence, trialNo) <span class="sc">%&gt;%</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_target_fix =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, distractor_prevalence, group) <span class="sc">%&gt;%</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_target_fix =</span> <span class="fu">mean</span>(n_target_fix, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete missing combinations with 0 for target refixations</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>all_target_combinations <span class="ot">&lt;-</span> target_refixations <span class="sc">%&gt;%</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(subj, group) <span class="sc">%&gt;%</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">distractor_prevalence =</span> <span class="fu">unique</span>(target_refixations<span class="sc">$</span>distractor_prevalence),</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">singleton =</span> <span class="fu">unique</span>(target_refixations<span class="sc">$</span>singleton)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>target_refixations <span class="ot">&lt;-</span> all_target_combinations <span class="sc">%&gt;%</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(target_refixations, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"subj"</span>, <span class="st">"group"</span>, <span class="st">"distractor_prevalence"</span>, <span class="st">"singleton"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mean_target_fix =</span> <span class="fu">replace_na</span>(mean_target_fix, <span class="dv">0</span>))</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical analysis using aov_ez</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>target_aov <span class="ot">&lt;-</span> <span class="fu">aov_ez</span>(<span class="at">id =</span> <span class="st">"subj"</span>,</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dv =</span> <span class="st">"mean_target_fix"</span>,</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> target_refixations,</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>                    <span class="at">within =</span> <span class="fu">c</span>(<span class="st">"singleton"</span>,<span class="st">"distractor_prevalence"</span>),</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>                    <span class="at">between =</span> <span class="st">"group"</span>,</span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type =</span> <span class="dv">3</span>)</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(target_aov, <span class="st">"Target refixation analysis"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -1646,18 +1806,18 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Post-hoc tests for target refixations</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>target_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(target_aov, <span class="sc">~</span> group <span class="sc">|</span> singleton)</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>target_contrasts <span class="ot">&lt;-</span> <span class="fu">pairs</span>(target_emm, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Post-hoc tests: Group differences in target refixations by singleton condition</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Post-hoc tests for target refixations</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>target_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(target_aov, <span class="sc">~</span> group <span class="sc">|</span> singleton)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>target_contrasts <span class="ot">&lt;-</span> <span class="fu">pairs</span>(target_emm, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Post-hoc tests: Group differences in target refixations by singleton condition</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Post-hoc tests: Group differences in target refixations by singleton condition</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">create_posthoc_table</span>(target_contrasts, <span class="st">"Group differences in target refixations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">create_posthoc_table</span>(target_contrasts, <span class="st">"Group differences in target refixations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -1703,23 +1863,35 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze refixations to distractor locations</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>distractor_refixations <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(close_to <span class="sc">==</span> <span class="st">"Distractor"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, group, distractor_prevalence, trialNo) <span class="sc">%&gt;%</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_distractor_fix =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, distractor_prevalence, group) <span class="sc">%&gt;%</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_distractor_fix =</span> <span class="fu">mean</span>(n_distractor_fix, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical analysis using aov_ez</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>distractor_aov <span class="ot">&lt;-</span> <span class="fu">aov_ez</span>(<span class="at">id =</span> <span class="st">"subj"</span>,</span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">dv =</span> <span class="st">"mean_distractor_fix"</span>,</span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> distractor_refixations,</span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>                        <span class="at">within =</span> <span class="fu">c</span>(<span class="st">"singleton"</span>, <span class="st">"distractor_prevalence"</span>),</span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>                        <span class="at">between =</span> <span class="st">"group"</span>,</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>                        <span class="at">type =</span> <span class="dv">3</span>)</span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(distractor_aov, <span class="st">"Distractor refixation analysis"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze refixations to distractor locations</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>distractor_refixations <span class="ot">&lt;-</span> fix_with_behav <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(close_to <span class="sc">==</span> <span class="st">"Distractor"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, group, distractor_prevalence, trialNo) <span class="sc">%&gt;%</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_distractor_fix =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subj, singleton, distractor_prevalence, group) <span class="sc">%&gt;%</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_distractor_fix =</span> <span class="fu">mean</span>(n_distractor_fix, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete missing combinations with 0 for distractor refixations</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>all_distractor_combinations <span class="ot">&lt;-</span> distractor_refixations <span class="sc">%&gt;%</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(subj, group) <span class="sc">%&gt;%</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">distractor_prevalence =</span> <span class="fu">unique</span>(distractor_refixations<span class="sc">$</span>distractor_prevalence),</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">singleton =</span> <span class="fu">unique</span>(distractor_refixations<span class="sc">$</span>singleton)</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>distractor_refixations <span class="ot">&lt;-</span> all_distractor_combinations <span class="sc">%&gt;%</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(distractor_refixations, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"subj"</span>, <span class="st">"group"</span>, <span class="st">"distractor_prevalence"</span>, <span class="st">"singleton"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mean_distractor_fix =</span> <span class="fu">replace_na</span>(mean_distractor_fix, <span class="dv">0</span>))</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical analysis using aov_ez</span></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>distractor_aov <span class="ot">&lt;-</span> <span class="fu">aov_ez</span>(<span class="at">id =</span> <span class="st">"subj"</span>,</span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>                        <span class="at">dv =</span> <span class="st">"mean_distractor_fix"</span>,</span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> distractor_refixations,</span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>                        <span class="at">within =</span> <span class="fu">c</span>(<span class="st">"singleton"</span>, <span class="st">"distractor_prevalence"</span>),</span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>                        <span class="at">between =</span> <span class="st">"group"</span>,</span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>                        <span class="at">type =</span> <span class="dv">3</span>)</span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a><span class="fu">create_anova_table</span>(distractor_aov, <span class="st">"Distractor refixation analysis"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -1737,77 +1909,77 @@ Confidence level used: 0.95 </code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">group</td>
-<td style="text-align: left;">1, 53</td>
-<td style="text-align: left;">0.02</td>
-<td style="text-align: left;">2.31</td>
-<td style="text-align: left;">.022</td>
-<td style="text-align: left;">.134</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.04</td>
+<td style="text-align: left;">0.37</td>
+<td style="text-align: left;">.003</td>
+<td style="text-align: left;">.547</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">singleton</td>
-<td style="text-align: left;">1, 53</td>
-<td style="text-align: left;">0.01</td>
-<td style="text-align: left;">16.96 ***</td>
-<td style="text-align: left;">.049</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">17.71 ***</td>
+<td style="text-align: left;">.058</td>
 <td style="text-align: left;">&lt;.001</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">group:singleton</td>
-<td style="text-align: left;">1, 53</td>
-<td style="text-align: left;">0.01</td>
-<td style="text-align: left;">0.16</td>
-<td style="text-align: left;">&lt;.001</td>
-<td style="text-align: left;">.695</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">4.51 *</td>
+<td style="text-align: left;">.015</td>
+<td style="text-align: left;">.038</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">distractor_prevalence</td>
-<td style="text-align: left;">1, 53</td>
-<td style="text-align: left;">0.01</td>
-<td style="text-align: left;">10.07 **</td>
-<td style="text-align: left;">.044</td>
-<td style="text-align: left;">.003</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">14.28 ***</td>
+<td style="text-align: left;">.058</td>
+<td style="text-align: left;">&lt;.001</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">group:distractor_prevalence</td>
-<td style="text-align: left;">1, 53</td>
-<td style="text-align: left;">0.01</td>
-<td style="text-align: left;">0.27</td>
-<td style="text-align: left;">.001</td>
-<td style="text-align: left;">.607</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">4.60 *</td>
+<td style="text-align: left;">.019</td>
+<td style="text-align: left;">.036</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 53</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">18.65 ***</td>
-<td style="text-align: left;">.028</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">15.59 ***</td>
+<td style="text-align: left;">.041</td>
 <td style="text-align: left;">&lt;.001</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">group:singleton:distractor_prevalence</td>
-<td style="text-align: left;">1, 53</td>
-<td style="text-align: left;">0.00</td>
-<td style="text-align: left;">1.08</td>
-<td style="text-align: left;">.002</td>
-<td style="text-align: left;">.304</td>
+<td style="text-align: left;">1, 57</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">6.12 *</td>
+<td style="text-align: left;">.017</td>
+<td style="text-align: left;">.016</td>
 </tr>
 </tbody>
 </table>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Post-hoc tests for distractor refixations</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>distractor_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(distractor_aov, <span class="sc">~</span> group <span class="sc">|</span> singleton)</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>distractor_contrasts <span class="ot">&lt;-</span> <span class="fu">pairs</span>(distractor_emm, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Post-hoc tests: Group differences in distractor refixations by singleton condition</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Post-hoc tests for distractor refixations</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>distractor_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(distractor_aov, <span class="sc">~</span> group <span class="sc">|</span> singleton)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>distractor_contrasts <span class="ot">&lt;-</span> <span class="fu">pairs</span>(distractor_emm, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Post-hoc tests: Group differences in distractor refixations by singleton condition</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Post-hoc tests: Group differences in distractor refixations by singleton condition</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">create_posthoc_table</span>(distractor_contrasts, <span class="st">"Group differences in distractor refixations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">create_posthoc_table</span>(distractor_contrasts, <span class="st">"Group differences in distractor refixations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -1827,20 +1999,20 @@ Confidence level used: 0.95 </code></pre>
 <tr class="odd">
 <td style="text-align: left;">TD - ASD</td>
 <td style="text-align: left;">Absent</td>
-<td style="text-align: right;">-0.023</td>
-<td style="text-align: right;">0.016</td>
-<td style="text-align: right;">53</td>
-<td style="text-align: right;">-1.459</td>
-<td style="text-align: right;">0.150</td>
+<td style="text-align: right;">0.054</td>
+<td style="text-align: right;">0.038</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">1.425</td>
+<td style="text-align: right;">0.160</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">TD - ASD</td>
 <td style="text-align: left;">Present</td>
-<td style="text-align: right;">-0.031</td>
-<td style="text-align: right;">0.024</td>
-<td style="text-align: right;">53</td>
-<td style="text-align: right;">-1.286</td>
-<td style="text-align: right;">0.204</td>
+<td style="text-align: right;">-0.023</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">-0.988</td>
+<td style="text-align: right;">0.327</td>
 </tr>
 </tbody>
 </table>
@@ -1854,8 +2026,28 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="data_ana_files/figure-html/fixation-combined-plots-1.png" class="img-fluid figure-img" width="1440"></p>
-<figcaption>Fixation patterns analysis. Left: total number of fixations per trial. Center: refixations to target locations. Right: refixations to distractor locations. The ASD group shows more fixations overall and increased target refixations, suggesting compensatory search strategies.</figcaption>
+<p><img src="data_ana_files/figure-html/target-refixation-plot-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Mean refixations to target locations. The ASD group shows more refixations to the target, suggesting compensatory search strategies.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data_ana_files/figure-html/distractor-refixation-plot-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Mean refixations to distractor locations. Both groups show similar patterns of distractor refixations, with increased fixations when distractors are present, particularly in high prevalence conditions.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data_ana_files/figure-html/combined-refixation-plots-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Combined refixation analysis. (A) Refixations to target locations. (B) Refixations to distractor locations. The ASD group shows increased target refixations, suggesting compensatory search strategies, while distractor refixations are similar between groups.</figcaption>
 </figure>
 </div>
 </div>
@@ -1898,7 +2090,7 @@ Confidence level used: 0.95 </code></pre>
 <p>The combination of behavioral and eye movement measures provides a comprehensive picture of the temporal dynamics of attentional control, revealing that the primary challenge for individuals with ASD lies in the later stages of attentional processing rather than initial capture mechanisms.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>Analysis completed on: 2025-12-04 11:41:57 </code></pre>
+<pre><code>Analysis completed on: 2025-12-12 10:46:14 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R Session Information:</code></pre>
@@ -1923,44 +2115,44 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggsci_3.2.0         scales_1.4.0        patchwork_1.2.0    
- [4] kableExtra_1.4.0    knitr_1.48          broom.mixed_0.2.9.5
- [7] effectsize_0.8.9    emmeans_1.10.4      afex_1.4-1         
-[10] lmerTest_3.1-3      lme4_1.1-37         Matrix_1.7-0       
-[13] lubridate_1.9.3     forcats_1.0.0       stringr_1.5.1      
-[16] dplyr_1.1.4         purrr_1.0.4         readr_2.1.5        
-[19] tidyr_1.3.1         tibble_3.2.1        ggplot2_3.5.2      
-[22] tidyverse_2.0.0    
+ [1] ggsignif_0.6.4      ggsci_3.2.0         scales_1.4.0       
+ [4] cowplot_1.1.3       patchwork_1.2.0     kableExtra_1.4.0   
+ [7] knitr_1.48          broom.mixed_0.2.9.5 effectsize_0.8.9   
+[10] emmeans_1.10.4      afex_1.4-1          lmerTest_3.1-3     
+[13] lme4_1.1-37         Matrix_1.7-0        lubridate_1.9.3    
+[16] forcats_1.0.0       stringr_1.5.1       dplyr_1.1.4        
+[19] purrr_1.0.4         readr_2.1.5         tidyr_1.3.1        
+[22] tibble_3.2.1        ggplot2_3.5.2       tidyverse_2.0.0    
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.1    viridisLite_0.4.2   farver_2.1.2       
- [4] fastmap_1.2.0       TH.data_1.1-2       bayestestR_0.14.0  
- [7] digest_0.6.37       estimability_1.5.1  timechange_0.3.0   
-[10] lifecycle_1.0.4     survival_3.6-4      magrittr_2.0.3     
-[13] compiler_4.4.1      rlang_1.1.6         tools_4.4.1        
-[16] yaml_2.3.10         labeling_0.4.3      htmlwidgets_1.6.4  
-[19] bit_4.0.5           xml2_1.3.6          plyr_1.8.9         
-[22] RColorBrewer_1.1-3  multcomp_1.4-26     abind_1.4-8        
-[25] withr_3.0.2         numDeriv_2016.8-1.1 datawizard_0.12.3  
-[28] xtable_1.8-4        future_1.49.0       globals_0.18.0     
-[31] MASS_7.3-60.2       dichromat_2.0-0.1   insight_0.20.4     
-[34] cli_3.6.5           mvtnorm_1.3-1       crayon_1.5.3       
-[37] rmarkdown_2.28      ragg_1.3.2          reformulas_0.4.1   
-[40] generics_0.1.4      rstudioapi_0.16.0   reshape2_1.4.4     
-[43] tzdb_0.4.0          parameters_0.22.2   minqa_1.2.8        
-[46] splines_4.4.1       parallel_4.4.1      vctrs_0.6.5        
-[49] boot_1.3-30         sandwich_3.1-0      jsonlite_1.8.8     
-[52] carData_3.0-5       car_3.1-2           hms_1.1.3          
-[55] bit64_4.0.5         listenv_0.9.1       systemfonts_1.1.0  
-[58] parallelly_1.44.0   glue_1.8.0          nloptr_2.2.1       
-[61] codetools_0.2-20    stringi_1.8.7       gtable_0.3.6       
-[64] pillar_1.10.2       furrr_0.3.1         htmltools_0.5.8.1  
-[67] R6_2.6.1            textshaping_0.4.0   Rdpack_2.6.4       
-[70] vroom_1.6.5         evaluate_0.24.0     lattice_0.22-6     
-[73] highr_0.11          rbibutils_2.3       backports_1.5.0    
-[76] broom_1.0.6         Rcpp_1.0.14         svglite_2.1.3      
-[79] coda_0.19-4.1       nlme_3.1-164        xfun_0.47          
-[82] zoo_1.8-12          pkgconfig_2.0.3    </code></pre>
+ [1] Rdpack_2.6.4        sandwich_3.1-0      rlang_1.1.6        
+ [4] magrittr_2.0.3      multcomp_1.4-26     furrr_0.3.1        
+ [7] compiler_4.4.1      systemfonts_1.1.0   vctrs_0.6.5        
+[10] reshape2_1.4.4      pkgconfig_2.0.3     crayon_1.5.3       
+[13] fastmap_1.2.0       backports_1.5.0     labeling_0.4.3     
+[16] rmarkdown_2.28      tzdb_0.4.0          nloptr_2.2.1       
+[19] ragg_1.3.2          bit_4.0.5           xfun_0.47          
+[22] jsonlite_1.8.8      highr_0.11          broom_1.0.6        
+[25] parallel_4.4.1      R6_2.6.1            stringi_1.8.7      
+[28] RColorBrewer_1.1-3  parallelly_1.44.0   car_3.1-2          
+[31] boot_1.3-30         numDeriv_2016.8-1.1 estimability_1.5.1 
+[34] Rcpp_1.0.14         zoo_1.8-12          parameters_0.22.2  
+[37] splines_4.4.1       timechange_0.3.0    tidyselect_1.2.1   
+[40] rstudioapi_0.16.0   dichromat_2.0-0.1   abind_1.4-8        
+[43] yaml_2.3.10         codetools_0.2-20    listenv_0.9.1      
+[46] lattice_0.22-6      plyr_1.8.9          withr_3.0.2        
+[49] bayestestR_0.14.0   coda_0.19-4.1       evaluate_0.24.0    
+[52] future_1.49.0       survival_3.6-4      xml2_1.3.6         
+[55] pillar_1.10.2       carData_3.0-5       reformulas_0.4.1   
+[58] insight_0.20.4      generics_0.1.4      vroom_1.6.5        
+[61] hms_1.1.3           minqa_1.2.8         globals_0.18.0     
+[64] xtable_1.8-4        glue_1.8.0          tools_4.4.1        
+[67] mvtnorm_1.3-1       rbibutils_2.3       datawizard_0.12.3  
+[70] nlme_3.1-164        cli_3.6.5           textshaping_0.4.0  
+[73] viridisLite_0.4.2   svglite_2.1.3       gtable_0.3.6       
+[76] digest_0.6.37       TH.data_1.1-2       htmlwidgets_1.6.4  
+[79] farver_2.1.2        htmltools_0.5.8.1   lifecycle_1.0.4    
+[82] bit64_4.0.5         MASS_7.3-60.2      </code></pre>
 </div>
 </div>
 </section>

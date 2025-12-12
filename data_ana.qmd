@@ -178,7 +178,7 @@ create_anova_table(rt_aov, "Repeated measures ANOVA for reaction time analysis")
 
 ```
 
-The mixed ANOVA revealed a significant main effect of Group, and singleton, but not Prevalence. There was a significant interaction between Group and singleton. The rest interactions were non-significant. 
+The mixed ANOVA revealed a significant main effect of Group, and singleton, but not Prevalence. There was a significant interaction between Group and singleton. The rest interactions were non-significant.
 
 Based on mRTs table above, the ASD group showed generally slower RTs, and both groups exhibited the expected singleton effect (slower RTs when distractor present). The interaction was mainly driven by a larger distractor capture effect in the ASD group, but not in the TD group (see below post-hoc tests).
 
@@ -192,7 +192,7 @@ cat("Post-hoc tests: Group differences within each Singleton condition\n")
 create_posthoc_table(rt_contrasts, "Group differences within Singleton conditions")
 ```
 
-The above post-hoc tests indicated that the presence of a distractor singleton significantly slowed RTs in the ASD group (p < .001), but not in the TD group (p = .332), suggesting that TD individuals effectively suppressed the distractor with perfect cue validity, but not with individuals with ASD.
+The above post-hoc tests indicated that the presence of a distractor singleton significantly slowed RTs in the ASD group (p \< .001), but not in the TD group (p = .332), suggesting that TD individuals effectively suppressed the distractor with perfect cue validity, but not with individuals with ASD.
 
 ### Visualization
 
@@ -206,44 +206,23 @@ rt_summary <- mRTs %>%
   group_by(Group, Prevalence, Singleton) %>%
   summarise(
     mean_RT = mean(RT),
-    se_RT = sd(RT)/sqrt(n()),
+    se = sd(RT)/sqrt(n()),
     .groups = 'drop'
   )
 
 # Create bar plot with APA style and custom colors
 # Color scheme: Blue for TD, Orange for ASD; Light for Absent, Dark for Present
-rt_plot <- rt_summary %>%
-  ggplot(aes(x = Prevalence, y = mean_RT, fill = interaction(Singleton, Group))) +
-  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
-  geom_errorbar(aes(ymin = mean_RT - se_RT, ymax = mean_RT + se_RT),
-                position = position_dodge(width = 0.8), width = 0.2) +
-  scale_fill_manual(
-    values = c(
-      "Absent.ASD" = "#FFB366",    # Light orange for ASD Absent
-      "Present.ASD" = "#E76F51",   # Dark orange for ASD Present
-      "Absent.TD" = "#A8DADC",     # Light blue for TD Absent
-      "Present.TD" = "#457B9D"     # Dark blue for TD Present
-    ),
-    labels = c(
-      "Absent.ASD" = "ASD - Absent",
-      "Present.ASD" = "ASD - Present",
-      "Absent.TD" = "TD - Absent",
-      "Present.TD" = "TD - Present"
-    )
-  ) +
-  labs(
-    x = "Session (Distractor Prevalence)",
-    y = "Reaction Time (ms)",
-    fill = ""
-  ) +
-  theme_classic(base_size = 12) +  # APA style: white background with axes
-  theme(
-    legend.position = "bottom",
-    strip.text = element_text(size = 12, face = "bold"),
-    strip.background = element_blank(),  # Remove box around facet labels
-    axis.line = element_line(color = "black"),
-    axis.ticks = element_line(color = "black")
-  ) +
+rt_plot = create_bar_plot(rt_summary,
+                x_var = "Prevalence",
+                y_var = "mean_RT",
+                group_var = "Group",
+                pattern_var = "Singleton",
+                facet_var = NULL,
+                title = "",
+                x_label = "Session (Distractor Prevalence)",
+                y_label = "Reaction Time (ms)",
+                group_label = "Group",
+                pattern_label = "Distractor")  +
   # Add significance brackets for singleton effect in ASD group
   # Using ggsignif with manual positioning for dodged bars
   geom_signif(
@@ -276,6 +255,7 @@ rt_plot <- rt_summary %>%
   ) +
   coord_cartesian(ylim = c(500, 1600))
 
+rt_plot
 # Note: Plot will be combined with interference plot below
 ```
 
@@ -345,7 +325,8 @@ cat("t =", round(t_test_result$statistic, 2),
 cat("95% CI: [", round(t_test_result$conf.int[1], 2), ", ",
     round(t_test_result$conf.int[2], 2), "]\n")
 ```
-The above test confirmed that the TD did not show significant distractor interference, but the ASD group did. 
+
+The above test confirmed that the TD did not show significant distractor interference, but the ASD group did.
 
 ### Interference Visualization
 
@@ -353,33 +334,25 @@ The above test confirmed that the TD did not show significant distractor interfe
 #| fig-cap: "Distractor interference effects by group and prevalence condition. The ASD group shows significantly larger interference effects than the TD group across both prevalence conditions."
 #| fig-width: 8
 #| fig-height: 5
-
-interference_plot <- mRTs_wide %>%
+mRTs_wide %>%
   group_by(Group, Prevalence) %>%
   summarise(
     mean_interference = mean(interference),
-    se_interference = sd(interference)/sqrt(n()),
+    se = sd(interference)/sqrt(n()),
     .groups = 'drop'
-  ) %>%
-  ggplot(aes(x = Group, y = mean_interference, fill = interaction(Prevalence, Group))) +
-  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
-  geom_errorbar(aes(ymin = mean_interference - se_interference,
-                    ymax = mean_interference + se_interference),
-                position = position_dodge(width = 0.8), width = 0.2) +
-  scale_fill_manual(
-    values = c(
-      "Low.TD" = "#9eceecff",      # Light blue for TD Low
-      "High.TD" = "#457B9D",     # Dark blue for TD High
-      "Low.ASD" = "#f2ad9bff",     # Light orange for ASD Low
-      "High.ASD" = "#E76F51"     # Dark orange for ASD High
-    ),
-    labels = c(
-      "Low.TD" = "TD - Low",
-      "High.TD" = "TD - High",
-      "Low.ASD" = "ASD - Low",
-      "High.ASD" = "ASD - High"
-    )
-  ) +
+  ) -> interference_summary
+
+interference_plot <- create_bar_plot(data = interference_summary,
+                x_var = "Group",
+                y_var = "mean_interference",
+                group_var = "Group",
+                pattern_var = "Prevalence",
+                facet_var = NULL,
+                title = "",
+                x_label = "Group",
+                y_label = "Interference Effect (ms)",
+                group_label = "Group",
+                pattern_label = "Prevalence") + 
   # Add significance bracket between groups
   geom_signif(
     comparisons = list(c("TD", "ASD")),
@@ -685,8 +658,6 @@ fixation_aov_target <- aov_ez(id = "subj",
 create_anova_table(fixation_aov_target, "Repeated measures ANOVA for first fixation analysis (Target)")
 ```
 
-
-
 ```{r first-fixation-posthoc_2}
 
 # Post-hoc tests for distractor_prevalence x singleton interaction
@@ -700,47 +671,8 @@ cat("Marginal means for distractor prevalence x singleton interaction:\n")
 marginal_means <- summary(fixation_emm2)
 print(marginal_means)
 ```
-The interaction between singleton and distractor prevalence was due to lower fixation toward the cued and target locations in the high prevalence condition than in the low prevalence condition in the distractor absent trials, but higher fixation when the distractor was present in the high prevalence condition. 
 
-### Dwell Time Analysis
-
-```{r dwell-time-analysis}
-#| echo: true
-
-# Repeated measures ANOVA for dwell time using aov_car
-
-dwell_aov <- aov_ez(id = "subj",
-                     dv = "mean_duration",
-                     data = dwell_time1,
-                     within = c("singleton","close_to", "distractor_prevalence"),
-                     between = "group",
-                     type = 3)
-
-create_anova_table(dwell_aov, "Repeated measures ANOVA for first fixation dwell time")
-
-```
-
-Another ANVOA on dwell time revealed significant main effects of close_to and marignal of the group (p = .073), but not singleton. The interaction between group and distractor prevalence was also significant. And three-way interaction between group, close_to and singleton was significant. The rest was non-significant. 
-
-- ASD group fixated longer than TD group overall.
-- Fixation on the target (close to the target) led to longer dwell times than fixation on the distractor. This may indicate more target processing.
-- The interaction between group and distractor prevalence 
-
-
-Let check what drives the interaction between group and singleton.
-
-```{r dwell-time-posthoc}
-
-# Post-hoc tests for dwell time
-dwell_emm <- emmeans(dwell_aov, ~ group | distractor_prevalence )
-dwell_contrasts <- pairs(dwell_emm, adjust = "bonferroni")
-
-cat("Post-hoc tests: Group differences in dwell times by condition\n")
-create_posthoc_table(dwell_contrasts, "Group differences in first fixation dwell times")
-
-```
-The above post-hoc tests revealed that group differences in dwell time were primarily driven in the low prevalence condition, where the ASD group showed significantly longer dwell times than the TD group. With higher distractor uncertainty (low prevalence), ASD individuals may have difficulty disengaging from the first fixation, leading to prolonged processing times.
-
+The interaction between singleton and distractor prevalence was due to lower fixation toward the cued and target locations in the high prevalence condition than in the low prevalence condition in the distractor absent trials, but higher fixation when the distractor was present in the high prevalence condition.
 
 ### Number of Fixations Analysis
 
@@ -780,20 +712,20 @@ nfix_aov <- aov_ez(id = "subj",
 create_anova_table(nfix_aov, "Repeated measures ANOVA for number of fixations")
 
 ```
+
 The ANOVA revealed significant main effects of group and singleton, but not distractor prevalence. The interaction between group and singleton was also significant. The rest was non-significant. There was no significant difference between prevalence conditions, which is consistent with the RT results.
 
 ```{r}
 
 # Post-hoc tests for number of fixations
-nfix_emm <- emmeans(nfix_aov, ~ group | singleton)
+nfix_emm <- emmeans(nfix_aov, ~ group | distractor_prevalence)
 nfix_contrasts <- pairs(nfix_emm, adjust = "bonferroni")
 
 cat("Post-hoc tests: Group differences in number of fixations by singleton condition\n")
 create_posthoc_table(nfix_contrasts, "Group differences in number of fixations")
 ```
+
 The interaction was due to increased number of fixation in the ASD group when the distractor was present, but not in the TD group. This suggests that the presence of a distractor led to less efficient search patterns in the ASD group, resulting in more fixations to locate the target.
-
-
 
 ### Number of Fixations Visualization
 
@@ -811,19 +743,235 @@ nfix_plot_data <- max_fixation %>%
   )
 
 # Store the number of fixations plot for later combination
-nfix_plot <- create_line_plot(
+nfix_plot <- create_bar_plot(
   data = nfix_plot_data,
-  x_var = "singleton",
+  x_var = "distractor_prevalence",
   y_var = "mean_nfix",
   group_var = "group",
-  line_var = "distractor_prevalence",
+  pattern_var = "singleton",
   facet_var = NULL,
-  title = "Total Fixations per Trial",
-  x_label = "Singleton Distractor",
+  title = "",
+  x_label = "Distractor Prevalence",
   y_label = "Mean Number of Fixations",
   group_label = "Group",
-  line_label = "Distractor Prevalence"
-) + coord_cartesian(ylim = c(2.5, 4))
+  pattern_label = "Distractor"
+) + coord_cartesian(ylim = c(2.5, 5)) +
+  geom_signif(
+    xmin = 0.8, xmax = 1.2,  #
+      y_position = 4.5,
+      annotation = "p=.01",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.8, xmax = 2.2,  # 
+      y_position = 4.5,
+      annotation = "p=.023",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif( #TD - Low prevalence
+    xmin = 0.7, xmax = 0.9,
+    y_position = 3.2,
+    annotation = 'p=.059',
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.1, xmax = 1.3,
+    y_position = 4.2,
+    annotation = 'p=.0011',
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 2.1, xmax = 2.3,
+    y_position = 4.2,
+    annotation = 'p<.001',
+    tip_length = 0.02,
+    textsize = 5
+  )
+
+
+nfix_plot
+```
+
+### Number of Fixations Interference Analysis
+
+Similar to RT interference, we calculated the distractor interference effect for number of fixations (Present - Absent) to better visualize group differences in attentional efficiency.
+
+```{r nfixations-interference-calculation}
+#| echo: true
+
+# Calculate distractor interference for number of fixations (Present - Absent)
+nfix_wide <- max_fixation %>%
+  pivot_wider(names_from = singleton, values_from = mean_nfixation) %>%
+  mutate(interference = Present - Absent) %>%
+  filter(!is.na(interference))
+
+# Summary statistics for number of fixations interference
+nfix_wide %>%
+  group_by(group, distractor_prevalence) %>%
+  summarise(
+    N = n(),
+    Mean_Interference = round(mean(interference), 3),
+    SD_Interference = round(sd(interference), 3),
+    SE_Interference = round(sd(interference)/sqrt(n()), 3),
+    .groups = 'drop'
+  ) %>%
+  kable(caption = "Distractor interference in number of fixations by group and prevalence") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+```{r nfixations-interference-analysis}
+#| echo: true
+
+# Repeated measures ANOVA for number of fixations interference
+nfix_interference_aov <- aov_ez(id = "subj",
+                                dv = "interference",
+                                data = nfix_wide,
+                                within = "distractor_prevalence",
+                                between = "group",
+                                type = 3)
+
+create_anova_table(nfix_interference_aov, "Repeated measures ANOVA for number of fixations interference")
+
+# Post-hoc tests for Group differences
+nfix_interference_emm <- emmeans(nfix_interference_aov, ~ group)
+nfix_interference_contrasts <- pairs(nfix_interference_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in number of fixations interference\n")
+create_posthoc_table(nfix_interference_contrasts, "Group differences in number of fixations interference")
+
+```
+
+```{r nfixations-interference-ttest}
+#| echo: true
+
+# One-sample t-tests for each group x prevalence condition
+cat("One-sample t-tests: Testing if interference differs from zero\n\n")
+
+# Get unique combinations
+conditions <- nfix_wide %>%
+  distinct(group, distractor_prevalence)
+
+# Perform t-tests for each condition
+ttest_results <- data.frame()
+for (i in 1:nrow(conditions)) {
+  grp <- conditions$group[i]
+  prev <- conditions$distractor_prevalence[i]
+
+  # Filter data for this condition
+  data_subset <- nfix_wide %>%
+    filter(group == grp, distractor_prevalence == prev)
+
+  # Perform t-test
+  t_result <- t.test(data_subset$interference, mu = 0)
+
+  # Store results
+  ttest_results <- rbind(ttest_results, data.frame(
+    group = grp,
+    distractor_prevalence = prev,
+    n = nrow(data_subset),
+    mean_interference = mean(data_subset$interference),
+    sd_interference = sd(data_subset$interference),
+    t_statistic = as.numeric(t_result$statistic),
+    df = as.numeric(t_result$parameter),
+    p_value = t_result$p.value,
+    ci_lower = t_result$conf.int[1],
+    ci_upper = t_result$conf.int[2]
+  ))
+}
+
+# Display results
+ttest_results %>%
+  mutate(
+    t_statistic = round(t_statistic, 3),
+    p_value = round(p_value, 4),
+    ci_lower = round(ci_lower, 3),
+    ci_upper = round(ci_upper, 3),
+    mean_interference = round(mean_interference, 3),
+    sd_interference = round(sd_interference, 3)
+  ) %>%
+  kable(caption = "One-sample t-tests for number of fixations interference (H0: interference = 0)",
+        col.names = c("Group", "Prevalence", "N", "Mean", "SD", "t", "df", "p", "CI Lower", "CI Upper")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+```{r nfixations-interference-plot}
+#| fig-cap: "Distractor interference effect in number of fixations by group and prevalence condition. The ASD group shows significantly larger interference effects than the TD group, indicating less efficient search patterns when distractors are present."
+#| fig-width: 8
+#| fig-height: 5
+
+# Prepare data for plotting
+nfix_interference_summary <- nfix_wide %>%
+  group_by(group, distractor_prevalence) %>%
+  summarise(
+    mean_interference = mean(interference),
+    se = sd(interference)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+# Create interference plot
+nfix_interference_plot <- create_bar_plot(
+  data = nfix_interference_summary,
+  x_var = "group",
+  y_var = "mean_interference",
+  group_var = "group",
+  pattern_var = "distractor_prevalence",
+  facet_var = NULL,
+  title = "",
+  x_label = "Group",
+  y_label = "Interference Effect (Number of Fixations)",
+  group_label = "Group",
+  pattern_label = "Prevalence"
+) +
+  # Add significance bracket between groups
+  geom_signif(
+    comparisons = list(c("TD", "ASD")),
+    annotation = "p = .006",
+    y_position = max(nfix_interference_summary$mean_interference + nfix_interference_summary$se) + 0.05,
+    tip_length = 0.02,
+    textsize = 4
+  ) +
+  labs(
+    x = "Group",
+    y = "Interference Effect (Number of Fixations)",
+    fill = ""
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    strip.background = element_blank(),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+
+print(nfix_interference_plot)
+
+# Save the plot
+ggsave(file.path(output_dir, 'fig_nfixations_interference.png'),
+       nfix_interference_plot,
+       width = 8, height = 5, dpi = 300)
+```
+```{r combined-nfixation}
+# combine number of fixations and fixation interference plots togehter
+combined_nfix_plot <- plot_grid(
+  nfix_plot,
+  nfix_interference_plot,
+  labels = c("A", "B"),
+  label_size = 14,
+  label_fontface = "bold",
+  ncol = 2,
+  rel_widths = c(1.2, 1)
+)
+print(combined_nfix_plot)
+# save the combined figure
+ggsave(file.path(output_dir, 'fig_combined_nfixations_interference.png'),
+       combined_nfix_plot,
+       width = 10, height = 5, dpi = 300) 
+
+
 ```
 
 ## Refixation Analysis
@@ -871,7 +1019,9 @@ cat("Post-hoc tests: Group differences in target refixations by singleton condit
 create_posthoc_table(target_contrasts, "Group differences in target refixations")
 ```
 
+
 There was only one signficant main effect of group, indicating that the ASD group made more refixations to the target location than the TD group overall. The rest was non-significant.
+
 
 ### Distractor Refixations
 
@@ -920,9 +1070,9 @@ The ANOVA revealed a significant main effect of singleton and distractor prevale
 
 ### Refixation Visualization
 
-```{r fixation-combined-plots}
-#| fig-cap: "Fixation patterns analysis. Left: total number of fixations per trial. Center: refixations to target locations. Right: refixations to distractor locations. The ASD group shows more fixations overall and increased target refixations, suggesting compensatory search strategies."
-#| fig-width: 15
+```{r target-refixation-plot}
+#| fig-cap: "Mean refixations to target locations. The ASD group shows more refixations to the target, suggesting compensatory search strategies."
+#| fig-width: 8
 #| fig-height: 5
 
 # Create target refixation plot data
@@ -934,19 +1084,45 @@ target_plot_data <- target_refixations %>%
     .groups = 'drop'
   )
 
-target_plot <- create_line_plot(
+target_plot <- create_bar_plot(
   data = target_plot_data,
-  x_var = "singleton",
+  x_var = "distractor_prevalence",
   y_var = "mean_fix",
   group_var = "group",
-  line_var = "distractor_prevalence",
+  pattern_var = "singleton",
   facet_var = NULL,
-  title = "Target Refixations",
-  x_label = "Singleton Distractor",
+  title = "",
+  x_label = "Distractor Prevalence",
   y_label = "Mean Fixations to Target",
   group_label = "Group",
-  line_label = "Distractor Prevalence"
-) + coord_cartesian(ylim = c(1, 1.5))
+  pattern_label = "Distractor"
+) + coord_cartesian(ylim = c(0.7, 1.5)) + 
+  geom_signif(
+    xmin = 0.8, xmax = 1.2,  #
+      y_position = 1.4,
+      annotation = "p=.044",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.8, xmax = 2.2,  # 
+      y_position = 1.4,
+      annotation = "p=.04",
+    tip_length = 0.02,
+    textsize = 5
+  )
+
+print(target_plot)
+
+ggsave(file.path(output_dir, 'fig_target_refixations.png'),
+       target_plot,
+       width = 8, height = 5, dpi = 300)
+```
+
+```{r distractor-refixation-plot}
+#| fig-cap: "Mean refixations to distractor locations. Both groups show similar patterns of distractor refixations, with increased fixations when distractors are present, particularly in high prevalence conditions."
+#| fig-width: 8
+#| fig-height: 5
 
 # Create distractor refixation plot data
 distractor_plot_data <- distractor_refixations %>%
@@ -957,29 +1133,69 @@ distractor_plot_data <- distractor_refixations %>%
     .groups = 'drop'
   )
 
-distractor_plot <- create_line_plot(
+distractor_plot <- create_bar_plot(
   data = distractor_plot_data,
-  x_var = "singleton",
+  x_var = "distractor_prevalence",
   y_var = "mean_fix",
   group_var = "group",
-  line_var = "distractor_prevalence",
+  pattern_var = "singleton",
   facet_var = NULL,
-  title = "Distractor Refixations",
-  x_label = "Singleton Distractor",
+  title = "",
+  x_label = "Distractor Prevalence",
   y_label = "Mean Fixations to Distractor",
   group_label = "Group",
-  line_label = "Distractor Prevalence"
-) + coord_cartesian(ylim = c(1, 1.15))
+  pattern_label = "Distractor"
+) + coord_cartesian(ylim = c(0.7, 1.5)) + 
+  geom_signif(
+    xmin = 2.1, xmax = 2.3,  # 
+      y_position = 1.2,
+      annotation = "p<.001",
+    tip_length = 0.02,
+    textsize = 5
+  ) + 
+  geom_signif(
+    xmin = 1.8, xmax = 2.2,  # 
+      y_position = 1.25,
+      annotation = "p=.038",
+    tip_length = 0.02,
+    textsize = 5
+  ) + 
+  geom_signif(
+    xmin = 1, xmax = 2,  # 
+      y_position = 1.4,
+      annotation = "p<.001",
+    tip_length = 0.02,
+    textsize = 5
+  )
 
-# Combine all three plots: total fixations, target refixations, distractor refixations
-combined_fixation_plot <- nfix_plot + target_plot + distractor_plot +
-  plot_layout(guides = "collect", ncol = 3) &
-  theme(legend.position = "top")
+print(distractor_plot)
 
-print(combined_fixation_plot)
+ggsave(file.path(output_dir, 'fig_distractor_refixations.png'),
+       distractor_plot,
+       width = 8, height = 5, dpi = 300)
+```
 
-ggsave(file.path(output_dir, 'fig_fixations_combined.png'), combined_fixation_plot,
-       width = 9, height = 3, dpi = 300)
+```{r combined-refixation-plots}
+#| fig-cap: "Combined refixation analysis. (A) Refixations to target locations. (B) Refixations to distractor locations. The ASD group shows increased target refixations, suggesting compensatory search strategies, while distractor refixations are similar between groups."
+#| fig-width: 12
+#| fig-height: 6
+
+# Combine target and distractor refixation plots
+combined_refixation_plot <- plot_grid(
+  target_plot,
+  distractor_plot,
+  labels = c("A", "B"),
+  label_size = 14,
+  label_fontface = "bold",
+  ncol = 2,
+  rel_widths = c(1, 1)
+)
+
+print(combined_refixation_plot)
+
+ggsave(file.path(output_dir, 'fig_refixations_combined.png'),
+       combined_refixation_plot,
+       width = 12, height = 6, dpi = 300)
 ```
 
 # Discussion
@@ -990,7 +1206,7 @@ Our analysis reveals several important differences between ASD and TD groups in 
 
 ### Behavioral Performance
 
-1.  **Increased Distractor Interference**: The ASD group showed significantly larger distractor interference effects compared to the TD group. Post-hoc tests confirmed that distractor presence significantly slowed RTs in the ASD group (p < .001), but not in the TD group (p = .332), indicating that TD individuals effectively suppressed distractors with perfect cue validity while ASD individuals did not.
+1.  **Increased Distractor Interference**: The ASD group showed significantly larger distractor interference effects compared to the TD group. Post-hoc tests confirmed that distractor presence significantly slowed RTs in the ASD group (p \< .001), but not in the TD group (p = .332), indicating that TD individuals effectively suppressed distractors with perfect cue validity while ASD individuals did not.
 
 2.  **Group-Specific Suppression Deficits**: One-sample t-tests revealed that the TD group showed no significant distractor interference (not different from zero), while the ASD group demonstrated significant interference effects, highlighting fundamental differences in suppression mechanisms.
 
