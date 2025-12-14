@@ -54,7 +54,10 @@ _book/
 *.aux
 *.out
 *.toc
-AGENTS.md
+
+# Manuscript backups and utilities
+manuscript/manuscript_with_embedded_images.md
+extract_images.py
 
 # Environment
 .env

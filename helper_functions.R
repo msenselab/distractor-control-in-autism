@@ -13,8 +13,29 @@
 #' @param caption Character string for table caption
 #' @return A kable table with bootstrap styling
 create_anova_table <- function(aov_result, caption) {
-  nice(aov_result) %>%
-    kable(caption = caption) %>%
+  # Get standard ANOVA table
+  nice_table <- nice(aov_result)
+
+  # Calculate partial eta-squared with 95% CI
+  eta_sq <- eta_squared(aov_result, partial = TRUE, ci = 0.95, verbose = FALSE)
+  eta_df <- as.data.frame(eta_sq)
+
+  # Format: "value [CI_low, CI_high]"
+  eta_df$eta2_formatted <- sprintf("%.3f [%.3f, %.3f]",
+                                    eta_df$Eta2_partial,
+                                    eta_df$CI_low,
+                                    eta_df$CI_high)
+
+  # Match and merge effect sizes
+  nice_table$eta2_p <- eta_df$eta2_formatted[match(nice_table$Effect, eta_df$Parameter)]
+
+  # Reorder columns (keeping ges for comparison)
+  nice_table <- nice_table[, c("Effect", "df", "MSE", "F", "eta2_p", "ges", "p.value")]
+  names(nice_table)[names(nice_table) == "eta2_p"] <- "ηp² [95% CI]"
+
+  # Return styled table
+  nice_table %>%
+    kable(caption = caption, escape = FALSE) %>%
     kable_styling(bootstrap_options = c("striped", "hover"))
 }
 

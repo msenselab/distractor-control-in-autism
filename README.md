@@ -117,12 +117,6 @@ This work is licensed under a [Creative Commons Attribution 4.0 International Li
 
 - Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made
 
-## Contact
-
-For questions about the data or analysis, please contact:
-
-[Contact information]
-
 ## Acknowledgments
 
 This research was conducted by MSense Lab and NEVIA Lab.

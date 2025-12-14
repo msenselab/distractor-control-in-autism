@@ -317,6 +317,7 @@ create_posthoc_table(interference_contrasts, "Group differences in interference 
 # Test if TD group interference differs from zero
 td_interference <- mRTs_wide %>% filter(Group == "TD")
 t_test_result <- t.test(td_interference$interference, mu = 0)
+d_result <- cohens_d(td_interference$interference, mu = 0)
 
 cat("One-sample t-test for TD group interference:\n")
 cat("t =", round(t_test_result$statistic, 2),
@@ -324,6 +325,9 @@ cat("t =", round(t_test_result$statistic, 2),
     ", p =", round(t_test_result$p.value, 3), "\n")
 cat("95% CI: [", round(t_test_result$conf.int[1], 2), ", ",
     round(t_test_result$conf.int[2], 2), "]\n")
+cat("Cohen's d =", round(d_result$Cohens_d, 2),
+    ", 95% CI: [", round(d_result$CI_low, 2), ", ",
+    round(d_result$CI_high, 2), "]\n")
 ```
 
 The above test confirmed that the TD did not show significant distractor interference, but the ASD group did.
@@ -867,6 +871,7 @@ for (i in 1:nrow(conditions)) {
 
   # Perform t-test
   t_result <- t.test(data_subset$interference, mu = 0)
+  d_result <- cohens_d(data_subset$interference, mu = 0)
 
   # Store results
   ttest_results <- rbind(ttest_results, data.frame(
@@ -879,7 +884,10 @@ for (i in 1:nrow(conditions)) {
     df = as.numeric(t_result$parameter),
     p_value = t_result$p.value,
     ci_lower = t_result$conf.int[1],
-    ci_upper = t_result$conf.int[2]
+    ci_upper = t_result$conf.int[2],
+    cohens_d = as.numeric(d_result$Cohens_d),
+    d_ci_lower = d_result$CI_low,
+    d_ci_upper = d_result$CI_high
   ))
 }
 
@@ -891,10 +899,14 @@ ttest_results %>%
     ci_lower = round(ci_lower, 3),
     ci_upper = round(ci_upper, 3),
     mean_interference = round(mean_interference, 3),
-    sd_interference = round(sd_interference, 3)
+    sd_interference = round(sd_interference, 3),
+    cohens_d = round(cohens_d, 3),
+    d_ci_lower = round(d_ci_lower, 3),
+    d_ci_upper = round(d_ci_upper, 3)
   ) %>%
   kable(caption = "One-sample t-tests for number of fixations interference (H0: interference = 0)",
-        col.names = c("Group", "Prevalence", "N", "Mean", "SD", "t", "df", "p", "CI Lower", "CI Upper")) %>%
+        col.names = c("Group", "Prevalence", "N", "Mean", "SD", "t", "df", "p",
+                      "CI Lower", "CI Upper", "Cohen's d", "d CI Low", "d CI High")) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
@@ -1058,12 +1070,7 @@ distractor_aov <- aov_ez(id = "subj",
 
 create_anova_table(distractor_aov, "Distractor refixation analysis")
 
-# Post-hoc tests for distractor refixations
-distractor_emm <- emmeans(distractor_aov, ~ group | singleton)
-distractor_contrasts <- pairs(distractor_emm, adjust = "bonferroni")
 
-cat("Post-hoc tests: Group differences in distractor refixations by singleton condition\n")
-create_posthoc_table(distractor_contrasts, "Group differences in distractor refixations")
 ```
 
 The ANOVA revealed a significant main effect of singleton and distractor prevalence, but not group. The interaction between distractor prevalence and singleton was also significant. The rest was non-significant. Refixations to the distractor location were similar between groups. The interaction was mainly due to the increase of distractor refixations when the distractor was present in the high prevalence condition compared to the low prevalence condition.
@@ -1214,14 +1221,11 @@ Our analysis reveals several important differences between ASD and TD groups in 
 
 1.  **Comparable Initial Capture**: Both groups showed similar patterns of initial attentional capture by salient distractors. The main effect of singleton was significant (both groups more likely to fixate distractors when present), but no significant group differences in first fixation patterns were observed.
 
-2.  **Context-Dependent Dwell Time Differences**: Group differences in first fixation dwell times were primarily driven by the low prevalence condition, where the ASD group showed significantly longer dwell times than the TD group. This suggests that with higher distractor uncertainty (low prevalence), ASD individuals have difficulty disengaging from fixations, leading to prolonged processing times.
+2.  **Inefficient Search Strategies**: The ASD group made significantly more fixations overall, particularly when distractors were present (significant Group × Singleton interaction). This indicates less efficient search patterns in ASD, requiring more fixations to locate targets when distractors are present.
 
-3.  **Inefficient Search Strategies**: The ASD group made significantly more fixations overall, particularly when distractors were present (significant Group × Singleton interaction). This indicates less efficient search patterns in ASD, requiring more fixations to locate targets when distractors are present.
+3.  **Compensatory Target Processing**: The ASD group showed significantly more refixations to target locations overall (significant main effect of group), suggesting compensatory mechanisms to overcome attentional difficulties, while distractor refixations were similar between groups.
 
-4.  **Compensatory Target Processing**: The ASD group showed significantly more refixations to target locations overall (significant main effect of group), suggesting compensatory mechanisms to overcome attentional difficulties, while distractor refixations were similar between groups.
-
-5.  **Prevalence-Modulated Distractor Processing**: Distractor refixations showed a significant interaction between singleton presence and distractor prevalence, with increased distractor refixations when distractors were present in high prevalence conditions compared to low prevalence conditions, affecting both groups similarly.
-
+4.  **Prevalence-Modulated Distractor Processing**: Distractor refixations showed a significant interaction between singleton presence and distractor prevalence, with increased distractor refixations when distractors were present in high prevalence conditions compared to low prevalence conditions, affecting both groups similarly.
 ## Theoretical Implications
 
 These findings support the enhanced perceptual functioning theory in autism, which suggests that individuals with ASD show increased sensitivity to local features and details. The prolonged engagement with distractors may reflect this enhanced processing of salient visual information, even when it is task-irrelevant.
