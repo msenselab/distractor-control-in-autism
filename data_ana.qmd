@@ -75,7 +75,7 @@ The ability to suppress irrelevant visual information is crucial for efficient v
 
 # Methods
 
-## Participants and Designf
+## Participants and Design
 
 The study included participants from two groups: - **ASD group**: Individuals diagnosed with autism spectrum disorder - **TD group**: Typically developing control participants
 
@@ -211,7 +211,7 @@ rt_summary <- mRTs %>%
   )
 
 # Create bar plot with APA style and custom colors
-# Color scheme: Blue for TD, Orange for ASD; Light for Absent, Dark for Present
+# Color scheme: Blue for ASD, Red for TD; Light for Absent, Dark for Present
 rt_plot = create_bar_plot(rt_summary,
                 x_var = "Prevalence",
                 y_var = "mean_RT",
@@ -1204,6 +1204,324 @@ ggsave(file.path(output_dir, 'fig_refixations_combined.png'),
        combined_refixation_plot,
        width = 12, height = 6, dpi = 300)
 ```
+
+## Correlations analysis: BDI, STAI trait, and IU
+
+Check potential relationships between distractor interference and participants’ trait scores on the Beck's Depression Inventory (BDI), State‑Trait Anxiety Inventory (STAI), and Intolerance of Uncertainty (IU), respectively.
+
+```{r lmm-setup}
+#| echo: false
+#| message: false
+
+# Load questionnaire data and merge
+traits <- read_csv(file.path(data_dir, "questionnaires_for_correlation.csv")) %>%
+  rename(Group = Diagnostic_group, BDI = BDI_final, 
+         STAI_Trait = STAI_trait_final, IU = IU_final)
+
+lmm_data <- mRTs_wide %>%
+  left_join(traits, by = c("Subj", "Group")) %>%
+  mutate(
+    # Sum contrast coding (effects coding)
+    Group_contrast = ifelse(Group == "TD", -1, 1),
+    Prevalence_contrast = ifelse(Prevalence == "Low", -1, 1),
+    # Z-score continuous predictors
+    BDI_scaled = scale(BDI)[,1],
+    STAI_Trait_scaled = scale(STAI_Trait)[,1],
+    IU_scaled = scale(IU)[,1]
+  )
+```
+
+### Model Specification
+
+**Variable Coding:**
+
+- Group: Sum contrast (TD = -1, ASD = +1)
+- Prevalence: Sum contrast (Low = -1, High = +1)  
+- Traits: Z-scored (M = 0, SD = 1)
+
+**Model Hierarchy:**
+
+- **Model 1**: interference ~ Trait_scaled + (1|Subj)
+- **Model 2**: interference ~ Trait_scaled + Group_contrast + Prevalence_contrast + (1|Subj)
+- **Model 3**: interference ~ Trait_scaled × Group_contrast + Prevalence_contrast + (1|Subj)
+
+```{r lmm-fit-models}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Function to fit nested models for each trait
+fit_trait_models <- function(data, trait_var) {
+  valid_data <- data %>% filter(!is.na(.data[[trait_var]]))
+  
+  if (nrow(valid_data) < 10 || n_distinct(valid_data$Subj) < 3) {
+    return(NULL)
+  }
+  
+  # Fit 3 nested models
+  model1 <- lmer(reformulate(c(trait_var, "(1|Subj)"), "interference"), 
+                 data = valid_data, REML = FALSE)
+  model2 <- lmer(reformulate(c(trait_var, "Group_contrast", "Prevalence_contrast", "(1|Subj)"), "interference"),
+                 data = valid_data, REML = FALSE)
+  model3 <- lmer(reformulate(c(paste0(trait_var, " * Group_contrast"), "Prevalence_contrast", "(1|Subj)"), "interference"),
+                 data = valid_data, REML = FALSE)
+  
+  return(list(model1 = model1, model2 = model2, model3 = model3))
+}
+
+# Fit models for each trait
+bdi_models <- fit_trait_models(lmm_data, "BDI_scaled")
+stai_models <- fit_trait_models(lmm_data, "STAI_Trait_scaled")
+iu_models <- fit_trait_models(lmm_data, "IU_scaled")
+```
+
+### Model Comparison
+
+```{r lmm-model-comparison}
+#| echo: false
+
+# Model comparison function
+compare_models <- function(models, trait_name) {
+  if (is.null(models)) return(NULL)
+  
+  cat("\n###", trait_name, "###\n\n")
+  
+  # Model 1 vs 2
+  comp12 <- anova(models$model1, models$model2)
+  cat("Model 1 vs Model 2:\n")
+  print(comp12)
+  cat(ifelse(comp12$`Pr(>Chisq)`[2] < 0.05, 
+             "→ Adding Group & Prevalence improves fit (p < 0.05)\n\n",
+             "→ Group & Prevalence do not improve fit\n\n"))
+  
+  # Model 2 vs 3
+  comp23 <- anova(models$model2, models$model3)
+  cat("Model 2 vs Model 3:\n")
+  print(comp23)
+  cat(ifelse(comp23$`Pr(>Chisq)`[2] < 0.05,
+             "→ Trait × Group interaction improves fit (p < 0.05)\n\n",
+             "→ Interaction not significant; prefer Model 2\n\n"))
+}
+
+compare_models(bdi_models, "BDI")
+compare_models(stai_models, "STAI-Trait")
+compare_models(iu_models, "IU")
+```
+
+### Model Summary
+
+```{r lmm-summary-table}
+#| echo: false
+#| tbl-cap: "Linear mixed model results: Trait effects on distractor interference"
+
+extract_lmm_stats <- function(model, trait_name, model_name, trait_var) {
+  coefs <- summary(model)$coefficients
+  trait_idx <- grep(trait_var, rownames(coefs))[1]
+  
+  trait_beta <- coefs[trait_idx, "Estimate"]
+  trait_se <- coefs[trait_idx, "Std. Error"]
+  trait_t <- coefs[trait_idx, "t value"]
+  df_res <- nrow(model@frame) - length(fixef(model))
+  trait_p <- 2 * pt(abs(trait_t), df = df_res, lower.tail = FALSE)
+  
+  # Extract other coefficients
+  group_idx <- grep("Group_contrast", rownames(coefs))
+  group_p <- if(length(group_idx) > 0) {
+    2 * pt(abs(coefs[group_idx[1], "t value"]), df = df_res, lower.tail = FALSE)
+  } else NA
+  
+  prev_idx <- grep("Prevalence_contrast", rownames(coefs))
+  prev_p <- if(length(prev_idx) > 0) {
+    2 * pt(abs(coefs[prev_idx[1], "t value"]), df = df_res, lower.tail = FALSE)
+  } else NA
+  
+  inter_idx <- grep(":", rownames(coefs))
+  inter_p <- if(length(inter_idx) > 0) {
+    2 * pt(abs(coefs[inter_idx[1], "t value"]), df = df_res, lower.tail = FALSE)
+  } else NA
+  
+  vc <- as.data.frame(VarCorr(model))
+  
+  data.frame(
+    Trait = trait_name, Model = model_name,
+    AIC = AIC(model), BIC = BIC(model),
+    Trait_Beta = trait_beta, Trait_SE = trait_se, 
+    Trait_t = trait_t, Trait_p = trait_p,
+    Group_p = group_p, Prev_p = prev_p, Inter_p = inter_p,
+    Subj_SD = vc$sdcor[vc$grp == "Subj"],
+    Resid_SD = vc$sdcor[vc$grp == "Residual"]
+  )
+}
+
+# Build summary table
+lmm_summary <- data.frame()
+
+if (!is.null(bdi_models)) {
+  lmm_summary <- rbind(lmm_summary,
+    extract_lmm_stats(bdi_models$model1, "BDI", "1: Trait", "BDI_scaled"),
+    extract_lmm_stats(bdi_models$model2, "BDI", "2: +Group+Prev", "BDI_scaled"),
+    extract_lmm_stats(bdi_models$model3, "BDI", "3: +Trait×Group", "BDI_scaled")
+  )
+}
+
+if (!is.null(stai_models)) {
+  lmm_summary <- rbind(lmm_summary,
+    extract_lmm_stats(stai_models$model1, "STAI-Trait", "1: Trait", "STAI_Trait_scaled"),
+    extract_lmm_stats(stai_models$model2, "STAI-Trait", "2: +Group+Prev", "STAI_Trait_scaled"),
+    extract_lmm_stats(stai_models$model3, "STAI-Trait", "3: +Trait×Group", "STAI_Trait_scaled")
+  )
+}
+
+if (!is.null(iu_models)) {
+  lmm_summary <- rbind(lmm_summary,
+    extract_lmm_stats(iu_models$model1, "IU", "1: Trait", "IU_scaled"),
+    extract_lmm_stats(iu_models$model2, "IU", "2: +Group+Prev", "IU_scaled"),
+    extract_lmm_stats(iu_models$model3, "IU", "3: +Trait×Group", "IU_scaled")
+  )
+}
+
+# Display table
+lmm_summary %>%
+  mutate(across(c(AIC, BIC), ~round(.x, 1)),
+         across(c(Trait_Beta, Trait_SE), ~round(.x, 3)),
+         across(c(Trait_t), ~round(.x, 2)),
+         across(c(Trait_p, Group_p, Prev_p, Inter_p), ~round(.x, 4)),
+         across(c(Subj_SD, Resid_SD), ~round(.x, 2)),
+         Sig = case_when(Trait_p < 0.001 ~ "***",
+                        Trait_p < 0.01 ~ "**",
+                        Trait_p < 0.05 ~ "*",
+                        TRUE ~ "")) %>%
+  select(Trait, Model, AIC, BIC, Trait_Beta, Trait_SE, Trait_t, Trait_p, Sig,
+         Group_p, Prev_p, Inter_p, Subj_SD, Resid_SD) %>%
+  kable(col.names = c("Trait", "Model", "AIC", "BIC", "β", "SE", "t", "p", "",
+                     "Group p", "Prev p", "Inter p", "Subj SD", "Resid SD"),
+        caption = "Linear mixed models: Trait effects on distractor interference. β = ms change per 1 SD trait increase. Significance: *** p<0.001, ** p<0.01, * p<0.05") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 11) %>%
+  collapse_rows(columns = 1, valign = "top")
+```
+
+### Residual Diagnostics
+
+```{r lmm-diagnostics}
+#| echo: false
+#| fig-cap: "Residual diagnostic plots for Model 3 (most complex). Q-Q plots assess normality; Residuals vs Fitted assess homoscedasticity/linearity."
+#| fig-width: 12
+#| fig-height: 4
+
+create_diagnostics <- function(model, trait_name) {
+  resid <- residuals(model)
+  fitted <- fitted(model)
+  
+  p1 <- ggplot(data.frame(resid = resid), aes(sample = resid)) +
+    stat_qq() + stat_qq_line(color = "red") +
+    labs(title = paste(trait_name, "Q-Q Plot"), x = "Theoretical", y = "Sample") +
+    theme_classic()
+  
+  p2 <- ggplot(data.frame(fitted = fitted, resid = resid), aes(fitted, resid)) +
+    geom_point(alpha = 0.5) +
+    geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+    geom_smooth(se = FALSE, color = "blue") +
+    labs(title = paste(trait_name, "Residuals vs Fitted"), x = "Fitted", y = "Residuals") +
+    theme_classic()
+  
+  return(list(p1, p2))
+}
+
+# Create diagnostic plots for each trait
+diag_plots <- list()
+if (!is.null(bdi_models)) diag_plots$BDI <- create_diagnostics(bdi_models$model3, "BDI")
+if (!is.null(stai_models)) diag_plots$STAI <- create_diagnostics(stai_models$model3, "STAI")
+if (!is.null(iu_models)) diag_plots$IU <- create_diagnostics(iu_models$model3, "IU")
+
+# Display as combined plot
+if (length(diag_plots) > 0) {
+  all_plots <- unlist(diag_plots, recursive = FALSE)
+  wrap_plots(all_plots, ncol = 2)
+}
+```
+
+### Trait-Interference Visualizations
+
+```{r lmm-visualizations}
+#| echo: false
+#| fig-cap: "Trait-interference relationships by Group and Prevalence. Points = individual observations; lines = linear fits."
+#| fig-width: 12
+#| fig-height: 10
+
+plot_list <- list()
+
+# BDI
+if (sum(!is.na(lmm_data$BDI)) > 2) {
+  plot_list$BDI <- ggplot(lmm_data %>% filter(!is.na(BDI)),
+                          aes(x = BDI, y = interference, color = Group, shape = Prevalence)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = TRUE, alpha = 0.2, linewidth = 1) +
+    facet_wrap(~Prevalence, ncol = 2) +
+    scale_color_manual(values = c("TD" = "#E64B35FF", "ASD" = "#4DBBD5FF")) +
+    scale_shape_manual(values = c("Low" = 16, "High" = 17)) +
+    labs(x = "BDI Score", y = "Interference (ms)") +
+    theme_classic(base_size = 11) +
+    theme(legend.position = "bottom")
+}
+
+# STAI-Trait
+if (sum(!is.na(lmm_data$STAI_Trait)) > 2) {
+  plot_list$STAI <- ggplot(lmm_data %>% filter(!is.na(STAI_Trait)),
+                           aes(x = STAI_Trait, y = interference, color = Group, shape = Prevalence)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = TRUE, alpha = 0.2, linewidth = 1) +
+    facet_wrap(~Prevalence, ncol = 2) +
+    scale_color_manual(values = c("TD" = "#E64B35FF", "ASD" = "#4DBBD5FF")) +
+    scale_shape_manual(values = c("Low" = 16, "High" = 17)) +
+    labs(x = "STAI-Trait Score", y = "Interference (ms)") +
+    theme_classic(base_size = 11) +
+    theme(legend.position = "bottom")
+}
+
+# IU
+if (sum(!is.na(lmm_data$IU)) > 2) {
+  plot_list$IU <- ggplot(lmm_data %>% filter(!is.na(IU)),
+                         aes(x = IU, y = interference, color = Group, shape = Prevalence)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = TRUE, alpha = 0.2, linewidth = 1) +
+    facet_wrap(~Prevalence, ncol = 2) +
+    scale_color_manual(values = c("TD" = "#E64B35FF", "ASD" = "#4DBBD5FF")) +
+    scale_shape_manual(values = c("Low" = 16, "High" = 17)) +
+    labs(x = "IU Score", y = "Interference (ms)") +
+    theme_classic(base_size = 11) +
+    theme(legend.position = "bottom")
+}
+
+if (length(plot_list) > 0) {
+  wrap_plots(plot_list, ncol = 1) + plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  
+  ggsave(file.path(output_dir, 'fig_trait_correlations_lmm.png'),
+         width = 10, height = 10, dpi = 300)
+}
+```
+
+### Interpretation
+
+**Coefficient Interpretation:**
+
+- **Trait β**: Change in interference (ms) per 1 SD increase in trait score
+- **Group_contrast**: ASD deviation from grand mean (TD = opposite sign)
+- **Interaction**: Whether trait effect differs between groups
+
+**Model Selection:**
+
+- Use AIC/BIC and likelihood ratio tests
+- If interaction significant (p < 0.05): Trait effects differ by group
+- If no interaction: Interpret main effects from Model 2
+
+**Effect Size:**
+
+- Small: |β| < 10 ms per SD
+- Medium: |β| = 10-20 ms per SD  
+- Large: |β| > 20 ms per SD
+
+**Model 2 Interpretation:** Examining the main effects model (Model 2), which includes Trait scores, Group, and Distractor Prevalence as predictors, reveals that Group consistently predicts distractor interference across BDI and STAI_Trait analyses. This significant Group effect indicates that the ASD group shows greater distractor interference compared to the TD group, independent of individual differences in depression or trait anxiety scores. Notably, the trait predictors themselves (BDI, STAI-Trait, IU) do not show significant relationships with distractor interference (all trait p > 0.05), suggesting that within-group variation in these psychological characteristics does not systematically relate to attentional control deficits. Similarly, distractor prevalence does not significantly modulate interference effects (Prevalence p > 0.05), indicating that experiencing distractors more frequently (90% vs. 50%) does not lead to differential suppression across the session. These findings suggest that group-level differences in attentional control are robust and not explained by comorbid affective symptoms or uncertainty intolerance.
 
 # Discussion
 
