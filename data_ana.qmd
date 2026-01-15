@@ -1791,6 +1791,9 @@ if (length(plot_list) > 0) {
   wrap_plots(plot_list, ncol = 1) + plot_layout(guides = "collect") &
     theme(legend.position = "bottom")
   
+  # show plots
+  print(plot_list)
+  
   ggsave(file.path(output_dir, 'fig_trait_correlations_lmm.png'),
          width = 10, height = 10, dpi = 300)
 }
