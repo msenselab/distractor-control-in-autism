@@ -255,7 +255,7 @@ rt_plot = create_bar_plot(rt_summary,
   ) +
   coord_cartesian(ylim = c(500, 1600))
 
-rt_plot
+print(rt_plot)
 # Note: Plot will be combined with interference plot below
 ```
 
@@ -1250,7 +1250,7 @@ lmm_data <- mRTs_wide %>%
 #| message: false
 #| warning: false
 
-# Function to fit nested models for each trait
+# Function to fit nested linear models for each trait
 fit_trait_models <- function(data, trait_var) {
   valid_data <- data %>% filter(!is.na(.data[[trait_var]]))
   
@@ -1258,13 +1258,14 @@ fit_trait_models <- function(data, trait_var) {
     return(NULL)
   }
   
-  # Fit 3 nested models
-  model1 <- lmer(reformulate(c(trait_var, "(1|Subj)"), "interference"), 
-                 data = valid_data, REML = FALSE)
-  model2 <- lmer(reformulate(c(trait_var, "Group_contrast", "Prevalence_contrast", "(1|Subj)"), "interference"),
-                 data = valid_data, REML = FALSE)
-  model3 <- lmer(reformulate(c(paste0(trait_var, " * Group_contrast"), "Prevalence_contrast", "(1|Subj)"), "interference"),
-                 data = valid_data, REML = FALSE)
+  # Fit 3 nested models (simple linear regression - random effects removed
+  # due to singular fit with only 2 observations per subject)
+  model1 <- lm(reformulate(c(trait_var), "interference"), 
+               data = valid_data)
+  model2 <- lm(reformulate(c(trait_var, "Group_contrast", "Prevalence_contrast"), "interference"),
+               data = valid_data)
+  model3 <- lm(reformulate(c(paste0(trait_var, " * Group_contrast"), "Prevalence_contrast"), "interference"),
+               data = valid_data)
   
   return(list(model1 = model1, model2 = model2, model3 = model3))
 }
@@ -1290,7 +1291,7 @@ compare_models <- function(models, trait_name) {
   comp12 <- anova(models$model1, models$model2)
   cat("Model 1 vs Model 2:\n")
   print(comp12)
-  cat(ifelse(comp12$`Pr(>Chisq)`[2] < 0.05, 
+  cat(ifelse(comp12$`Pr(>F)`[2] < 0.05, 
              "→ Adding Group & Prevalence improves fit (p < 0.05)\n\n",
              "→ Group & Prevalence do not improve fit\n\n"))
   
@@ -1298,7 +1299,7 @@ compare_models <- function(models, trait_name) {
   comp23 <- anova(models$model2, models$model3)
   cat("Model 2 vs Model 3:\n")
   print(comp23)
-  cat(ifelse(comp23$`Pr(>Chisq)`[2] < 0.05,
+  cat(ifelse(comp23$`Pr(>F)`[2] < 0.05,
              "→ Trait × Group interaction improves fit (p < 0.05)\n\n",
              "→ Interaction not significant; prefer Model 2\n\n"))
 }
@@ -1312,118 +1313,96 @@ compare_models(iu_models, "IU")
 
 ```{r lmm-summary-table}
 #| echo: false
-#| tbl-cap: "Linear mixed model results: Trait effects on distractor interference"
+#| tbl-cap: "Linear model results: Trait effects on distractor interference"
 
-extract_lmm_stats <- function(model, trait_name, model_name, trait_var) {
+extract_lm_stats <- function(model, trait_name, model_name, trait_var) {
   coefs <- summary(model)$coefficients
-  df_res <- nrow(model@frame) - length(fixef(model))
   
   # Extract intercept
   intercept_beta <- coefs["(Intercept)", "Estimate"]
-  intercept_se <- coefs["(Intercept)", "Std. Error"]
-  intercept_t <- coefs["(Intercept)", "t value"]
-  intercept_p <- 2 * pt(abs(intercept_t), df = df_res, lower.tail = FALSE)
+  intercept_p <- coefs["(Intercept)", "Pr(>|t|)"]
   
   # Extract trait coefficient
   trait_idx <- grep(trait_var, rownames(coefs))[1]
   trait_beta <- coefs[trait_idx, "Estimate"]
-  trait_se <- coefs[trait_idx, "Std. Error"]
-  trait_t <- coefs[trait_idx, "t value"]
-  trait_p <- 2 * pt(abs(trait_t), df = df_res, lower.tail = FALSE)
+  trait_p <- coefs[trait_idx, "Pr(>|t|)"]
   
   # Extract Group coefficient if present
   group_idx <- grep("^Group_contrast$", rownames(coefs))
   if(length(group_idx) > 0) {
     group_beta <- coefs[group_idx[1], "Estimate"]
-    group_se <- coefs[group_idx[1], "Std. Error"]
-    group_t <- coefs[group_idx[1], "t value"]
-    group_p <- 2 * pt(abs(group_t), df = df_res, lower.tail = FALSE)
+    group_p <- coefs[group_idx[1], "Pr(>|t|)"]
   } else {
-    group_beta <- group_se <- group_t <- group_p <- NA
+    group_beta <- group_p <- NA
   }
   
   # Extract Prevalence coefficient if present
   prev_idx <- grep("^Prevalence_contrast$", rownames(coefs))
   if(length(prev_idx) > 0) {
     prev_beta <- coefs[prev_idx[1], "Estimate"]
-    prev_se <- coefs[prev_idx[1], "Std. Error"]
-    prev_t <- coefs[prev_idx[1], "t value"]
-    prev_p <- 2 * pt(abs(prev_t), df = df_res, lower.tail = FALSE)
+    prev_p <- coefs[prev_idx[1], "Pr(>|t|)"]
   } else {
-    prev_beta <- prev_se <- prev_t <- prev_p <- NA
+    prev_beta <- prev_p <- NA
   }
   
   # Extract Interaction coefficient if present
   inter_idx <- grep(":", rownames(coefs))
   if(length(inter_idx) > 0) {
     inter_beta <- coefs[inter_idx[1], "Estimate"]
-    inter_se <- coefs[inter_idx[1], "Std. Error"]
-    inter_t <- coefs[inter_idx[1], "t value"]
-    inter_p <- 2 * pt(abs(inter_t), df = df_res, lower.tail = FALSE)
+    inter_p <- coefs[inter_idx[1], "Pr(>|t|)"]
   } else {
-    inter_beta <- inter_se <- inter_t <- inter_p <- NA
+    inter_beta <- inter_p <- NA
   }
   
-  # Extract variance components (random effects and residuals)
-  vc <- as.data.frame(VarCorr(model))
-  subj_var <- vc$vcov[vc$grp == "Subj"]
-  resid_var <- vc$vcov[vc$grp == "Residual"]
-  subj_sd <- vc$sdcor[vc$grp == "Subj"]
-  resid_sd <- vc$sdcor[vc$grp == "Residual"]
+  # Residual variance
+  resid_var <- summary(model)$sigma^2
+  resid_sd <- summary(model)$sigma
   
   data.frame(
     Trait = trait_name, Model = model_name,
     AIC = AIC(model), BIC = BIC(model),
-    Intercept = intercept_beta, Intercept_SE = intercept_se, 
-    Intercept_t = intercept_t, Intercept_p = intercept_p,
-    Trait_Beta = trait_beta, Trait_SE = trait_se, 
-    Trait_t = trait_t, Trait_p = trait_p,
-    Group_Beta = group_beta, Group_SE = group_se,
-    Group_t = group_t, Group_p = group_p,
-    Prev_Beta = prev_beta, Prev_SE = prev_se,
-    Prev_t = prev_t, Prev_p = prev_p,
-    Inter_Beta = inter_beta, Inter_SE = inter_se,
-    Inter_t = inter_t, Inter_p = inter_p,
-    Subj_Var = subj_var, Subj_SD = subj_sd,
+    Intercept = intercept_beta, Intercept_p = intercept_p,
+    Trait_Beta = trait_beta, Trait_p = trait_p,
+    Group_Beta = group_beta, Group_p = group_p,
+    Prev_Beta = prev_beta, Prev_p = prev_p,
+    Inter_Beta = inter_beta, Inter_p = inter_p,
     Resid_Var = resid_var, Resid_SD = resid_sd
   )
 }
 
 # Build summary table
-lmm_summary <- data.frame()
+lm_summary <- data.frame()
 
 if (!is.null(bdi_models)) {
-  lmm_summary <- rbind(lmm_summary,
-    extract_lmm_stats(bdi_models$model1, "BDI", "1: Trait", "BDI_scaled"),
-    extract_lmm_stats(bdi_models$model2, "BDI", "2: +Group+Prev", "BDI_scaled"),
-    extract_lmm_stats(bdi_models$model3, "BDI", "3: +Trait×Group", "BDI_scaled")
+  lm_summary <- rbind(lm_summary,
+    extract_lm_stats(bdi_models$model1, "BDI", "1: Trait", "BDI_scaled"),
+    extract_lm_stats(bdi_models$model2, "BDI", "2: +Group+Prev", "BDI_scaled"),
+    extract_lm_stats(bdi_models$model3, "BDI", "3: +Trait×Group", "BDI_scaled")
   )
 }
 
 if (!is.null(stai_models)) {
-  lmm_summary <- rbind(lmm_summary,
-    extract_lmm_stats(stai_models$model1, "STAI-Trait", "1: Trait", "STAI_Trait_scaled"),
-    extract_lmm_stats(stai_models$model2, "STAI-Trait", "2: +Group+Prev", "STAI_Trait_scaled"),
-    extract_lmm_stats(stai_models$model3, "STAI-Trait", "3: +Trait×Group", "STAI_Trait_scaled")
+  lm_summary <- rbind(lm_summary,
+    extract_lm_stats(stai_models$model1, "STAI-Trait", "1: Trait", "STAI_Trait_scaled"),
+    extract_lm_stats(stai_models$model2, "STAI-Trait", "2: +Group+Prev", "STAI_Trait_scaled"),
+    extract_lm_stats(stai_models$model3, "STAI-Trait", "3: +Trait×Group", "STAI_Trait_scaled")
   )
 }
 
 if (!is.null(iu_models)) {
-  lmm_summary <- rbind(lmm_summary,
-    extract_lmm_stats(iu_models$model1, "IU", "1: Trait", "IU_scaled"),
-    extract_lmm_stats(iu_models$model2, "IU", "2: +Group+Prev", "IU_scaled"),
-    extract_lmm_stats(iu_models$model3, "IU", "3: +Trait×Group", "IU_scaled")
+  lm_summary <- rbind(lm_summary,
+    extract_lm_stats(iu_models$model1, "IU", "1: Trait", "IU_scaled"),
+    extract_lm_stats(iu_models$model2, "IU", "2: +Group+Prev", "IU_scaled"),
+    extract_lm_stats(iu_models$model3, "IU", "3: +Trait×Group", "IU_scaled")
   )
 }
 
 # Display table
-lmm_summary %>%
+lm_summary %>%
   mutate(across(c(AIC, BIC), ~round(.x, 1)),
          across(c(Intercept, Trait_Beta, Group_Beta, Prev_Beta, Inter_Beta), ~round(.x, 3)),
-         across(c(Intercept_SE, Trait_SE, Group_SE, Prev_SE, Inter_SE), ~round(.x, 3)),
-         across(c(Intercept_t, Trait_t, Group_t, Prev_t, Inter_t), ~round(.x, 2)),
          across(c(Intercept_p, Trait_p, Group_p, Prev_p, Inter_p), ~round(.x, 4)),
-         across(c(Subj_Var, Resid_Var, Subj_SD, Resid_SD), ~round(.x, 2)),
+         across(c(Resid_Var, Resid_SD), ~round(.x, 2)),
          Trait_Sig = case_when(Trait_p < 0.001 ~ "***",
                                Trait_p < 0.01 ~ "**",
                                Trait_p < 0.05 ~ "*",
@@ -1441,31 +1420,31 @@ lmm_summary %>%
                                Inter_p < 0.05 ~ "*",
                                TRUE ~ "")) %>%
   select(Trait, Model, AIC, BIC, 
-         Intercept, Intercept_SE, Intercept_t, Intercept_p,
-         Trait_Beta, Trait_SE, Trait_t, Trait_p, Trait_Sig,
-         Group_Beta, Group_SE, Group_t, Group_p, Group_Sig,
-         Prev_Beta, Prev_SE, Prev_t, Prev_p, Prev_Sig,
-         Inter_Beta, Inter_SE, Inter_t, Inter_p, Inter_Sig,
-         Subj_Var, Subj_SD, Resid_Var, Resid_SD) %>%
+         Intercept, Intercept_p,
+         Trait_Beta, Trait_p, Trait_Sig,
+         Group_Beta, Group_p, Group_Sig,
+         Prev_Beta, Prev_p, Prev_Sig,
+         Inter_Beta, Inter_p, Inter_Sig,
+         Resid_Var, Resid_SD) %>%
   kable(col.names = c("Trait", "Model", "AIC", "BIC", 
-                     "β₀", "SE", "t", "p",
-                     "β_Trait", "SE", "t", "p", "",
-                     "β_Group", "SE", "t", "p", "",
-                     "β_Prev", "SE", "t", "p", "",
-                     "β_Inter", "SE", "t", "p", "",
-                     "σ²_Subj", "σ_Subj", "σ²_Resid", "σ_Resid"),
-        caption = "Linear mixed models: Complete coefficient table with all beta values and variance components. 
+                     "β₀", "p",
+                     "β_Trait", "p", "",
+                     "β_Group", "p", "",
+                     "β_Prev", "p", "",
+                     "β_Inter", "p", "",
+                     "σ²_Resid", "σ_Resid"),
+        caption = "Linear models: Coefficient table with beta values and residual variance. 
                    β₀ = Intercept; β_Trait = ms change per 1 SD trait increase; β_Group = ASD effect (sum contrast); 
                    β_Prev = Prevalence effect; β_Inter = Trait×Group interaction; σ² = Variance; σ = SD. 
                    Significance: *** p<0.001, ** p<0.01, * p<0.05",
-        align = c('l', 'l', rep('r', 32))) %>%
+        align = c('l', 'l', rep('r', 18))) %>%
   kable_styling(bootstrap_options = c("striped", "hover"), 
                 font_size = 9,
                 full_width = TRUE) %>%
   collapse_rows(columns = 1, valign = "top") %>%
-  add_header_above(c(" " = 4, "Intercept" = 4, "Trait Effect" = 5, 
-                     "Group Effect" = 5, "Prevalence Effect" = 5, 
-                     "Interaction" = 5, "Random Effects" = 4))
+  add_header_above(c(" " = 4, "Intercept" = 2, "Trait Effect" = 3, 
+                     "Group Effect" = 3, "Prevalence Effect" = 3, 
+                     "Interaction" = 3, "Residual" = 2))
 
 # save the table as csv
 #write_csv(lmm_summary, file.path("C:/Users/whate/Downloads", "lmm_trait_interference_summary.csv"))
@@ -1477,12 +1456,12 @@ The coefficients in the table above can be used to construct prediction equation
 
 **Model 1: Trait-only model**
 $$
-\text{Interference}_{ij} = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + u_{0j} + \epsilon_{ij}
+\text{Interference}_{ij} = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \epsilon_{ij}
 $$
 
 **Model 2: Main effects model**
 $$
-\text{Interference}_{ij} = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \beta_{\text{Group}} \times \text{Group}_i + \beta_{\text{Prev}} \times \text{Prev}_{ij} + u_{0j} + \epsilon_{ij}
+\text{Interference}_{ij} = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \beta_{\text{Group}} \times \text{Group}_i + \beta_{\text{Prev}} \times \text{Prev}_{ij} + \epsilon_{ij}
 $$
 
 **Model 3: Interaction model**
