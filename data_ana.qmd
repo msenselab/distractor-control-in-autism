@@ -1495,7 +1495,7 @@ The actual observed value will also include the residual term $\epsilon_{ij}$, w
 
 # Example: Construct prediction from Model 2 coefficients (BDI)
 if (!is.null(bdi_models)) {
-  model2_coefs <- fixef(bdi_models$model2)
+  model2_coefs <- coef(bdi_models$model2)
   
   cat("Example Model 2 (BDI) Coefficients:\n")
   cat("β₀ (Intercept):", round(model2_coefs["(Intercept)"], 3), "ms\n")
@@ -1510,14 +1510,14 @@ if (!is.null(bdi_models)) {
           0 * model2_coefs["BDI_scaled"] + 
           (-1) * model2_coefs["Group_contrast"] + 
           (-1) * model2_coefs["Prevalence_contrast"]
-  cat("Predicted interference =", round(pred, 2), "ms (at population level, u₀j = 0)\n\n")
+  cat("Predicted interference =", round(pred, 2), "ms \n\n")
   
   cat("ASD participant (Group = +1), High Prevalence (Prev = +1), BDI = +1 SD:\n")
   pred2 <- model2_coefs["(Intercept)"] + 
            1 * model2_coefs["BDI_scaled"] + 
            1 * model2_coefs["Group_contrast"] + 
            1 * model2_coefs["Prevalence_contrast"]
-  cat("Predicted interference =", round(pred2, 2), "ms (at population level, u₀j = 0)\n")
+  cat("Predicted interference =", round(pred2, 2), "ms \n")
 }
 ```
 
