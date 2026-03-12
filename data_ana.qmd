@@ -13,13 +13,7 @@ format:
     fig-width: 10
     fig-height: 6
     theme: cosmo
-    embed-resources: false
-  pdf:
-    toc: true
-    number-sections: true
-    fig-width: 8
-    fig-height: 5
-    geometry: margin=1in
+    embed-resources: true
 execute:
   warning: false
   message: false
@@ -1452,42 +1446,41 @@ lm_summary %>%
 
 ### Model Equations
 
-The coefficients in the table above can be used to construct prediction equations for each model:
+The coefficients in the table above can be used to construct prediction equations for each model. Note: These are simple linear regression models (not mixed-effects models) because there are only 2 observations per participant (one per prevalence condition), which is insufficient for reliable random effect estimation.
 
 **Model 1: Trait-only model**
 $$
-\text{Interference}_{ij} = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \epsilon_{ij}
+\text{Interference}_i = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \epsilon_i
 $$
 
 **Model 2: Main effects model**
 $$
-\text{Interference}_{ij} = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \beta_{\text{Group}} \times \text{Group}_i + \beta_{\text{Prev}} \times \text{Prev}_{ij} + \epsilon_{ij}
+\text{Interference}_i = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \beta_{\text{Group}} \times \text{Group}_i + \beta_{\text{Prev}} \times \text{Prev}_i + \epsilon_i
 $$
 
 **Model 3: Interaction model**
 $$
-\text{Interference}_{ij} = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \beta_{\text{Group}} \times \text{Group}_i + \beta_{\text{Prev}} \times \text{Prev}_{ij} + \beta_{\text{Inter}} \times \text{Trait}_i \times \text{Group}_i + u_{0j} + \epsilon_{ij}
+\text{Interference}_i = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \beta_{\text{Group}} \times \text{Group}_i + \beta_{\text{Prev}} \times \text{Prev}_i + \beta_{\text{Inter}} \times \text{Trait}_i \times \text{Group}_i + \epsilon_i
 $$
 
 Where:
-- $i$ indexes individuals, $j$ indexes observations within individuals
-- $\beta_0$ = Intercept (grand mean interference when all predictors = 0)
+- $i$ indexes observations
+- $\beta_0$ = Intercept (mean interference when all predictors = 0)
 - $\beta_{\text{Trait}}$ = Effect of trait score (z-scored, so per 1 SD increase)
 - $\beta_{\text{Group}}$ = Effect of group (sum contrast: TD = -1, ASD = +1)
 - $\beta_{\text{Prev}}$ = Effect of prevalence (sum contrast: Low = -1, High = +1)
 - $\beta_{\text{Inter}}$ = Trait × Group interaction effect
-- $u_{0j} \sim N(0, \sigma^2_{\text{Subj}})$ = Random intercept for subject $j$
-- $\epsilon_{ij} \sim N(0, \sigma^2_{\text{Resid}})$ = Residual error
+- $\epsilon_i \sim N(0, \sigma^2_{\text{Resid}})$ = Residual error
 
 **Example prediction for Model 2 (BDI):**
 
 For a TD participant (Group = -1) in Low prevalence (Prev = -1) with BDI score 1 SD above mean (Trait = 1):
 
 $$
-\text{Predicted Interference} = \beta_0 + (1 \times \beta_{\text{BDI}}) + (-1 \times \beta_{\text{Group}}) + (-1 \times \beta_{\text{Prev}}) + u_{0j}
+\text{Predicted Interference} = \beta_0 + (1 \times \beta_{\text{BDI}}) + (-1 \times \beta_{\text{Group}}) + (-1 \times \beta_{\text{Prev}})
 $$
 
-The actual observed value will also include the residual term $\epsilon_{ij}$, which follows a normal distribution with variance $\sigma^2_{\text{Resid}}$.
+The actual observed value will also include the residual term $\epsilon_i$, which follows a normal distribution with variance $\sigma^2_{\text{Resid}}$.
 
 ```{r model-equation-example}
 #| echo: true
