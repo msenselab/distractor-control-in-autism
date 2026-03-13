@@ -372,6 +372,7 @@ interference_plot <- create_bar_plot(data = interference_summary,
     panel.grid.minor = element_blank()
   ) 
 
+print(interference_plot)
 # Note: Plot will be combined with RT plot below
 ```
 
@@ -470,7 +471,7 @@ print(combined_plot)
 
 # Save the plot
 ggsave(file.path(output_dir, 'fixations_example.png'), combined_plot,
-       width = 10, height = 5, dpi = 300)
+       width = 12, height = 6, dpi = 300)
 ```
 
 The example trials illustrate typical differences between groups: ASD participants often show more fixations to distractor locations and longer fixation sequences, while TD participants demonstrate more efficient search patterns with fewer distractors fixations when distractors are present.
