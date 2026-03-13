@@ -1,10 +1,10 @@
-# Predictability Isn't Enough: Disengagement Limits Distractor Control in Autism
+# Intact Priors but Prolonged Updating: Distractor Suppression in Autism under Perfect Predictability
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
 This repository contains data and analysis code for the manuscript:
 
-**"Predictability Isn't Enough: Disengagement Limits Distractor Control in Autism"**
+**"Intact Priors but Prolonged Updating: Distractor Suppression in Autism under Perfect Predictability"**
 
 MSense Lab and NEVIA Lab, LMU Munich
 

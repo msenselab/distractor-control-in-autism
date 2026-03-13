@@ -1,7 +1,7 @@
 ---
 title: "Distractor Control in Autism: Data Analysis"
-subtitle: "Predictability isn't enough: Disengagement limits distractor control in ASD"
-author: "MSense lab and NEVIA lab"
+subtitle: "Intact Priors but Prolonged Updating: Distractor Suppression in Autism under Perfect Predictability"
+author: "TO BE UPDATED AFTER DOUBLE BLIND PEER REVIEW"
 date: "`r Sys.Date()`"
 format:
   html:
@@ -172,7 +172,7 @@ create_anova_table(rt_aov, "Repeated measures ANOVA for reaction time analysis")
 
 ```
 
-The mixed ANOVA revealed a significant main effect of Group, and singleton, but not Prevalence. There was a significant interaction between Group and singleton. The rest interactions were non-significant.
+The mixed ANOVA revealed a significant main effect of Group, and singleton, but not Prevalence. There was a significant interaction between Group and singleton. The other interactions were non-significant.
 
 Based on mRTs table above, the ASD group showed generally slower RTs, and both groups exhibited the expected singleton effect (slower RTs when distractor present). The interaction was mainly driven by a larger distractor capture effect in the ASD group, but not in the TD group (see below post-hoc tests).
 
@@ -532,7 +532,7 @@ close_to_dt %>%
 ### First Fixation Visualization
 
 ```{r first-fixation-combined-plot}
-#| fig-cap: "Combined first fixation analysis. Top row: percentage of first fixations to target and distractor locations. Bottom row: first fixation dwell times. Both measures show group differences in attentional deployment patterns."
+#| fig-cap: "Combined first fixation analysis. Top row: percentage of first fixations to target and distractor locations. There are group differences in attentional deployment patterns."
 #| fig-width: 12
 #| fig-height: 8
 
@@ -569,7 +569,7 @@ first_fix_perc_plot
 #### Stacked Bar Chart: First Fixation Distribution
 
 ```{r first-fixation-stacked-bars}
-#| fig-cap: "Distribution of first saccadic fixations across all possible landing locations by experimental condition. Each horizontal bar represents one combination of singleton presence (Absent/Present), distractor prevalence (Low/High), and group (TD/ASD), showing the percentage breakdown of first fixations landing on the Target (blue), Distractor (red), or Other locations (gray). Bars sum to approximately 100% within each condition. The stacked format reveals how attentional deployment differs across conditions, with target-directed saccades competing with capture by salient distractors and fixations to non-cued locations."
+#| fig-cap: "Distribution of first saccadic fixations across all possible landing locations by experimental condition. Each horizontal bar represents one combination of singleton presence (Absent/Present), distractor prevalence (Low/High), and group (ASD/TD), showing the percentage breakdown of first fixations landing on the Target (blue), Distractor (red), or Other locations (gray). Bars sum to approximately 100% within each condition. The stacked format reveals how attentional deployment differs across conditions, with target-directed saccades competing with capture by salient distractors and fixations to non-cued locations."
 #| fig-width: 10
 #| fig-height: 8
 
@@ -631,7 +631,7 @@ ggsave(file.path(output_dir, 'fig_first_fixation_stacked.png'),
 ```{r first-fixation-analysis1}
 #| echo: true
 
-# Repeated measures ANOVA for first fixation percentages using aov_car
+# Repeated measures ANOVA for first fixation percentages using aov_ez
 fixation_aov <- aov_ez(id = "subj",
                        dv = "percentage",
                        data = close_to_summary %>% filter(close_to == "Distractor"),
@@ -641,7 +641,7 @@ fixation_aov <- aov_ez(id = "subj",
 #fixation_aov <- aov_car(percentage ~ group * close_to * singleton*distractor_prevalence+ Error(subj/(c#lose_to * singleton*distractor_prevalence)),
 ##                      type = 3)
 
-create_anova_table(fixation_aov, "Repeated measures ANOVA for first fixation analysis")
+create_anova_table(fixation_aov, "Repeated measures ANOVA for first fixation analysis (Singleton Distractor)")
 
 ```
 
@@ -716,7 +716,7 @@ The ANOVA revealed significant main effects of group and singleton, but not dist
 ```{r}
 
 # Post-hoc tests for number of fixations
-nfix_emm <- emmeans(nfix_aov, ~ group | distractor_prevalence)
+nfix_emm <- emmeans(nfix_aov, ~ group | singleton)
 nfix_contrasts <- pairs(nfix_emm, adjust = "bonferroni")
 
 cat("Post-hoc tests: Group differences in number of fixations by singleton condition\n")
@@ -757,7 +757,7 @@ nfix_plot <- create_bar_plot(
   geom_signif(
     xmin = 0.8, xmax = 1.2,  #
       y_position = 4.5,
-      annotation = "p=.01",
+      annotation = "p=.023",
     tip_length = 0.02,
     textsize = 5
   ) +
@@ -768,17 +768,17 @@ nfix_plot <- create_bar_plot(
     tip_length = 0.02,
     textsize = 5
   ) +
-  geom_signif( #TD - Low prevalence
-    xmin = 0.7, xmax = 0.9,
-    y_position = 3.2,
-    annotation = 'p=.059',
-    tip_length = 0.02,
-    textsize = 5
-  ) +
+  # geom_signif( #TD - Low prevalence
+  #   xmin = 0.7, xmax = 0.9,
+  #   y_position = 3.2,
+  #   annotation = 'p=.059',
+  #   tip_length = 0.02,
+  #   textsize = 5
+  # ) +
   geom_signif(
     xmin = 1.1, xmax = 1.3,
     y_position = 4.2,
-    annotation = 'p=.0011',
+    annotation = 'p<.001',
     tip_length = 0.02,
     textsize = 5
   ) +
@@ -1101,7 +1101,7 @@ target_plot <- create_bar_plot(
   geom_signif(
     xmin = 0.8, xmax = 1.2,  #
       y_position = 1.4,
-      annotation = "p=.044",
+      annotation = "p=.04",
     tip_length = 0.02,
     textsize = 5
   ) +
@@ -1203,7 +1203,7 @@ ggsave(file.path(output_dir, 'fig_refixations_combined.png'),
 
 Check potential relationships between distractor interference and participants’ trait scores on the Beck's Depression Inventory (BDI), State‑Trait Anxiety Inventory (STAI), and Intolerance of Uncertainty (IU), respectively.
 
-```{r lmm-setup}
+```{r lm-setup}
 #| echo: false
 #| message: false
 
@@ -1212,7 +1212,7 @@ traits <- read_csv(file.path(data_dir, "questionnaires_for_correlation.csv")) %>
   rename(Group = Diagnostic_group, BDI = BDI_final, 
          STAI_Trait = STAI_trait_final, IU = IU_final)
 
-lmm_data <- mRTs_wide %>%
+lm_data <- mRTs_wide %>%
   left_join(traits, by = c("Subj", "Group")) %>%
   mutate(
     # Sum contrast coding (effects coding)
@@ -1265,14 +1265,14 @@ fit_trait_models <- function(data, trait_var) {
 }
 
 # Fit models for each trait
-bdi_models <- fit_trait_models(lmm_data, "BDI_scaled")
-stai_models <- fit_trait_models(lmm_data, "STAI_Trait_scaled")
-iu_models <- fit_trait_models(lmm_data, "IU_scaled")
+bdi_models <- fit_trait_models(lm_data, "BDI_scaled")
+stai_models <- fit_trait_models(lm_data, "STAI_Trait_scaled")
+iu_models <- fit_trait_models(lm_data, "IU_scaled")
 ```
 
 ### Model Comparison
 
-```{r lmm-model-comparison}
+```{r lm-model-comparison}
 #| echo: false
 
 # Model comparison function
@@ -1305,7 +1305,7 @@ compare_models(iu_models, "IU")
 
 ### Model Summary
 
-```{r lmm-summary-table}
+```{r lm-summary-table}
 #| echo: false
 #| tbl-cap: "Linear model results: Trait effects on distractor interference"
 
@@ -1441,7 +1441,7 @@ lm_summary %>%
                      "Interaction" = 3, "Residual" = 2))
 
 # save the table as csv
-#write_csv(lmm_summary, file.path("C:/Users/whate/Downloads", "lmm_trait_interference_summary.csv"))
+#write_csv(lm_summary, file.path("C:/Users/whate/Downloads", "lm_trait_interference_summary.csv"))
 ```
 
 ### Model Equations
@@ -1516,7 +1516,7 @@ if (!is.null(bdi_models)) {
 
 ### Residual Diagnostics
 
-```{r lmm-diagnostics}
+```{r lm-diagnostics}
 #| echo: false
 #| fig-cap: "Residual diagnostic plots for Model 3 (most complex). Q-Q plots assess normality; Residuals vs Fitted assess homoscedasticity/linearity."
 #| fig-width: 12
@@ -1556,7 +1556,7 @@ if (length(diag_plots) > 0) {
 
 ### Trait-Interference Visualizations
 
-```{r lmm-visualizations}
+```{r lm-visualizations}
 #| echo: false
 #| fig-cap: "Trait-interference relationships by Group and Prevalence. Points = individual observations; lines = linear fits. Each plot shows all four Group × Prevalence combinations."
 #| fig-width: 12
@@ -1568,7 +1568,7 @@ dark2_colors <- RColorBrewer::brewer.pal(4, "Dark2")
 plot_list <- list()
 
 # BDI
-if (sum(!is.na(lmm_data$BDI)) > 2) {
+if (sum(!is.na(lm_data$BDI)) > 2) {
   # Create dummy data for legend
   legend_data <- data.frame(
     Group_Prev = factor(c("ASD/Low", "ASD/High", "TD/Low", "TD/High"),
@@ -1579,31 +1579,31 @@ if (sum(!is.na(lmm_data$BDI)) > 2) {
   
   plot_list$BDI <- ggplot() +
     # ASD/Low Prevalence: color 1, dashed line, open circles
-    geom_point(data = lmm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "Low"),
+    geom_point(data = lm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "Low"),
                aes(x = BDI, y = interference), color = dark2_colors[1], 
                shape = 21, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "Low"),
+    geom_smooth(data = lm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "Low"),
                 aes(x = BDI, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[1], linetype = "dashed", alpha = 0.2, linewidth = 1) +
     # ASD/High Prevalence: color 2, dashed line, filled circles
-    geom_point(data = lmm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "High"),
+    geom_point(data = lm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "High"),
                aes(x = BDI, y = interference), color = dark2_colors[2], 
                shape = 16, size = 2.5, alpha = 0.3) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "High"),
+    geom_smooth(data = lm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "High"),
                 aes(x = BDI, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[2], linetype = "dashed", alpha = 0.2, linewidth = 1) +
     # TD/Low Prevalence: color 3, solid line, open squares
-    geom_point(data = lmm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "Low"),
+    geom_point(data = lm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "Low"),
                aes(x = BDI, y = interference), color = dark2_colors[3], 
                shape = 22, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "Low"),
+    geom_smooth(data = lm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "Low"),
                 aes(x = BDI, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[3], linetype = "solid", alpha = 0.2, linewidth = 1) +
     # TD/High Prevalence: color 4, solid line, filled squares
-    geom_point(data = lmm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "High"),
+    geom_point(data = lm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "High"),
                aes(x = BDI, y = interference), color = dark2_colors[4], 
                shape = 15, size = 2.5, alpha = 0.3) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "High"),
+    geom_smooth(data = lm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "High"),
                 aes(x = BDI, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[4], linetype = "solid", alpha = 0.2, linewidth = 1) +
     # Add invisible points for legend
@@ -1626,15 +1626,15 @@ if (sum(!is.na(lmm_data$BDI)) > 2) {
            shape = guide_legend(override.aes = list(alpha = 1, size = 3)),
            linetype = guide_legend(override.aes = list(alpha = 1))) + 
     # show x-axis from 0 to max BDI score in increments of 10 
-    scale_x_continuous(breaks = seq(0, max(lmm_data$BDI, na.rm = TRUE), by = 10),
-                       limits = c(min(lmm_data$BDI, na.rm = TRUE), max(lmm_data$BDI, na.rm = TRUE)),
+    scale_x_continuous(breaks = seq(0, max(lm_data$BDI, na.rm = TRUE), by = 10),
+                       limits = c(min(lm_data$BDI, na.rm = TRUE), max(lm_data$BDI, na.rm = TRUE)),
                        # add some padding to the x-axis
                       #expand = expansion(mult = c(0.05, 0.05))
                       )
 }
 
 # STAI-Trait
-if (sum(!is.na(lmm_data$STAI_Trait)) > 2) {
+if (sum(!is.na(lm_data$STAI_Trait)) > 2) {
   # Create dummy data for legend
   legend_data <- data.frame(
     Group_Prev = factor(c("ASD/Low", "ASD/High", "TD/Low", "TD/High"),
@@ -1645,31 +1645,31 @@ if (sum(!is.na(lmm_data$STAI_Trait)) > 2) {
   
   plot_list$STAI <- ggplot() +
     # ASD/Low Prevalence: color 1, dashed line, open circles
-    geom_point(data = lmm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "Low"),
+    geom_point(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "Low"),
                aes(x = STAI_Trait, y = interference), color = dark2_colors[1], 
                shape = 21, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "Low"),
+    geom_smooth(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "Low"),
                 aes(x = STAI_Trait, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[1], linetype = "dashed", alpha = 0.2, linewidth = 1) +
     # ASD/High Prevalence: color 2, dashed line, filled circles
-    geom_point(data = lmm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "High"),
+    geom_point(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "High"),
                aes(x = STAI_Trait, y = interference), color = dark2_colors[2], 
                shape = 16, size = 2.5, alpha = 0.3) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "High"),
+    geom_smooth(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "High"),
                 aes(x = STAI_Trait, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[2], linetype = "dashed", alpha = 0.2, linewidth = 1) +
     # TD/Low Prevalence: color 3, solid line, open squares
-    geom_point(data = lmm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "Low"),
+    geom_point(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "Low"),
                aes(x = STAI_Trait, y = interference), color = dark2_colors[3], 
                shape = 22, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "Low"),
+    geom_smooth(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "Low"),
                 aes(x = STAI_Trait, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[3], linetype = "solid", alpha = 0.2, linewidth = 1) +
     # TD/High Prevalence: color 4, solid line, filled squares
-    geom_point(data = lmm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "High"),
+    geom_point(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "High"),
                aes(x = STAI_Trait, y = interference), color = dark2_colors[4], 
                shape = 15, size = 2.5, alpha = 0.3) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "High"),
+    geom_smooth(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "High"),
                 aes(x = STAI_Trait, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[4], linetype = "solid", alpha = 0.2, linewidth = 1) +
     # Add invisible points for legend
@@ -1692,12 +1692,12 @@ if (sum(!is.na(lmm_data$STAI_Trait)) > 2) {
            shape = guide_legend(override.aes = list(alpha = 1, size = 3)),
            linetype = guide_legend(override.aes = list(alpha = 1))) +
     # show x-axis from 10 to max STAI-trait score in increments of 10 
-    scale_x_continuous(breaks = seq(10, max(lmm_data$STAI_Trait, na.rm = TRUE), by = 10),
-                       limits = c(10, max(lmm_data$STAI_Trait, na.rm = TRUE)))
+    scale_x_continuous(breaks = seq(10, max(lm_data$STAI_Trait, na.rm = TRUE), by = 10),
+                       limits = c(10, max(lm_data$STAI_Trait, na.rm = TRUE)))
 }
 
 # IU
-if (sum(!is.na(lmm_data$IU)) > 2) {
+if (sum(!is.na(lm_data$IU)) > 2) {
   # Create dummy data for legend
   legend_data <- data.frame(
     Group_Prev = factor(c("ASD/Low", "ASD/High", "TD/Low", "TD/High"),
@@ -1708,31 +1708,31 @@ if (sum(!is.na(lmm_data$IU)) > 2) {
   
   plot_list$IU <- ggplot() +
     # ASD/Low Prevalence: color 1, dashed line, open circles
-    geom_point(data = lmm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "Low"),
+    geom_point(data = lm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "Low"),
                aes(x = IU, y = interference), color = dark2_colors[1], 
                shape = 21, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "Low"),
+    geom_smooth(data = lm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "Low"),
                 aes(x = IU, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[1], linetype = "dashed", alpha = 0.2, linewidth = 1) +
     # ASD/High Prevalence: color 2, dashed line, filled circles
-    geom_point(data = lmm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "High"),
+    geom_point(data = lm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "High"),
                aes(x = IU, y = interference), color = dark2_colors[2], 
                shape = 16, size = 2.5, alpha = 0.3) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "High"),
+    geom_smooth(data = lm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "High"),
                 aes(x = IU, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[2], linetype = "dashed", alpha = 0.2, linewidth = 1) +
     # TD/Low Prevalence: color 3, solid line, open squares
-    geom_point(data = lmm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "Low"),
+    geom_point(data = lm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "Low"),
                aes(x = IU, y = interference), color = dark2_colors[3], 
                shape = 22, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "Low"),
+    geom_smooth(data = lm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "Low"),
                 aes(x = IU, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[3], linetype = "solid", alpha = 0.2, linewidth = 1) +
     # TD/High Prevalence: color 4, solid line, filled squares
-    geom_point(data = lmm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "High"),
+    geom_point(data = lm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "High"),
                aes(x = IU, y = interference), color = dark2_colors[4], 
                shape = 15, size = 2.5, alpha = 0.3) +
-    geom_smooth(data = lmm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "High"),
+    geom_smooth(data = lm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "High"),
                 aes(x = IU, y = interference), method = "lm", se = TRUE,
                 color = dark2_colors[4], linetype = "solid", alpha = 0.2, linewidth = 1) +
     # Add invisible points for legend
@@ -1756,7 +1756,7 @@ if (sum(!is.na(lmm_data$IU)) > 2) {
            linetype = guide_legend(override.aes = list(alpha = 1))) +
     # show x-axis from 18 to max IU score (90) in increments of 10 
     scale_x_continuous(breaks = seq(20, 90, by = 10),
-                       limits = c(20, max(lmm_data$IU, na.rm = TRUE)))
+                       limits = c(20, max(lm_data$IU, na.rm = TRUE)))
 }
 
 if (length(plot_list) > 0) {
@@ -1766,9 +1766,15 @@ if (length(plot_list) > 0) {
   # show plots
   print(plot_list)
   
-  ggsave(file.path(output_dir, 'fig_trait_correlations_lmm.png'),
-         width = 10, height = 10, dpi = 300)
+  # ggsave(file.path(output_dir, 'fig_trait_correlations_lm.png'),
+  #        width = 10, height = 10, dpi = 300)
 }
+# combine all three trait plots into one figure with shared legend
+ggsave(file.path(output_dir, 'fig_trait_correlations_combined.png'),
+          plot = wrap_plots(plot_list, ncol = 1) + plot_layout(guides = "collect") &
+            theme(legend.position = "bottom"), width = 10, height = 12, dpi = 300)
+
+
 ```
 
 ### Interpretation
@@ -1814,6 +1820,7 @@ Our analysis reveals several important differences between ASD and TD groups in 
 3.  **Compensatory Target Processing**: The ASD group showed significantly more refixations to target locations overall (significant main effect of group), suggesting compensatory mechanisms to overcome attentional difficulties, while distractor refixations were similar between groups.
 
 4.  **Prevalence-Modulated Distractor Processing**: Distractor refixations showed a significant interaction between singleton presence and distractor prevalence, with increased distractor refixations when distractors were present in high prevalence conditions compared to low prevalence conditions, affecting both groups similarly.
+
 ## Theoretical Implications
 
 These findings support the enhanced perceptual functioning theory in autism, which suggests that individuals with ASD show increased sensitivity to local features and details. The prolonged engagement with distractors may reflect this enhanced processing of salient visual information, even when it is task-irrelevant.
