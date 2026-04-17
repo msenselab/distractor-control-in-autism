@@ -1,6 +1,6 @@
 ---
 title: "Distractor Control in Autism: Data Analysis"
-subtitle: "Intact Priors but Prolonged Updating: Distractor Suppression in Autism under Perfect Predictability"
+subtitle: "Persistent belief updating despite perfect predictability – the atypical iterative prior updating account of autism"
 author: "TO BE UPDATED AFTER DOUBLE BLIND PEER REVIEW"
 date: "`r Sys.Date()`"
 format:
