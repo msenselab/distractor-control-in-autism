@@ -1,0 +1,1844 @@
+---
+title: "Distractor Control in Autism: Data Analysis"
+subtitle: "Persistent belief updating despite perfect predictability – the atypical iterative prior updating account of autism"
+author: "TO BE UPDATED AFTER DOUBLE BLIND PEER REVIEW"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-summary: "Show code"
+    fig-width: 10
+    fig-height: 6
+    theme: cosmo
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r setup}
+#| include: false
+
+# Load required libraries
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(lme4)
+library(lmerTest)
+library(afex)
+library(emmeans)
+library(effectsize)
+library(broom.mixed)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+library(cowplot)
+library(scales)
+library(ggsci)
+library(ggsignif)
+library(grid)
+source('helper_functions.R')
+
+# Set global options
+options(dplyr.summarise.inform = FALSE)
+theme_set(theme_minimal(base_size = 12))
+
+# Define project directory - UPDATE THIS PATH FOR YOUR LOCAL ENVIRONMENT
+proj_dir <- '.'
+data_dir <- file.path(proj_dir, 'data')
+output_dir <- file.path(proj_dir, 'figures')
+
+# Create output directory if it doesn't exist
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+```
+
+# Abstract
+
+This analysis examines distractor suppression mechanisms in autism spectrum disorder (ASD) compared to typically developing (TD) individuals using an additional singleton search task with precueing. We investigate reaction time patterns, eye movement behavior, and attentional deployment strategies across different distractor prevalence conditions.
+
+# Introduction
+
+The ability to suppress irrelevant visual information is crucial for efficient visual search. Previous research suggests that individuals with ASD may show altered patterns of attentional control and distractor suppression. This study examines these mechanisms using behavioral and eye movement measures in a precued visual search task.
+
+# Methods
+
+## Participants and Design
+
+The study included participants from two groups: - **ASD group**: Individuals diagnosed with autism spectrum disorder - **TD group**: Typically developing control participants
+
+## Task and Procedure
+
+Participants performed an additional singleton search task with the following manipulations: - **Singleton prevalence**: Low (50%) vs. High (90%) singleton frequency - **Singleton presence**: Singleton present vs. absent trials - **Precueing**: 100% valid spatial cues indicating potential singleton locations
+
+## Data Analysis
+
+All analyses were conducted using mixed-effects models with participants as random effects. Effect sizes are reported as partial eta-squared (η²p) for ANOVAs and Cohen's d for t-tests.
+
+# Results
+
+## Data Loading and Preprocessing
+
+```{r data-loading}
+#| echo: true
+#| code-fold: false
+
+# Load behavioral and eye movement data
+behav <- read_csv(file.path(data_dir, 'behav.csv'), show_col_types = FALSE)
+fix_with_behav <- read_csv(file.path(data_dir, 'fix_with_behav.csv'), show_col_types = FALSE)
+
+# Data preprocessing
+behav <- behav %>%
+  mutate(
+    group = factor(group, levels = c("TD", "ASD")),
+    distractor_prevalence = factor(distractor_prevalence,
+                                 levels = c(0.5, 0.9),
+                                 labels = c("Low", "High")),
+    singleton = factor(singleton,
+                      levels = c(0, 1),
+                      labels = c("Absent", "Present"))
+  )
+
+fix_with_behav <- fix_with_behav %>%
+  mutate(
+    group = factor(group, levels = c("TD", "ASD")),
+    distractor_prevalence = factor(distractor_prevalence,
+                                 levels = c(0.5, 0.9),
+                                 labels = c("Low", "High")),
+    close_to = factor(close_to)
+  )
+
+# Display data summary
+cat("Behavioral data dimensions:", dim(behav), "\n")
+cat("Eye movement data dimensions:", dim(fix_with_behav), "\n")
+cat("Participants per group:\n")
+table(behav$group, behav$subj) %>%
+  apply(1, function(x) sum(x > 0)) %>%
+  print()
+```
+
+## Reaction Time Analysis
+
+### Data Preparation
+
+```{r rt-preparation}
+#| echo: true
+
+# Calculate mean RTs for correct trials, excluding outliers
+mRTs <- behav %>%
+  filter(corr == 1, outlier == FALSE) %>%
+  group_by(group, subj, distractor_prevalence, singleton) %>%
+  summarise(RT = mean(rt, na.rm = TRUE) * 1000, .groups = 'drop') %>%
+  rename(Group = group,
+         Subj = subj,
+         Prevalence = distractor_prevalence,
+         Singleton = singleton)
+
+# Display summary statistics
+mRTs %>%
+  group_by(Group, Prevalence, Singleton) %>%
+  summarise(
+    N = n(),
+    Mean_RT = round(mean(RT), 1),
+    SD_RT = round(sd(RT), 1),
+    SE_RT = round(sd(RT)/sqrt(n()), 1),
+    .groups = 'drop'
+  ) %>%
+  kable(caption = "Mean reaction times (ms) by experimental condition") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### Statistical Analysis
+
+```{r rt-mixed-model}
+#| echo: true
+
+# Repeated measures ANOVA using aov_ez
+rt_aov <- aov_ez(id = "Subj",
+                 dv = "RT",
+                 data = mRTs,
+                 within = c("Prevalence", "Singleton"),
+                 between = "Group",
+                 type = 3)
+
+# ANOVA table
+create_anova_table(rt_aov, "Repeated measures ANOVA for reaction time analysis")
+
+```
+
+The mixed ANOVA revealed a significant main effect of Group, and singleton, but not Prevalence. There was a significant interaction between Group and singleton. The other interactions were non-significant.
+
+Based on mRTs table above, the ASD group showed generally slower RTs, and both groups exhibited the expected singleton effect (slower RTs when distractor present). The interaction was mainly driven by a larger distractor capture effect in the ASD group, but not in the TD group (see below post-hoc tests).
+
+```{r rt_post-hoc-tests}
+
+# Post-hoc tests for Group x Singleton interaction
+rt_emm <- emmeans(rt_aov, ~ Singleton | Group)
+rt_contrasts <- pairs(rt_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences within each Singleton condition\n")
+create_posthoc_table(rt_contrasts, "Group differences within Singleton conditions")
+```
+
+The above post-hoc tests indicated that the presence of a distractor singleton significantly slowed RTs in the ASD group (p \< .001), but not in the TD group (p = .332), suggesting that TD individuals effectively suppressed the distractor with perfect cue validity, but not with individuals with ASD.
+
+### Visualization
+
+```{r rt-visualization}
+#| fig-cap: "Mean reaction times across experimental conditions. Error bars represent standard errors. Brackets with *** indicate significant singleton effect within ASD group (p < .001). ** at top indicates significant group difference (p < .01)."
+#| fig-width: 10
+#| fig-height: 6
+
+# Prepare summary data for plotting
+rt_summary <- mRTs %>%
+  group_by(Group, Prevalence, Singleton) %>%
+  summarise(
+    mean_RT = mean(RT),
+    se = sd(RT)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+# Create bar plot with APA style and custom colors
+# Color scheme: Blue for ASD, Red for TD; Light for Absent, Dark for Present
+rt_plot = create_bar_plot(rt_summary,
+                x_var = "Prevalence",
+                y_var = "mean_RT",
+                group_var = "Group",
+                pattern_var = "Singleton",
+                facet_var = NULL,
+                title = "",
+                x_label = "Session (Distractor Prevalence)",
+                y_label = "Reaction Time (ms)",
+                group_label = "Group",
+                pattern_label = "Distractor")  +
+  # Add significance brackets for singleton effect in ASD group
+  # Using ggsignif with manual positioning for dodged bars
+  geom_signif(
+    xmin = 0.8, xmax = 1.2,  # Dodged bar positions for Low prevalence
+      y_position = 1570,
+      annotation = "p=.003",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.8, xmax = 2.2,  # Dodged bar positions for High prevalence
+    y_position = 1570,
+    annotation = "p=.003",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.1, xmax = 1.3,
+    y_position = 1490,
+    annotation = 'p<.001',
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 2.1, xmax = 2.3,
+    y_position = 1490,
+    annotation = 'p<.001',
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  coord_cartesian(ylim = c(500, 1600))
+
+print(rt_plot)
+# Note: Plot will be combined with interference plot below
+```
+
+## Distractor Interference Analysis
+
+To better show the group differences in distractor suppression, we calculated the distractor interference effect (RT difference between distractor present and absent trials) for each participant in each prevalence condition.
+
+### Interference Effect Calculation
+
+```{r interference-calculation}
+#| echo: true
+
+# Calculate distractor interference (Present - Absent)
+mRTs_wide <- mRTs %>%
+  pivot_wider(names_from = Singleton, values_from = RT) %>%
+  mutate(interference = Present - Absent) %>%
+  filter(!is.na(interference))
+
+# Summary statistics for interference
+mRTs_wide %>%
+  group_by(Group, Prevalence) %>%
+  summarise(
+    N = n(),
+    Mean_Interference = round(mean(interference), 1),
+    SD_Interference = round(sd(interference), 1),
+    SE_Interference = round(sd(interference)/sqrt(n()), 1),
+    .groups = 'drop'
+  ) %>%
+  kable(caption = "Distractor interference effects (ms) by group and prevalence") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### Statistical Analysis of Interference
+
+```{r interference-analysis}
+#| echo: true
+
+# Repeated measures ANOVA for interference effect using aov_ez
+interference_aov <- aov_ez(id = "Subj",
+                          dv = "interference",
+                          data = mRTs_wide,
+                          within = "Prevalence",
+                          between = "Group",
+                          type = 3)
+
+create_anova_table(interference_aov, "Repeated measures ANOVA for distractor interference")
+
+# Post-hoc tests for Group differences
+interference_emm <- emmeans(interference_aov, ~ Group)
+interference_contrasts <- pairs(interference_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in interference\n")
+create_posthoc_table(interference_contrasts, "Group differences in interference effects")
+
+
+```
+
+```{r}
+# Test if TD group interference differs from zero
+td_interference <- mRTs_wide %>% filter(Group == "TD")
+t_test_result <- t.test(td_interference$interference, mu = 0)
+d_result <- cohens_d(td_interference$interference, mu = 0)
+
+cat("One-sample t-test for TD group interference:\n")
+cat("t =", round(t_test_result$statistic, 2),
+    ", df =", t_test_result$parameter,
+    ", p =", round(t_test_result$p.value, 3), "\n")
+cat("95% CI: [", round(t_test_result$conf.int[1], 2), ", ",
+    round(t_test_result$conf.int[2], 2), "]\n")
+cat("Cohen's d =", round(d_result$Cohens_d, 2),
+    ", 95% CI: [", round(d_result$CI_low, 2), ", ",
+    round(d_result$CI_high, 2), "]\n")
+```
+
+The above test confirmed that the TD did not show significant distractor interference, but the ASD group did.
+
+### Interference Visualization
+
+```{r interference-plot}
+#| fig-cap: "Distractor interference effects by group and prevalence condition. The ASD group shows significantly larger interference effects than the TD group across both prevalence conditions."
+#| fig-width: 8
+#| fig-height: 5
+mRTs_wide %>%
+  group_by(Group, Prevalence) %>%
+  summarise(
+    mean_interference = mean(interference),
+    se = sd(interference)/sqrt(n()),
+    .groups = 'drop'
+  ) -> interference_summary
+
+interference_plot <- create_bar_plot(data = interference_summary,
+                x_var = "Group",
+                y_var = "mean_interference",
+                group_var = "Group",
+                pattern_var = "Prevalence",
+                facet_var = NULL,
+                title = "",
+                x_label = "Group",
+                y_label = "Interference Effect (ms)",
+                group_label = "Group",
+                pattern_label = "Prevalence") + 
+  # Add significance bracket between groups
+  geom_signif(
+    comparisons = list(c("TD", "ASD")),
+    annotation = "p < .001",
+    y_position = 100,  # Adjust this value based on your data range
+    tip_length = 0.02,
+    textsize = 4
+  ) +
+  labs(
+    x = "Group",
+    y = "Interference Effect (ms)",
+    fill = ""
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    strip.background = element_blank(),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  ) 
+
+print(interference_plot)
+# Note: Plot will be combined with RT plot below
+```
+
+### Combined Figure: RT and Interference
+
+```{r combined-rt-interference}
+#| fig-cap: "Reaction time and distractor interference effects. (A) Mean reaction times across conditions. (B) Distractor interference effects by group and prevalence. Error bars represent standard errors."
+#| fig-width: 12
+#| fig-height: 6
+
+# Combine plots A and B using cowplot
+combined_plot <- plot_grid(
+  rt_plot,
+  interference_plot,
+  labels = c("A", "B"),
+  label_size = 14,
+  label_fontface = "bold",
+  ncol = 2,
+  rel_widths = c(1.2, 1)
+) 
+
+print(combined_plot)
+
+# Save combined figure
+ggsave(file.path(output_dir, 'fig_combined_RT_interference.png'),
+       combined_plot,
+       width = 12, height = 6, dpi = 300)
+```
+
+## Eye Movement Analysis
+
+Motivation: While manual responses (RTs) clearly showed more substantial distractor interference in the ASD group than the TD group, the timeline of attentional processing in which this occurred remained unclear. The pattern of eye movements across the whole search trial, from display onset to response, might. To better understand distractor interference, we further looked into several metrics derived from eye movement data.
+
+### Example Fixation Patterns
+
+To illustrate the differences in eye movement behavior between groups, we first show example fixation sequences for individual trials from representative participants.
+
+```{r example-fixation-patterns}
+#| fig-cap: "Example fixation patterns for individual trials. Top row: ASD participant, bottom row: TD participant. Each panel shows one trial with fixation sequence (connected dots), fixation numbers, target locations (squares), and distractor locations (triangles). Colors indicate whether fixations landed on target (red), distractor (blue), or other locations (gray)."
+#| fig-width: 12
+#| fig-height: 6
+
+# Select representative subjects and trials
+subjects <- data.frame(
+  subj = c('ASD001', 'TD001'),
+  group = c('ASD', 'TD'),
+  stringsAsFactors = FALSE
+)
+
+trials <- c(6, 7, 8, 9)
+
+# Create a list to store plots
+plot_list <- list()
+
+for (i in 1:nrow(subjects)) {
+  for (j in 1:length(trials)) {
+    subj_id <- subjects$subj[i]
+    group_id <- subjects$group[i]
+    trial_id <- trials[j]
+
+    # Filter data for this specific subject and trial
+    fix_trial <- fix_with_behav %>%
+      filter(subj == subj_id, trialNo == trial_id, session == 1)
+
+    # Create title
+    if (i == 1) {
+      title <- paste("Trial", trial_id)
+    } else {
+      title <- NULL
+    }
+
+    # Create plot
+    p <- plot_fixations_and_items(fix_trial, title = title)
+
+    # Add axis labels for leftmost plots
+    if (j == 1) {
+      p <- p +
+        coord_cartesian(xlim = c(-8, 8), ylim = c(-8, 8), clip = "off") +
+        theme(plot.margin = margin(5, 5, 5, 35)) +
+        annotation_custom(
+          grob = textGrob(group_id, rot = 90,
+                         gp = gpar(fontsize = 12, fontface = "bold")),
+          xmin = -10, xmax = -10, ymin = -Inf, ymax = Inf
+        )
+    }
+
+    # Store plot in list
+    plot_list[[paste(i, j, sep = "_")]] <- p
+  }
+}
+
+# Combine all plots
+combined_plot <- wrap_plots(plot_list, nrow = 2, ncol = 4)
+
+print(combined_plot)
+
+# Save the plot
+ggsave(file.path(output_dir, 'fixations_example.png'), combined_plot,
+       width = 12, height = 6, dpi = 300)
+```
+
+The example trials illustrate typical differences between groups: ASD participants often show more fixations to distractor locations and longer fixation sequences, while TD participants demonstrate more efficient search patterns with fewer distractors fixations when distractors are present.
+
+### First Fixation Analysis
+
+```{r first-fixation-data}
+#| echo: true
+
+# Calculate actual total trials per condition (using fixationNo == 1 as it exists for every trial)
+actual_total_trials <- fix_with_behav %>%
+  filter(fixationNo == 1) %>%
+  group_by(subj, distractor_prevalence, singleton, group) %>%
+  summarise(total_trials = n(), .groups = 'drop')
+
+# Analyze first fixation after central fixation (fixationNo == 2)
+close_to_counts <- fix_with_behav %>%
+  filter(fixationNo == 2) %>%
+  group_by(subj, distractor_prevalence, singleton, group, close_to) %>%
+  summarise(n_trials = n(), .groups = 'drop')
+
+# Complete missing combinations with 0 first (before calculating percentages)
+# Get all subjects and all possible condition combinations
+all_subjects <- close_to_counts %>%
+  distinct(subj, group)
+
+all_conditions <- close_to_counts %>%
+  distinct(distractor_prevalence, singleton, close_to)
+
+# Create complete grid
+close_to_summary <- all_subjects %>%
+  crossing(all_conditions) %>%
+  left_join(close_to_counts, by = c("subj", "group", "distractor_prevalence", "singleton", "close_to")) %>%
+  mutate(n_trials = replace_na(n_trials, 0)) %>%
+  # Join with actual total trials
+  left_join(actual_total_trials, by = c("subj", "group", "distractor_prevalence", "singleton")) %>%
+  # Now calculate percentage with correct total_trials
+  mutate(percentage = if_else(total_trials > 0, n_trials / total_trials, 0)) %>%
+  ungroup()
+
+# Focus on Target and Distractor fixations (exclude "Other")
+close_to_dt <- close_to_summary %>%
+  filter(close_to != "Other") 
+
+
+# Summary statistics
+close_to_dt %>%
+  group_by(group, distractor_prevalence, singleton, close_to) %>%
+  summarise(
+    N = n(),
+    Mean_Percentage = round(mean(percentage), 3),
+    SD_Percentage = round(sd(percentage), 3),
+    .groups = 'drop'
+  ) %>%
+  kable(caption = "First fixation landing positions by experimental condition") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### First Fixation Visualization
+
+```{r first-fixation-combined-plot}
+#| fig-cap: "Combined first fixation analysis. Top row: percentage of first fixations to target and distractor locations. There are group differences in attentional deployment patterns."
+#| fig-width: 12
+#| fig-height: 8
+
+# Create percentage plot data
+perc_plot_data <- close_to_dt %>%
+  group_by(group, distractor_prevalence, singleton, close_to) %>%
+  summarise(
+    mean_percentage = mean(percentage),
+    se = sd(percentage)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+first_fix_perc_plot <- create_bar_plot(
+  data = perc_plot_data,
+  x_var = "singleton",
+  y_var = "mean_percentage",
+  group_var = "group",
+  pattern_var = "close_to",
+  facet_var = "distractor_prevalence",
+  title = "",
+  x_label = "Distractor Presence",
+  y_label = "Percentage of First Fixations",
+  group_label = "Group",
+  pattern_label = "close_to"
+) + scale_y_continuous(labels = scales::percent_format()) 
+
+
+ggsave(file.path(output_dir, 'fig_first_fixation_perc.png'), first_fix_perc_plot,
+       width = 8, height = 4, dpi = 300)
+
+first_fix_perc_plot
+```
+
+#### Stacked Bar Chart: First Fixation Distribution
+
+```{r first-fixation-stacked-bars}
+#| fig-cap: "Distribution of first saccadic fixations across all possible landing locations by experimental condition. Each horizontal bar represents one combination of singleton presence (Absent/Present), distractor prevalence (Low/High), and group (ASD/TD), showing the percentage breakdown of first fixations landing on the Target (blue), Distractor (red), or Other locations (gray). Bars sum to approximately 100% within each condition. The stacked format reveals how attentional deployment differs across conditions, with target-directed saccades competing with capture by salient distractors and fixations to non-cued locations."
+#| fig-width: 10
+#| fig-height: 8
+
+# Prepare data for stacked bar chart using close_to_summary (includes "Other")
+stacked_data <- close_to_summary %>%
+  group_by(singleton, distractor_prevalence, group, close_to) %>%
+  summarise(mean_percentage = mean(percentage), .groups = 'drop') %>%
+  # Create a combined label for each condition: Singleton - Prevalence - Group
+  mutate(condition = paste(singleton, distractor_prevalence, group, sep = " - "))
+
+# Create ordered factor for condition to control row ordering
+stacked_data$condition <- factor(stacked_data$condition,
+                                levels = c("Absent - Low - TD", "Absent - Low - ASD",
+                                          "Absent - High - TD", "Absent - High - ASD",
+                                          "Present - Low - TD", "Present - Low - ASD",
+                                          "Present - High - TD", "Present - High - ASD"))
+
+# Reorder close_to factor for better stacking order (Target at bottom)
+stacked_data$close_to <- factor(stacked_data$close_to,
+                               levels = c("Other", "Distractor", "Target"))
+
+# Create horizontal stacked bar chart
+stacked_bar_plot <- stacked_data %>%
+  ggplot(aes(x = condition, y = mean_percentage, fill = close_to)) +
+  geom_col(position = "stack", color = "black", linewidth = 0.2) +
+  coord_flip() +  # Make bars horizontal
+  scale_fill_manual(
+    values = c(
+      "Target" = "#4DBBD5FF",      # NPG blue for Target
+      "Distractor" = "#E64B35FF",  # NPG red for Distractor
+      "Other" = "#8491B4FF"        # NPG gray for Other
+    ),
+    name = "Fixation Location"
+  ) +
+  scale_y_continuous(labels = scales::percent_format(),
+                    limits = c(0, 1),
+                    expand = c(0, 0)) +
+  labs(
+    x = "Experimental Condition",
+    y = "Percentage of First Fixations"
+  ) +
+  theme_classic(base_size = 11) +
+  theme(
+    legend.position = "right",
+    panel.grid.major.x = element_line(color = "gray90"),
+    axis.text.y = element_text(size = 9)
+  )
+
+print(stacked_bar_plot)
+
+# Save the plot
+ggsave(file.path(output_dir, 'fig_first_fixation_stacked.png'),
+       stacked_bar_plot,
+       width = 10, height = 6, dpi = 300)
+```
+
+### First Fixation Statistical Analysis
+
+```{r first-fixation-analysis1}
+#| echo: true
+
+# Repeated measures ANOVA for first fixation percentages using aov_ez
+fixation_aov <- aov_ez(id = "subj",
+                       dv = "percentage",
+                       data = close_to_summary %>% filter(close_to == "Distractor"),
+                       within = c("singleton", "distractor_prevalence"),
+                       between = "group",
+                       type = 3)
+#fixation_aov <- aov_car(percentage ~ group * close_to * singleton*distractor_prevalence+ Error(subj/(c#lose_to * singleton*distractor_prevalence)),
+##                      type = 3)
+
+create_anova_table(fixation_aov, "Repeated measures ANOVA for first fixation analysis (Singleton Distractor)")
+
+```
+
+```{r first-fixation-analysis2}
+fixation_aov_target <- aov_ez(id = "subj",
+                       dv = "percentage",
+                       data = close_to_summary %>% filter(close_to == "Target"),
+                       within = c("singleton", "distractor_prevalence"),
+                       between = "group",
+                       type = 3)
+
+create_anova_table(fixation_aov_target, "Repeated measures ANOVA for first fixation analysis (Target)")
+```
+
+```{r first-fixation-posthoc_2}
+
+# Post-hoc tests for distractor_prevalence x singleton interaction
+fixation_emm2 <- emmeans(fixation_aov, ~   singleton | distractor_prevalence)
+fixation_contrasts2 <- pairs(fixation_emm2, adjust = "bonferroni")
+
+create_posthoc_table(fixation_contrasts2, "Singleton differences in first fixation patterns between prevalence conditions")
+
+# show marginal means
+cat("Marginal means for distractor prevalence x singleton interaction:\n")
+marginal_means <- summary(fixation_emm2)
+print(marginal_means)
+```
+
+The interaction between singleton and distractor prevalence was due to lower fixation toward the cued and target locations in the high prevalence condition than in the low prevalence condition in the distractor absent trials, but higher fixation when the distractor was present in the high prevalence condition.
+
+### Number of Fixations Analysis
+
+What happens after the first fixation? We next examined the total number of fixations made during each trial.
+
+```{r nfixations-analysis}
+#| echo: true
+
+# Calculate number of fixations per trial
+max_fixation <- fix_with_behav %>%
+  group_by(subj, group, singleton, distractor_prevalence, trialNo) %>%
+  summarise(max_fixation = max(fixationNo, na.rm = TRUE), .groups = 'drop') %>%
+  mutate(nfixation = max_fixation - 1) %>%
+  group_by(subj, group, singleton, distractor_prevalence) %>%
+  summarise(mean_nfixation = mean(nfixation, na.rm = TRUE), .groups = 'drop')
+
+# Complete missing combinations (if any) for number of fixations
+all_nfix_combinations <- max_fixation %>%
+  distinct(subj, group) %>%
+  crossing(
+    distractor_prevalence = unique(max_fixation$distractor_prevalence),
+    singleton = unique(max_fixation$singleton)
+  )
+
+max_fixation <- all_nfix_combinations %>%
+  left_join(max_fixation, by = c("subj", "group", "distractor_prevalence", "singleton")) %>%
+  mutate(mean_nfixation = replace_na(mean_nfixation, 0))
+
+# Statistical analysis using aov_ez
+nfix_aov <- aov_ez(id = "subj",
+                   dv = "mean_nfixation",
+                   data = max_fixation,
+                   within = c("singleton","distractor_prevalence"),
+                   between = "group",
+                   type = 3)
+
+create_anova_table(nfix_aov, "Repeated measures ANOVA for number of fixations")
+
+```
+
+The ANOVA revealed significant main effects of group and singleton, but not distractor prevalence. The interaction between group and singleton was also significant. The rest was non-significant. There was no significant difference between prevalence conditions, which is consistent with the RT results.
+
+```{r}
+
+# Post-hoc tests for number of fixations
+nfix_emm <- emmeans(nfix_aov, ~ group | singleton)
+nfix_contrasts <- pairs(nfix_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in number of fixations by singleton condition\n")
+create_posthoc_table(nfix_contrasts, "Group differences in number of fixations")
+```
+
+The interaction was due to increased number of fixation in the ASD group when the distractor was present, but not in the TD group. This suggests that the presence of a distractor led to less efficient search patterns in the ASD group, resulting in more fixations to locate the target.
+
+### Number of Fixations Visualization
+
+```{r nfixations-plot}
+#| fig-cap: "Mean number of fixations per trial. The ASD group makes more fixations overall, particularly when distractors are present, indicating less efficient search strategies."
+#| fig-width: 8
+#| fig-height: 5
+
+nfix_plot_data <- max_fixation %>%
+  group_by(group, distractor_prevalence, singleton) %>%
+  summarise(
+    mean_nfix = mean(mean_nfixation),
+    se = sd(mean_nfixation)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+# Store the number of fixations plot for later combination
+nfix_plot <- create_bar_plot(
+  data = nfix_plot_data,
+  x_var = "distractor_prevalence",
+  y_var = "mean_nfix",
+  group_var = "group",
+  pattern_var = "singleton",
+  facet_var = NULL,
+  title = "",
+  x_label = "Distractor Prevalence",
+  y_label = "Mean Number of Fixations",
+  group_label = "Group",
+  pattern_label = "Distractor"
+) + coord_cartesian(ylim = c(2.5, 5)) +
+  geom_signif(
+    xmin = 0.8, xmax = 1.2,  #
+      y_position = 4.5,
+      annotation = "p=.023",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.8, xmax = 2.2,  # 
+      y_position = 4.5,
+      annotation = "p=.023",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  # geom_signif( #TD - Low prevalence
+  #   xmin = 0.7, xmax = 0.9,
+  #   y_position = 3.2,
+  #   annotation = 'p=.059',
+  #   tip_length = 0.02,
+  #   textsize = 5
+  # ) +
+  geom_signif(
+    xmin = 1.1, xmax = 1.3,
+    y_position = 4.2,
+    annotation = 'p<.001',
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 2.1, xmax = 2.3,
+    y_position = 4.2,
+    annotation = 'p<.001',
+    tip_length = 0.02,
+    textsize = 5
+  )
+
+
+nfix_plot
+```
+
+### Number of Fixations Interference Analysis
+
+Similar to RT interference, we calculated the distractor interference effect for number of fixations (Present - Absent) to better visualize group differences in attentional efficiency.
+
+```{r nfixations-interference-calculation}
+#| echo: true
+
+# Calculate distractor interference for number of fixations (Present - Absent)
+nfix_wide <- max_fixation %>%
+  pivot_wider(names_from = singleton, values_from = mean_nfixation) %>%
+  mutate(interference = Present - Absent) %>%
+  filter(!is.na(interference))
+
+# Summary statistics for number of fixations interference
+nfix_wide %>%
+  group_by(group, distractor_prevalence) %>%
+  summarise(
+    N = n(),
+    Mean_Interference = round(mean(interference), 3),
+    SD_Interference = round(sd(interference), 3),
+    SE_Interference = round(sd(interference)/sqrt(n()), 3),
+    .groups = 'drop'
+  ) %>%
+  kable(caption = "Distractor interference in number of fixations by group and prevalence") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+```{r nfixations-interference-analysis}
+#| echo: true
+
+# Repeated measures ANOVA for number of fixations interference
+nfix_interference_aov <- aov_ez(id = "subj",
+                                dv = "interference",
+                                data = nfix_wide,
+                                within = "distractor_prevalence",
+                                between = "group",
+                                type = 3)
+
+create_anova_table(nfix_interference_aov, "Repeated measures ANOVA for number of fixations interference")
+
+# Post-hoc tests for Group differences
+nfix_interference_emm <- emmeans(nfix_interference_aov, ~ group)
+nfix_interference_contrasts <- pairs(nfix_interference_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in number of fixations interference\n")
+create_posthoc_table(nfix_interference_contrasts, "Group differences in number of fixations interference")
+
+```
+
+```{r nfixations-interference-ttest}
+#| echo: true
+
+# One-sample t-tests for each group x prevalence condition
+cat("One-sample t-tests: Testing if interference differs from zero\n\n")
+
+# Get unique combinations
+conditions <- nfix_wide %>%
+  distinct(group, distractor_prevalence)
+
+# Perform t-tests for each condition
+ttest_results <- data.frame()
+for (i in 1:nrow(conditions)) {
+  grp <- conditions$group[i]
+  prev <- conditions$distractor_prevalence[i]
+
+  # Filter data for this condition
+  data_subset <- nfix_wide %>%
+    filter(group == grp, distractor_prevalence == prev)
+
+  # Perform t-test
+  t_result <- t.test(data_subset$interference, mu = 0)
+  d_result <- cohens_d(data_subset$interference, mu = 0)
+
+  # Store results
+  ttest_results <- rbind(ttest_results, data.frame(
+    group = grp,
+    distractor_prevalence = prev,
+    n = nrow(data_subset),
+    mean_interference = mean(data_subset$interference),
+    sd_interference = sd(data_subset$interference),
+    t_statistic = as.numeric(t_result$statistic),
+    df = as.numeric(t_result$parameter),
+    p_value = t_result$p.value,
+    ci_lower = t_result$conf.int[1],
+    ci_upper = t_result$conf.int[2],
+    cohens_d = as.numeric(d_result$Cohens_d),
+    d_ci_lower = d_result$CI_low,
+    d_ci_upper = d_result$CI_high
+  ))
+}
+
+# Display results
+ttest_results %>%
+  mutate(
+    t_statistic = round(t_statistic, 3),
+    p_value = round(p_value, 4),
+    ci_lower = round(ci_lower, 3),
+    ci_upper = round(ci_upper, 3),
+    mean_interference = round(mean_interference, 3),
+    sd_interference = round(sd_interference, 3),
+    cohens_d = round(cohens_d, 3),
+    d_ci_lower = round(d_ci_lower, 3),
+    d_ci_upper = round(d_ci_upper, 3)
+  ) %>%
+  kable(caption = "One-sample t-tests for number of fixations interference (H0: interference = 0)",
+        col.names = c("Group", "Prevalence", "N", "Mean", "SD", "t", "df", "p",
+                      "CI Lower", "CI Upper", "Cohen's d", "d CI Low", "d CI High")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+```{r nfixations-interference-plot}
+#| fig-cap: "Distractor interference effect in number of fixations by group and prevalence condition. The ASD group shows significantly larger interference effects than the TD group, indicating less efficient search patterns when distractors are present."
+#| fig-width: 8
+#| fig-height: 5
+
+# Prepare data for plotting
+nfix_interference_summary <- nfix_wide %>%
+  group_by(group, distractor_prevalence) %>%
+  summarise(
+    mean_interference = mean(interference),
+    se = sd(interference)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+# Create interference plot
+nfix_interference_plot <- create_bar_plot(
+  data = nfix_interference_summary,
+  x_var = "group",
+  y_var = "mean_interference",
+  group_var = "group",
+  pattern_var = "distractor_prevalence",
+  facet_var = NULL,
+  title = "",
+  x_label = "Group",
+  y_label = "Interference Effect (Number of Fixations)",
+  group_label = "Group",
+  pattern_label = "Prevalence"
+) +
+  # Add significance bracket between groups
+  geom_signif(
+    comparisons = list(c("TD", "ASD")),
+    annotation = "p = .006",
+    y_position = max(nfix_interference_summary$mean_interference + nfix_interference_summary$se) + 0.05,
+    tip_length = 0.02,
+    textsize = 4
+  ) +
+  labs(
+    x = "Group",
+    y = "Interference Effect (Number of Fixations)",
+    fill = ""
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    strip.background = element_blank(),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+
+print(nfix_interference_plot)
+
+# Save the plot
+ggsave(file.path(output_dir, 'fig_nfixations_interference.png'),
+       nfix_interference_plot,
+       width = 8, height = 5, dpi = 300)
+```
+```{r combined-nfixation}
+# combine number of fixations and fixation interference plots togehter
+combined_nfix_plot <- plot_grid(
+  nfix_plot,
+  nfix_interference_plot,
+  labels = c("A", "B"),
+  label_size = 14,
+  label_fontface = "bold",
+  ncol = 2,
+  rel_widths = c(1.2, 1)
+)
+print(combined_nfix_plot)
+# save the combined figure
+ggsave(file.path(output_dir, 'fig_combined_nfixations_interference.png'),
+       combined_nfix_plot,
+       width = 10, height = 5, dpi = 300) 
+
+
+```
+
+## Refixation Analysis
+
+### Target Refixations
+
+```{r target-refixations}
+#| echo: true
+
+# Analyze refixations to target locations
+target_refixations <- fix_with_behav %>%
+  filter(close_to == "Target") %>%
+  group_by(subj, singleton, group, distractor_prevalence, trialNo) %>%
+  summarise(n_target_fix = n(), .groups = 'drop') %>%
+  group_by(subj, singleton, distractor_prevalence, group) %>%
+  summarise(mean_target_fix = mean(n_target_fix, na.rm = TRUE), .groups = 'drop')
+
+# Complete missing combinations with 0 for target refixations
+all_target_combinations <- target_refixations %>%
+  distinct(subj, group) %>%
+  crossing(
+    distractor_prevalence = unique(target_refixations$distractor_prevalence),
+    singleton = unique(target_refixations$singleton)
+  )
+
+target_refixations <- all_target_combinations %>%
+  left_join(target_refixations, by = c("subj", "group", "distractor_prevalence", "singleton")) %>%
+  mutate(mean_target_fix = replace_na(mean_target_fix, 0))
+
+# Statistical analysis using aov_ez
+target_aov <- aov_ez(id = "subj",
+                    dv = "mean_target_fix",
+                    data = target_refixations,
+                    within = c("singleton","distractor_prevalence"),
+                    between = "group",
+                    type = 3)
+
+create_anova_table(target_aov, "Target refixation analysis")
+
+# Post-hoc tests for target refixations
+target_emm <- emmeans(target_aov, ~ group | singleton)
+target_contrasts <- pairs(target_emm, adjust = "bonferroni")
+
+cat("Post-hoc tests: Group differences in target refixations by singleton condition\n")
+create_posthoc_table(target_contrasts, "Group differences in target refixations")
+```
+
+
+There was only one signficant main effect of group, indicating that the ASD group made more refixations to the target location than the TD group overall. The rest was non-significant.
+
+
+### Distractor Refixations
+
+```{r distractor-refixations}
+#| echo: true
+
+# Analyze refixations to distractor locations
+distractor_refixations <- fix_with_behav %>%
+  filter(close_to == "Distractor") %>%
+  group_by(subj, singleton, group, distractor_prevalence, trialNo) %>%
+  summarise(n_distractor_fix = n(), .groups = 'drop') %>%
+  group_by(subj, singleton, distractor_prevalence, group) %>%
+  summarise(mean_distractor_fix = mean(n_distractor_fix, na.rm = TRUE), .groups = 'drop')
+
+# Complete missing combinations with 0 for distractor refixations
+all_distractor_combinations <- distractor_refixations %>%
+  distinct(subj, group) %>%
+  crossing(
+    distractor_prevalence = unique(distractor_refixations$distractor_prevalence),
+    singleton = unique(distractor_refixations$singleton)
+  )
+
+distractor_refixations <- all_distractor_combinations %>%
+  left_join(distractor_refixations, by = c("subj", "group", "distractor_prevalence", "singleton")) %>%
+  mutate(mean_distractor_fix = replace_na(mean_distractor_fix, 0))
+
+# Statistical analysis using aov_ez
+distractor_aov <- aov_ez(id = "subj",
+                        dv = "mean_distractor_fix",
+                        data = distractor_refixations,
+                        within = c("singleton", "distractor_prevalence"),
+                        between = "group",
+                        type = 3)
+
+create_anova_table(distractor_aov, "Distractor refixation analysis")
+
+
+```
+
+The ANOVA revealed a significant main effect of singleton and distractor prevalence, but not group. The interaction between distractor prevalence and singleton was also significant. The rest was non-significant. Refixations to the distractor location were similar between groups. The interaction was mainly due to the increase of distractor refixations when the distractor was present in the high prevalence condition compared to the low prevalence condition.
+
+### Refixation Visualization
+
+```{r target-refixation-plot}
+#| fig-cap: "Mean refixations to target locations. The ASD group shows more refixations to the target, suggesting compensatory search strategies."
+#| fig-width: 8
+#| fig-height: 5
+
+# Create target refixation plot data
+target_plot_data <- target_refixations %>%
+  group_by(group, distractor_prevalence, singleton) %>%
+  summarise(
+    mean_fix = mean(mean_target_fix),
+    se = sd(mean_target_fix)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+target_plot <- create_bar_plot(
+  data = target_plot_data,
+  x_var = "distractor_prevalence",
+  y_var = "mean_fix",
+  group_var = "group",
+  pattern_var = "singleton",
+  facet_var = NULL,
+  title = "",
+  x_label = "Distractor Prevalence",
+  y_label = "Mean Fixations to Target",
+  group_label = "Group",
+  pattern_label = "Distractor"
+) + coord_cartesian(ylim = c(0.7, 1.5)) + 
+  geom_signif(
+    xmin = 0.8, xmax = 1.2,  #
+      y_position = 1.4,
+      annotation = "p=.04",
+    tip_length = 0.02,
+    textsize = 5
+  ) +
+  geom_signif(
+    xmin = 1.8, xmax = 2.2,  # 
+      y_position = 1.4,
+      annotation = "p=.04",
+    tip_length = 0.02,
+    textsize = 5
+  )
+
+print(target_plot)
+
+ggsave(file.path(output_dir, 'fig_target_refixations.png'),
+       target_plot,
+       width = 8, height = 5, dpi = 300)
+```
+
+```{r distractor-refixation-plot}
+#| fig-cap: "Mean refixations to distractor locations. Both groups show similar patterns of distractor refixations, with increased fixations when distractors are present, particularly in high prevalence conditions."
+#| fig-width: 8
+#| fig-height: 5
+
+# Create distractor refixation plot data
+distractor_plot_data <- distractor_refixations %>%
+  group_by(group, distractor_prevalence, singleton) %>%
+  summarise(
+    mean_fix = mean(mean_distractor_fix),
+    se = sd(mean_distractor_fix)/sqrt(n()),
+    .groups = 'drop'
+  )
+
+distractor_plot <- create_bar_plot(
+  data = distractor_plot_data,
+  x_var = "distractor_prevalence",
+  y_var = "mean_fix",
+  group_var = "group",
+  pattern_var = "singleton",
+  facet_var = NULL,
+  title = "",
+  x_label = "Distractor Prevalence",
+  y_label = "Mean Fixations to Distractor",
+  group_label = "Group",
+  pattern_label = "Distractor"
+) + coord_cartesian(ylim = c(0.7, 1.5)) + 
+  geom_signif(
+    xmin = 2.1, xmax = 2.3,  # 
+      y_position = 1.2,
+      annotation = "p<.001",
+    tip_length = 0.02,
+    textsize = 5
+  ) + 
+  geom_signif(
+    xmin = 1.8, xmax = 2.2,  # 
+      y_position = 1.25,
+      annotation = "p=.038",
+    tip_length = 0.02,
+    textsize = 5
+  ) + 
+  geom_signif(
+    xmin = 1, xmax = 2,  # 
+      y_position = 1.4,
+      annotation = "p<.001",
+    tip_length = 0.02,
+    textsize = 5
+  )
+
+print(distractor_plot)
+
+ggsave(file.path(output_dir, 'fig_distractor_refixations.png'),
+       distractor_plot,
+       width = 8, height = 5, dpi = 300)
+```
+
+```{r combined-refixation-plots}
+#| fig-cap: "Combined refixation analysis. (A) Refixations to target locations. (B) Refixations to distractor locations. The ASD group shows increased target refixations, suggesting compensatory search strategies, while distractor refixations are similar between groups."
+#| fig-width: 12
+#| fig-height: 6
+
+# Combine target and distractor refixation plots
+combined_refixation_plot <- plot_grid(
+  target_plot,
+  distractor_plot,
+  labels = c("A", "B"),
+  label_size = 14,
+  label_fontface = "bold",
+  ncol = 2,
+  rel_widths = c(1, 1)
+)
+
+print(combined_refixation_plot)
+
+ggsave(file.path(output_dir, 'fig_refixations_combined.png'),
+       combined_refixation_plot,
+       width = 12, height = 6, dpi = 300)
+```
+
+## Correlations analysis: BDI, STAI trait, and IU
+
+Check potential relationships between distractor interference and participants’ trait scores on the Beck's Depression Inventory (BDI), State‑Trait Anxiety Inventory (STAI), and Intolerance of Uncertainty (IU), respectively.
+
+```{r lm-setup}
+#| echo: false
+#| message: false
+
+# Load questionnaire data and merge
+traits <- read_csv(file.path(data_dir, "questionnaires_for_correlation.csv")) %>%
+  rename(Group = Diagnostic_group, BDI = BDI_final, 
+         STAI_Trait = STAI_trait_final, IU = IU_final)
+
+lm_data <- mRTs_wide %>%
+  left_join(traits, by = c("Subj", "Group")) %>%
+  mutate(
+    # Sum contrast coding (effects coding)
+    Group_contrast = ifelse(Group == "TD", -1, 1),
+    Prevalence_contrast = ifelse(Prevalence == "Low", -1, 1),
+    # Z-score continuous predictors
+    BDI_scaled = scale(BDI)[,1],
+    STAI_Trait_scaled = scale(STAI_Trait)[,1],
+    IU_scaled = scale(IU)[,1]
+  )
+```
+
+### Model Specification
+
+**Variable Coding:**
+
+- Group: Sum contrast (TD = -1, ASD = +1)
+- Prevalence: Sum contrast (Low = -1, High = +1)  
+- Traits: Z-scored (M = 0, SD = 1)
+
+**Model Hierarchy:**
+
+- **Model 1**: interference ~ Trait_scaled + (1|Subj)
+- **Model 2**: interference ~ Trait_scaled + Group_contrast + Prevalence_contrast + (1|Subj)
+- **Model 3**: interference ~ Trait_scaled × Group_contrast + Prevalence_contrast + (1|Subj)
+
+```{r lmm-fit-models}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Function to fit nested linear models for each trait
+fit_trait_models <- function(data, trait_var) {
+  valid_data <- data %>% filter(!is.na(.data[[trait_var]]))
+  
+  if (nrow(valid_data) < 10 || n_distinct(valid_data$Subj) < 3) {
+    return(NULL)
+  }
+  
+  # Fit 3 nested models (simple linear regression - random effects removed
+  # due to singular fit with only 2 observations per subject)
+  model1 <- lm(reformulate(c(trait_var), "interference"), 
+               data = valid_data)
+  model2 <- lm(reformulate(c(trait_var, "Group_contrast", "Prevalence_contrast"), "interference"),
+               data = valid_data)
+  model3 <- lm(reformulate(c(paste0(trait_var, " * Group_contrast"), "Prevalence_contrast"), "interference"),
+               data = valid_data)
+  
+  return(list(model1 = model1, model2 = model2, model3 = model3))
+}
+
+# Fit models for each trait
+bdi_models <- fit_trait_models(lm_data, "BDI_scaled")
+stai_models <- fit_trait_models(lm_data, "STAI_Trait_scaled")
+iu_models <- fit_trait_models(lm_data, "IU_scaled")
+```
+
+### Model Comparison
+
+```{r lm-model-comparison}
+#| echo: false
+
+# Model comparison function
+compare_models <- function(models, trait_name) {
+  if (is.null(models)) return(NULL)
+  
+  cat("\n###", trait_name, "###\n\n")
+  
+  # Model 1 vs 2
+  comp12 <- anova(models$model1, models$model2)
+  cat("Model 1 vs Model 2:\n")
+  print(comp12)
+  cat(ifelse(comp12$`Pr(>F)`[2] < 0.05, 
+             "→ Adding Group & Prevalence improves fit (p < 0.05)\n\n",
+             "→ Group & Prevalence do not improve fit\n\n"))
+  
+  # Model 2 vs 3
+  comp23 <- anova(models$model2, models$model3)
+  cat("Model 2 vs Model 3:\n")
+  print(comp23)
+  cat(ifelse(comp23$`Pr(>F)`[2] < 0.05,
+             "→ Trait × Group interaction improves fit (p < 0.05)\n\n",
+             "→ Interaction not significant; prefer Model 2\n\n"))
+}
+
+compare_models(bdi_models, "BDI")
+compare_models(stai_models, "STAI-Trait")
+compare_models(iu_models, "IU")
+```
+
+### Model Summary
+
+```{r lm-summary-table}
+#| echo: false
+#| tbl-cap: "Linear model results: Trait effects on distractor interference"
+
+extract_lm_stats <- function(model, trait_name, model_name, trait_var) {
+  coefs <- summary(model)$coefficients
+  
+  # Extract intercept
+  intercept_beta <- coefs["(Intercept)", "Estimate"]
+  intercept_p <- coefs["(Intercept)", "Pr(>|t|)"]
+  
+  # Extract trait coefficient
+  trait_idx <- grep(trait_var, rownames(coefs))[1]
+  trait_beta <- coefs[trait_idx, "Estimate"]
+  trait_p <- coefs[trait_idx, "Pr(>|t|)"]
+  
+  # Extract Group coefficient if present
+  group_idx <- grep("^Group_contrast$", rownames(coefs))
+  if(length(group_idx) > 0) {
+    group_beta <- coefs[group_idx[1], "Estimate"]
+    group_p <- coefs[group_idx[1], "Pr(>|t|)"]
+  } else {
+    group_beta <- group_p <- NA
+  }
+  
+  # Extract Prevalence coefficient if present
+  prev_idx <- grep("^Prevalence_contrast$", rownames(coefs))
+  if(length(prev_idx) > 0) {
+    prev_beta <- coefs[prev_idx[1], "Estimate"]
+    prev_p <- coefs[prev_idx[1], "Pr(>|t|)"]
+  } else {
+    prev_beta <- prev_p <- NA
+  }
+  
+  # Extract Interaction coefficient if present
+  inter_idx <- grep(":", rownames(coefs))
+  if(length(inter_idx) > 0) {
+    inter_beta <- coefs[inter_idx[1], "Estimate"]
+    inter_p <- coefs[inter_idx[1], "Pr(>|t|)"]
+  } else {
+    inter_beta <- inter_p <- NA
+  }
+  
+  # Residual variance
+  resid_var <- summary(model)$sigma^2
+  resid_sd <- summary(model)$sigma
+  
+  data.frame(
+    Trait = trait_name, Model = model_name,
+    AIC = AIC(model), BIC = BIC(model),
+    Intercept = intercept_beta, Intercept_p = intercept_p,
+    Trait_Beta = trait_beta, Trait_p = trait_p,
+    Group_Beta = group_beta, Group_p = group_p,
+    Prev_Beta = prev_beta, Prev_p = prev_p,
+    Inter_Beta = inter_beta, Inter_p = inter_p,
+    Resid_Var = resid_var, Resid_SD = resid_sd
+  )
+}
+
+# Build summary table
+lm_summary <- data.frame()
+
+if (!is.null(bdi_models)) {
+  lm_summary <- rbind(lm_summary,
+    extract_lm_stats(bdi_models$model1, "BDI", "1: Trait", "BDI_scaled"),
+    extract_lm_stats(bdi_models$model2, "BDI", "2: +Group+Prev", "BDI_scaled"),
+    extract_lm_stats(bdi_models$model3, "BDI", "3: +Trait×Group", "BDI_scaled")
+  )
+}
+
+if (!is.null(stai_models)) {
+  lm_summary <- rbind(lm_summary,
+    extract_lm_stats(stai_models$model1, "STAI-Trait", "1: Trait", "STAI_Trait_scaled"),
+    extract_lm_stats(stai_models$model2, "STAI-Trait", "2: +Group+Prev", "STAI_Trait_scaled"),
+    extract_lm_stats(stai_models$model3, "STAI-Trait", "3: +Trait×Group", "STAI_Trait_scaled")
+  )
+}
+
+if (!is.null(iu_models)) {
+  lm_summary <- rbind(lm_summary,
+    extract_lm_stats(iu_models$model1, "IU", "1: Trait", "IU_scaled"),
+    extract_lm_stats(iu_models$model2, "IU", "2: +Group+Prev", "IU_scaled"),
+    extract_lm_stats(iu_models$model3, "IU", "3: +Trait×Group", "IU_scaled")
+  )
+}
+
+# Display table
+lm_summary %>%
+  mutate(across(c(AIC, BIC), ~round(.x, 1)),
+         across(c(Intercept, Trait_Beta, Group_Beta, Prev_Beta, Inter_Beta), ~round(.x, 3)),
+         across(c(Intercept_p, Trait_p, Group_p, Prev_p, Inter_p), ~round(.x, 4)),
+         across(c(Resid_Var, Resid_SD), ~round(.x, 2)),
+         Trait_Sig = case_when(Trait_p < 0.001 ~ "***",
+                               Trait_p < 0.01 ~ "**",
+                               Trait_p < 0.05 ~ "*",
+                               TRUE ~ ""),
+         Group_Sig = case_when(Group_p < 0.001 ~ "***",
+                               Group_p < 0.01 ~ "**",
+                               Group_p < 0.05 ~ "*",
+                               TRUE ~ ""),
+         Prev_Sig = case_when(Prev_p < 0.001 ~ "***",
+                              Prev_p < 0.01 ~ "**",
+                              Prev_p < 0.05 ~ "*",
+                              TRUE ~ ""),
+         Inter_Sig = case_when(Inter_p < 0.001 ~ "***",
+                               Inter_p < 0.01 ~ "**",
+                               Inter_p < 0.05 ~ "*",
+                               TRUE ~ "")) %>%
+  select(Trait, Model, AIC, BIC, 
+         Intercept, Intercept_p,
+         Trait_Beta, Trait_p, Trait_Sig,
+         Group_Beta, Group_p, Group_Sig,
+         Prev_Beta, Prev_p, Prev_Sig,
+         Inter_Beta, Inter_p, Inter_Sig,
+         Resid_Var, Resid_SD) %>%
+  kable(col.names = c("Trait", "Model", "AIC", "BIC", 
+                     "β₀", "p",
+                     "β_Trait", "p", "",
+                     "β_Group", "p", "",
+                     "β_Prev", "p", "",
+                     "β_Inter", "p", "",
+                     "σ²_Resid", "σ_Resid"),
+        caption = "Linear models: Coefficient table with beta values and residual variance. 
+                   β₀ = Intercept; β_Trait = ms change per 1 SD trait increase; β_Group = ASD effect (sum contrast); 
+                   β_Prev = Prevalence effect; β_Inter = Trait×Group interaction; σ² = Variance; σ = SD. 
+                   Significance: *** p<0.001, ** p<0.01, * p<0.05",
+        align = c('l', 'l', rep('r', 18))) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), 
+                font_size = 9,
+                full_width = TRUE) %>%
+  collapse_rows(columns = 1, valign = "top") %>%
+  add_header_above(c(" " = 4, "Intercept" = 2, "Trait Effect" = 3, 
+                     "Group Effect" = 3, "Prevalence Effect" = 3, 
+                     "Interaction" = 3, "Residual" = 2))
+
+# save the table as csv
+#write_csv(lm_summary, file.path("C:/Users/whate/Downloads", "lm_trait_interference_summary.csv"))
+```
+
+### Model Equations
+
+The coefficients in the table above can be used to construct prediction equations for each model. Note: These are simple linear regression models (not mixed-effects models) because there are only 2 observations per participant (one per prevalence condition), which is insufficient for reliable random effect estimation.
+
+**Model 1: Trait-only model**
+$$
+\text{Interference}_i = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \epsilon_i
+$$
+
+**Model 2: Main effects model**
+$$
+\text{Interference}_i = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \beta_{\text{Group}} \times \text{Group}_i + \beta_{\text{Prev}} \times \text{Prev}_i + \epsilon_i
+$$
+
+**Model 3: Interaction model**
+$$
+\text{Interference}_i = \beta_0 + \beta_{\text{Trait}} \times \text{Trait}_i + \beta_{\text{Group}} \times \text{Group}_i + \beta_{\text{Prev}} \times \text{Prev}_i + \beta_{\text{Inter}} \times \text{Trait}_i \times \text{Group}_i + \epsilon_i
+$$
+
+Where:
+- $i$ indexes observations
+- $\beta_0$ = Intercept (mean interference when all predictors = 0)
+- $\beta_{\text{Trait}}$ = Effect of trait score (z-scored, so per 1 SD increase)
+- $\beta_{\text{Group}}$ = Effect of group (sum contrast: TD = -1, ASD = +1)
+- $\beta_{\text{Prev}}$ = Effect of prevalence (sum contrast: Low = -1, High = +1)
+- $\beta_{\text{Inter}}$ = Trait × Group interaction effect
+- $\epsilon_i \sim N(0, \sigma^2_{\text{Resid}})$ = Residual error
+
+**Example prediction for Model 2 (BDI):**
+
+For a TD participant (Group = -1) in Low prevalence (Prev = -1) with BDI score 1 SD above mean (Trait = 1):
+
+$$
+\text{Predicted Interference} = \beta_0 + (1 \times \beta_{\text{BDI}}) + (-1 \times \beta_{\text{Group}}) + (-1 \times \beta_{\text{Prev}})
+$$
+
+The actual observed value will also include the residual term $\epsilon_i$, which follows a normal distribution with variance $\sigma^2_{\text{Resid}}$.
+
+```{r model-equation-example}
+#| echo: true
+#| eval: true
+
+# Example: Construct prediction from Model 2 coefficients (BDI)
+if (!is.null(bdi_models)) {
+  model2_coefs <- coef(bdi_models$model2)
+  
+  cat("Example Model 2 (BDI) Coefficients:\n")
+  cat("β₀ (Intercept):", round(model2_coefs["(Intercept)"], 3), "ms\n")
+  cat("β_BDI:", round(model2_coefs["BDI_scaled"], 3), "ms per SD\n")
+  cat("β_Group:", round(model2_coefs["Group_contrast"], 3), "ms\n")
+  cat("β_Prev:", round(model2_coefs["Prevalence_contrast"], 3), "ms\n\n")
+  
+  # Example prediction
+  cat("Example Prediction:\n")
+  cat("TD participant (Group = -1), Low Prevalence (Prev = -1), BDI = 0 (mean):\n")
+  pred <- model2_coefs["(Intercept)"] + 
+          0 * model2_coefs["BDI_scaled"] + 
+          (-1) * model2_coefs["Group_contrast"] + 
+          (-1) * model2_coefs["Prevalence_contrast"]
+  cat("Predicted interference =", round(pred, 2), "ms \n\n")
+  
+  cat("ASD participant (Group = +1), High Prevalence (Prev = +1), BDI = +1 SD:\n")
+  pred2 <- model2_coefs["(Intercept)"] + 
+           1 * model2_coefs["BDI_scaled"] + 
+           1 * model2_coefs["Group_contrast"] + 
+           1 * model2_coefs["Prevalence_contrast"]
+  cat("Predicted interference =", round(pred2, 2), "ms \n")
+}
+```
+
+### Residual Diagnostics
+
+```{r lm-diagnostics}
+#| echo: false
+#| fig-cap: "Residual diagnostic plots for Model 3 (most complex). Q-Q plots assess normality; Residuals vs Fitted assess homoscedasticity/linearity."
+#| fig-width: 12
+#| fig-height: 4
+
+create_diagnostics <- function(model, trait_name) {
+  resid <- residuals(model)
+  fitted <- fitted(model)
+  
+  p1 <- ggplot(data.frame(resid = resid), aes(sample = resid)) +
+    stat_qq() + stat_qq_line(color = "red") +
+    labs(title = paste(trait_name, "Q-Q Plot"), x = "Theoretical", y = "Sample") +
+    theme_classic()
+  
+  p2 <- ggplot(data.frame(fitted = fitted, resid = resid), aes(fitted, resid)) +
+    geom_point(alpha = 0.5) +
+    geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+    geom_smooth(se = FALSE, color = "blue") +
+    labs(title = paste(trait_name, "Residuals vs Fitted"), x = "Fitted", y = "Residuals") +
+    theme_classic()
+  
+  return(list(p1, p2))
+}
+
+# Create diagnostic plots for each trait
+diag_plots <- list()
+if (!is.null(bdi_models)) diag_plots$BDI <- create_diagnostics(bdi_models$model3, "BDI")
+if (!is.null(stai_models)) diag_plots$STAI <- create_diagnostics(stai_models$model3, "STAI")
+if (!is.null(iu_models)) diag_plots$IU <- create_diagnostics(iu_models$model3, "IU")
+
+# Display as combined plot
+if (length(diag_plots) > 0) {
+  all_plots <- unlist(diag_plots, recursive = FALSE)
+  wrap_plots(all_plots, ncol = 2)
+}
+```
+
+### Trait-Interference Visualizations
+
+```{r lm-visualizations}
+#| echo: false
+#| fig-cap: "Trait-interference relationships by Group and Prevalence. Points = individual observations; lines = linear fits. Each plot shows all four Group × Prevalence combinations."
+#| fig-width: 12
+#| fig-height: 10
+
+# Define Dark2 palette colors (matching seaborn's Dark2)
+dark2_colors <- RColorBrewer::brewer.pal(4, "Dark2")
+
+plot_list <- list()
+
+# BDI
+if (sum(!is.na(lm_data$BDI)) > 2) {
+  # Create dummy data for legend
+  legend_data <- data.frame(
+    Group_Prev = factor(c("ASD/Low", "ASD/High", "TD/Low", "TD/High"),
+                        levels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")),
+    x = rep(0, 4),
+    y = rep(0, 4)
+  )
+  
+  plot_list$BDI <- ggplot() +
+    # ASD/Low Prevalence: color 1, dashed line, open circles
+    geom_point(data = lm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "Low"),
+               aes(x = BDI, y = interference), color = dark2_colors[1], 
+               shape = 21, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
+    geom_smooth(data = lm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "Low"),
+                aes(x = BDI, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[1], linetype = "dashed", alpha = 0.2, linewidth = 1) +
+    # ASD/High Prevalence: color 2, dashed line, filled circles
+    geom_point(data = lm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "High"),
+               aes(x = BDI, y = interference), color = dark2_colors[2], 
+               shape = 16, size = 2.5, alpha = 0.3) +
+    geom_smooth(data = lm_data %>% filter(!is.na(BDI), Group == "ASD", Prevalence == "High"),
+                aes(x = BDI, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[2], linetype = "dashed", alpha = 0.2, linewidth = 1) +
+    # TD/Low Prevalence: color 3, solid line, open squares
+    geom_point(data = lm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "Low"),
+               aes(x = BDI, y = interference), color = dark2_colors[3], 
+               shape = 22, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
+    geom_smooth(data = lm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "Low"),
+                aes(x = BDI, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[3], linetype = "solid", alpha = 0.2, linewidth = 1) +
+    # TD/High Prevalence: color 4, solid line, filled squares
+    geom_point(data = lm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "High"),
+               aes(x = BDI, y = interference), color = dark2_colors[4], 
+               shape = 15, size = 2.5, alpha = 0.3) +
+    geom_smooth(data = lm_data %>% filter(!is.na(BDI), Group == "TD", Prevalence == "High"),
+                aes(x = BDI, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[4], linetype = "solid", alpha = 0.2, linewidth = 1) +
+    # Add invisible points for legend
+    geom_point(data = legend_data, aes(x = x, y = y, color = Group_Prev, shape = Group_Prev, linetype = Group_Prev),
+               size = 3, alpha = 0) +
+    scale_color_manual(name = "Group/Prevalence",
+                       values = dark2_colors,
+                       labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    scale_shape_manual(name = "Group/Prevalence",
+                       values = c(21, 16, 22, 15),
+                       labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    scale_linetype_manual(name = "Group/Prevalence",
+                          values = c("dashed", "dashed", "solid", "solid"),
+                          labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    labs(x = "BDI Score", y = "Interference (ms)", title = "BDI") +
+    theme_classic(base_size = 11) +
+    theme(legend.position = "bottom",
+          legend.title = element_text(face = "bold")) +
+    guides(color = guide_legend(override.aes = list(alpha = 1, size = 3)),
+           shape = guide_legend(override.aes = list(alpha = 1, size = 3)),
+           linetype = guide_legend(override.aes = list(alpha = 1))) + 
+    # show x-axis from 0 to max BDI score in increments of 10 
+    scale_x_continuous(breaks = seq(0, max(lm_data$BDI, na.rm = TRUE), by = 10),
+                       limits = c(min(lm_data$BDI, na.rm = TRUE), max(lm_data$BDI, na.rm = TRUE)),
+                       # add some padding to the x-axis
+                      #expand = expansion(mult = c(0.05, 0.05))
+                      )
+}
+
+# STAI-Trait
+if (sum(!is.na(lm_data$STAI_Trait)) > 2) {
+  # Create dummy data for legend
+  legend_data <- data.frame(
+    Group_Prev = factor(c("ASD/Low", "ASD/High", "TD/Low", "TD/High"),
+                        levels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")),
+    x = rep(0, 4),
+    y = rep(0, 4)
+  )
+  
+  plot_list$STAI <- ggplot() +
+    # ASD/Low Prevalence: color 1, dashed line, open circles
+    geom_point(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "Low"),
+               aes(x = STAI_Trait, y = interference), color = dark2_colors[1], 
+               shape = 21, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
+    geom_smooth(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "Low"),
+                aes(x = STAI_Trait, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[1], linetype = "dashed", alpha = 0.2, linewidth = 1) +
+    # ASD/High Prevalence: color 2, dashed line, filled circles
+    geom_point(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "High"),
+               aes(x = STAI_Trait, y = interference), color = dark2_colors[2], 
+               shape = 16, size = 2.5, alpha = 0.3) +
+    geom_smooth(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "ASD", Prevalence == "High"),
+                aes(x = STAI_Trait, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[2], linetype = "dashed", alpha = 0.2, linewidth = 1) +
+    # TD/Low Prevalence: color 3, solid line, open squares
+    geom_point(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "Low"),
+               aes(x = STAI_Trait, y = interference), color = dark2_colors[3], 
+               shape = 22, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
+    geom_smooth(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "Low"),
+                aes(x = STAI_Trait, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[3], linetype = "solid", alpha = 0.2, linewidth = 1) +
+    # TD/High Prevalence: color 4, solid line, filled squares
+    geom_point(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "High"),
+               aes(x = STAI_Trait, y = interference), color = dark2_colors[4], 
+               shape = 15, size = 2.5, alpha = 0.3) +
+    geom_smooth(data = lm_data %>% filter(!is.na(STAI_Trait), Group == "TD", Prevalence == "High"),
+                aes(x = STAI_Trait, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[4], linetype = "solid", alpha = 0.2, linewidth = 1) +
+    # Add invisible points for legend
+    geom_point(data = legend_data, aes(x = x, y = y, color = Group_Prev, shape = Group_Prev, linetype = Group_Prev),
+               size = 3, alpha = 0) +
+    scale_color_manual(name = "Group/Prevalence",
+                       values = dark2_colors,
+                       labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    scale_shape_manual(name = "Group/Prevalence",
+                       values = c(21, 16, 22, 15),
+                       labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    scale_linetype_manual(name = "Group/Prevalence",
+                          values = c("dashed", "dashed", "solid", "solid"),
+                          labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    labs(x = "STAI-Trait Score", y = "Interference (ms)", title = "STAI-Trait") +
+    theme_classic(base_size = 11) +
+    theme(legend.position = "bottom",
+          legend.title = element_text(face = "bold")) +
+    guides(color = guide_legend(override.aes = list(alpha = 1, size = 3)),
+           shape = guide_legend(override.aes = list(alpha = 1, size = 3)),
+           linetype = guide_legend(override.aes = list(alpha = 1))) +
+    # show x-axis from 10 to max STAI-trait score in increments of 10 
+    scale_x_continuous(breaks = seq(10, max(lm_data$STAI_Trait, na.rm = TRUE), by = 10),
+                       limits = c(10, max(lm_data$STAI_Trait, na.rm = TRUE)))
+}
+
+# IU
+if (sum(!is.na(lm_data$IU)) > 2) {
+  # Create dummy data for legend
+  legend_data <- data.frame(
+    Group_Prev = factor(c("ASD/Low", "ASD/High", "TD/Low", "TD/High"),
+                        levels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")),
+    x = rep(0, 4),
+    y = rep(0, 4)
+  )
+  
+  plot_list$IU <- ggplot() +
+    # ASD/Low Prevalence: color 1, dashed line, open circles
+    geom_point(data = lm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "Low"),
+               aes(x = IU, y = interference), color = dark2_colors[1], 
+               shape = 21, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
+    geom_smooth(data = lm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "Low"),
+                aes(x = IU, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[1], linetype = "dashed", alpha = 0.2, linewidth = 1) +
+    # ASD/High Prevalence: color 2, dashed line, filled circles
+    geom_point(data = lm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "High"),
+               aes(x = IU, y = interference), color = dark2_colors[2], 
+               shape = 16, size = 2.5, alpha = 0.3) +
+    geom_smooth(data = lm_data %>% filter(!is.na(IU), Group == "ASD", Prevalence == "High"),
+                aes(x = IU, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[2], linetype = "dashed", alpha = 0.2, linewidth = 1) +
+    # TD/Low Prevalence: color 3, solid line, open squares
+    geom_point(data = lm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "Low"),
+               aes(x = IU, y = interference), color = dark2_colors[3], 
+               shape = 22, fill = NA, size = 2.5, alpha = 0.3, stroke = 1) +
+    geom_smooth(data = lm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "Low"),
+                aes(x = IU, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[3], linetype = "solid", alpha = 0.2, linewidth = 1) +
+    # TD/High Prevalence: color 4, solid line, filled squares
+    geom_point(data = lm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "High"),
+               aes(x = IU, y = interference), color = dark2_colors[4], 
+               shape = 15, size = 2.5, alpha = 0.3) +
+    geom_smooth(data = lm_data %>% filter(!is.na(IU), Group == "TD", Prevalence == "High"),
+                aes(x = IU, y = interference), method = "lm", se = TRUE,
+                color = dark2_colors[4], linetype = "solid", alpha = 0.2, linewidth = 1) +
+    # Add invisible points for legend
+    geom_point(data = legend_data, aes(x = x, y = y, color = Group_Prev, shape = Group_Prev, linetype = Group_Prev),
+               size = 3, alpha = 0) +
+    scale_color_manual(name = "Group/Prevalence",
+                       values = dark2_colors,
+                       labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    scale_shape_manual(name = "Group/Prevalence",
+                       values = c(21, 16, 22, 15),
+                       labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    scale_linetype_manual(name = "Group/Prevalence",
+                          values = c("dashed", "dashed", "solid", "solid"),
+                          labels = c("ASD/Low", "ASD/High", "TD/Low", "TD/High")) +
+    labs(x = "IU Score", y = "Interference (ms)", title = "IU") +
+    theme_classic(base_size = 11) +
+    theme(legend.position = "bottom",
+          legend.title = element_text(face = "bold")) +
+    guides(color = guide_legend(override.aes = list(alpha = 1, size = 3)),
+           shape = guide_legend(override.aes = list(alpha = 1, size = 3)),
+           linetype = guide_legend(override.aes = list(alpha = 1))) +
+    # show x-axis from 18 to max IU score (90) in increments of 10 
+    scale_x_continuous(breaks = seq(20, 90, by = 10),
+                       limits = c(20, max(lm_data$IU, na.rm = TRUE)))
+}
+
+if (length(plot_list) > 0) {
+  wrap_plots(plot_list, ncol = 1) + plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  
+  # show plots
+  print(plot_list)
+  
+  # ggsave(file.path(output_dir, 'fig_trait_correlations_lm.png'),
+  #        width = 10, height = 10, dpi = 300)
+}
+# combine all three trait plots into one figure with shared legend
+ggsave(file.path(output_dir, 'fig_trait_correlations_combined.png'),
+          plot = wrap_plots(plot_list, ncol = 1) + plot_layout(guides = "collect") &
+            theme(legend.position = "bottom"), width = 10, height = 12, dpi = 300)
+
+
+```
+
+### Interpretation
+
+**Coefficient Interpretation:**
+
+- **Trait β**: Change in interference (ms) per 1 SD increase in trait score
+- **Group_contrast**: ASD deviation from grand mean (TD = opposite sign)
+- **Interaction**: Whether trait effect differs between groups
+
+**Model Selection:**
+
+- Use AIC/BIC and likelihood ratio tests
+- If interaction significant (p < 0.05): Trait effects differ by group
+- If no interaction: Interpret main effects from Model 2
+
+**Effect Size:**
+
+- Small: |β| < 10 ms per SD
+- Medium: |β| = 10-20 ms per SD  
+- Large: |β| > 20 ms per SD
+
+**Model 2 Interpretation:** Examining the main effects model (Model 2), which includes Trait scores, Group, and Distractor Prevalence as predictors, reveals that Group consistently predicts distractor interference across BDI and STAI_Trait analyses. This significant Group effect indicates that the ASD group shows greater distractor interference compared to the TD group, independent of individual differences in depression or trait anxiety scores. Notably, the trait predictors themselves (BDI, STAI-Trait, IU) do not show significant relationships with distractor interference (all trait p > 0.05), suggesting that within-group variation in these psychological characteristics does not systematically relate to attentional control deficits. Similarly, distractor prevalence does not significantly modulate interference effects (Prevalence p > 0.05), indicating that experiencing distractors more frequently (90% vs. 50%) does not lead to differential suppression across the session. These findings suggest that group-level differences in attentional control are robust and not explained by comorbid affective symptoms or uncertainty intolerance.
+
+# Discussion
+
+## Key Findings
+
+Our analysis reveals several important differences between ASD and TD groups in distractor suppression mechanisms:
+
+### Behavioral Performance
+
+1.  **Increased Distractor Interference**: The ASD group showed significantly larger distractor interference effects compared to the TD group. Post-hoc tests confirmed that distractor presence significantly slowed RTs in the ASD group (p \< .001), but not in the TD group (p = .332), indicating that TD individuals effectively suppressed distractors with perfect cue validity while ASD individuals did not.
+
+2.  **Group-Specific Suppression Deficits**: One-sample t-tests revealed that the TD group showed no significant distractor interference (not different from zero), while the ASD group demonstrated significant interference effects, highlighting fundamental differences in suppression mechanisms.
+
+### Eye Movement Patterns
+
+1.  **Comparable Initial Capture**: Both groups showed similar patterns of initial attentional capture by salient distractors. The main effect of singleton was significant (both groups more likely to fixate distractors when present), but no significant group differences in first fixation patterns were observed.
+
+2.  **Inefficient Search Strategies**: The ASD group made significantly more fixations overall, particularly when distractors were present (significant Group × Singleton interaction). This indicates less efficient search patterns in ASD, requiring more fixations to locate targets when distractors are present.
+
+3.  **Compensatory Target Processing**: The ASD group showed significantly more refixations to target locations overall (significant main effect of group), suggesting compensatory mechanisms to overcome attentional difficulties, while distractor refixations were similar between groups.
+
+4.  **Prevalence-Modulated Distractor Processing**: Distractor refixations showed a significant interaction between singleton presence and distractor prevalence, with increased distractor refixations when distractors were present in high prevalence conditions compared to low prevalence conditions, affecting both groups similarly.
+
+## Theoretical Implications
+
+These findings support the enhanced perceptual functioning theory in autism, which suggests that individuals with ASD show increased sensitivity to local features and details. The prolonged engagement with distractors may reflect this enhanced processing of salient visual information, even when it is task-irrelevant.
+
+The comparable initial capture but prolonged engagement suggests that the primary difference lies not in bottom-up attentional capture mechanisms, but in top-down control processes responsible for disengaging attention from irrelevant information.
+
+# Conclusion
+
+This study provides compelling evidence for altered distractor suppression mechanisms in autism spectrum disorder. While individuals with ASD show comparable initial attentional capture by salient distractors, they demonstrate significant difficulties in disengaging attention from irrelevant information. These findings advance our understanding of attentional differences in autism and highlight potential targets for intervention.
+
+The combination of behavioral and eye movement measures provides a comprehensive picture of the temporal dynamics of attentional control, revealing that the primary challenge for individuals with ASD lies in the later stages of attentional processing rather than initial capture mechanisms.
+
+```{r session-info}
+#| echo: false
+
+# Document computational environment
+cat("Analysis completed on:", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n\n")
+cat("R Session Information:\n")
+sessionInfo()
+```

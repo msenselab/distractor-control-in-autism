@@ -1,0 +1,131 @@
+tree:
+  - id: N01
+    type: question
+    support_level: explicit
+    source_refs: ["docs/manuscript-r3.md:49 (Introduction, gaps)", "logic/problem.md G1,G2"]
+    title: "Does the where/what dissociation in autism persist under explicit perfect cueing, and is the locus in iterative updating rather than prior formation?"
+    description: >
+      Core research question. Pairs a 100% valid spatial cue (removes spatial uncertainty) with a
+      session-wise distractor-prevalence manipulation (frequency prior) and time-resolved eye
+      movements to dissociate capture from disengagement.
+    children:
+      - id: N02
+        type: decision
+        support_level: explicit
+        source_refs: ["docs/manuscript-r3.md:111 (Design and procedure)"]
+        title: "Use a 100% valid spatial cue + low/high prevalence across two counterbalanced sessions"
+        description: >
+          Explicit prior supplied trial-by-trial (vs. learned probability cueing in Allenmark 2021);
+          prevalence varied 50% vs 90% to manipulate how surprising/expected distractors are.
+        children:
+          - id: N03
+            type: decision
+            support_level: explicit
+            source_refs: ["docs/manuscript-r3.md:61 (Participants, power analysis)"]
+            title: "Target 24/group via PANGEA from Allenmark d=0.33; recruit 71, analyse 28 ASD + 31 TD"
+            description: "Power analysis on the Group × Prevalence interaction; exclusions for RADS-R/eye-tracking quality."
+          - id: N04
+            type: experiment
+            support_level: explicit
+            source_refs: ["docs/manuscript-r3.md:137", "data_ana.qmd:rt-mixed-model"]
+            title: "RT mixed ANOVA + interference analysis"
+            description: "Tests whether perfect spatial cueing abolishes the group difference in RT interference."
+            evidence: [C01, C02]
+            children:
+              - id: N05
+                type: finding
+                support_level: explicit
+                source_refs: ["docs/manuscript-r3.md:137,141", "evidence/figures/figure2.md"]
+                title: "Larger RT interference in ASD (Group × Singleton); TD ≈ 0"
+                description: "Group × Singleton F=13.86, p<.001; ASD 62.88 ms vs TD 9.64 ms (n.s.); TD not different from zero."
+                evidence: [C01, C02]
+          - id: N06
+            type: experiment
+            support_level: explicit
+            source_refs: ["docs/manuscript-r3.md:163", "data_ana.qmd:first-fixation-analysis1"]
+            title: "First-fixation capture ANOVAs (distractor- and target-directed)"
+            description: "Tests whether initial oculomotor capture differs across groups."
+            evidence: [C03]
+            children:
+              - id: N07
+                type: finding
+                support_level: explicit
+                source_refs: ["docs/manuscript-r3.md:163", "evidence/figures/figure4.md"]
+                title: "Comparable initial capture; capture rises with singleton presence equally"
+                description: "Distractor first-fixation F=37.18, p<.001; Group and Group×Prevalence n.s. — argues against weak-priors/capture account."
+                evidence: [C03]
+          - id: N08
+            type: experiment
+            support_level: explicit
+            source_refs: ["docs/manuscript-r3.md:171", "data_ana.qmd:nfixations-analysis"]
+            title: "Number-of-fixations ANOVA + fixation-interference t-tests"
+            description: "Tests post-selective search depth and its prevalence sensitivity."
+            evidence: [C04, C05]
+            children:
+              - id: N09
+                type: finding
+                support_level: explicit
+                source_refs: ["docs/manuscript-r3.md:171", "evidence/figures/figure5.md"]
+                title: "More fixations in ASD (Group × Singleton); ASD interference in BOTH prevalence conditions, TD only low"
+                description: "Group F=5.49; Group×Singleton F=8.32; ASD ps<.01 both prevalences, TD only low (p=.0357)."
+                evidence: [C04, C05]
+          - id: N10
+            type: experiment
+            support_level: explicit
+            source_refs: ["docs/manuscript-r3.md:179,181", "data_ana.qmd:target-refixations"]
+            title: "Target & distractor refixation ANOVAs"
+            description: "Tests compensatory re-checking and frequency-prior learning."
+            evidence: [C06, C07]
+            children:
+              - id: N11
+                type: finding
+                support_level: explicit
+                source_refs: ["docs/manuscript-r3.md:179,181", "evidence/figures/figure6.md"]
+                title: "More target refixations in ASD; three-way interaction shows ASD learned the frequency prior"
+                description: "Target Group F=4.42; distractor three-way Group×Prev×Singleton F=6.12 (ASD avoid cued location under high prevalence when no singleton)."
+                evidence: [C06, C07]
+      - id: N12
+        type: experiment
+        support_level: explicit
+        source_refs: ["docs/appendix.md", "data_ana.qmd:lm-model-comparison"]
+        title: "Trait linear-model comparison (BDI/STAI/IU)"
+        description: "Tests whether affective comorbidity explains the group interference difference."
+        evidence: [C08]
+        children:
+          - id: N13
+            type: finding
+            support_level: explicit
+            source_refs: ["docs/appendix.md:16,19,21", "evidence/tables/tableA1.md"]
+            title: "Group effect robust; traits n.s. after Group; IU significant only trait-only"
+            description: "Best model (Model 2) keeps Group significant (BDI p=.005, STAI p=.027), traits n.s.; IU trait-only p=.002."
+            evidence: [C08]
+      - id: N14
+        type: decision
+        support_level: explicit
+        source_refs: ["CHANGELOG.md:55 (2026-01-27)", "data_ana.qmd:lmm-fit-models"]
+        title: "Replace lmer with lm for trait correlation models"
+        description: >
+          The trait-correlation analysis was refactored from mixed-effects (lmer/fixef) to ordinary
+          lm/coef. The implemented trait models are therefore lm, despite the README's general
+          'mixed-effects models' phrasing.
+      - id: N15
+        type: dead_end
+        support_level: explicit
+        source_refs: ["data_ana.qmd:642 (commented aov_car)"]
+        title: "Abandoned single 4-way aov_car for first fixations"
+        description: >
+          A commented-out aov_car model crossing group × close_to × singleton × prevalence in one
+          Error term was replaced by separate aov_ez ANOVAs filtered to Distractor and Target
+          landings, the implemented approach.
+      - id: N16
+        type: dead_end
+        support_level: explicit
+        source_refs: ["docs/manuscript-r3.md:199,201,213 (struck-through Discussion)"]
+        title: "Reframed interpretation from precision-regulation to AIPU"
+        description: >
+          Earlier Discussion paragraphs framing results purely as phasic precision-weighting on
+          surprising events were struck through and reframed: persistent interference even under
+          high (expected) prevalence is better accommodated by the AIPU (updating-driven) account
+          than by strictly surprise-graded precision-regulation. A surprise-grading effect cannot be
+          definitively excluded given moderate power.
+        evidence: [C05, C07]

@@ -1,0 +1,244 @@
+{
+  "checks": [
+    {
+      "check": "exists:PAPER.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:logic/problem.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:logic/claims.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:logic/concepts.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:logic/experiments.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:logic/related_work.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:logic/solution/constraints.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:src/environment.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:trace/exploration_tree.yaml",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exists:evidence/README.md",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "claims>=1",
+      "pass": true,
+      "detail": "8 claims"
+    },
+    {
+      "check": "experiments>=3",
+      "pass": true,
+      "detail": "8 experiments"
+    },
+    {
+      "check": "proof-resolves:C01",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "proof-resolves:C02",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "proof-resolves:C03",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "proof-resolves:C04",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "proof-resolves:C05",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "proof-resolves:C06",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "proof-resolves:C07",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "proof-resolves:C08",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "verifies-resolves:E01",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "verifies-resolves:E02",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "verifies-resolves:E03",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "verifies-resolves:E04",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "verifies-resolves:E05",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "verifies-resolves:E06",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "verifies-resolves:E07",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "verifies-resolves:E08",
+      "pass": true,
+      "detail": "unresolved set()"
+    },
+    {
+      "check": "experiments-directional",
+      "pass": true,
+      "detail": "found reported values: []"
+    },
+    {
+      "check": "evidence-pair:figures/figure2",
+      "pass": true,
+      "detail": "missing sibling .md"
+    },
+    {
+      "check": "evidence-pair:figures/figure3",
+      "pass": true,
+      "detail": "missing sibling .md"
+    },
+    {
+      "check": "evidence-pair:figures/figure4",
+      "pass": true,
+      "detail": "missing sibling .md"
+    },
+    {
+      "check": "evidence-pair:figures/figure5",
+      "pass": true,
+      "detail": "missing sibling .md"
+    },
+    {
+      "check": "evidence-pair:figures/figure6",
+      "pass": true,
+      "detail": "missing sibling .md"
+    },
+    {
+      "check": "evidence-pair:figures/figureA1",
+      "pass": true,
+      "detail": "missing sibling .md"
+    },
+    {
+      "check": "evidence-pair:tables/table1",
+      "pass": true,
+      "detail": "missing sibling .md"
+    },
+    {
+      "check": "evidence-pair:tables/tableA1",
+      "pass": true,
+      "detail": "missing sibling .md"
+    },
+    {
+      "check": "evidence-png:figures/figure2",
+      "pass": true,
+      "detail": "missing sibling .png"
+    },
+    {
+      "check": "evidence-png:figures/figure3",
+      "pass": true,
+      "detail": "missing sibling .png"
+    },
+    {
+      "check": "evidence-png:figures/figure4",
+      "pass": true,
+      "detail": "missing sibling .png"
+    },
+    {
+      "check": "evidence-png:figures/figure5",
+      "pass": true,
+      "detail": "missing sibling .png"
+    },
+    {
+      "check": "evidence-png:figures/figure6",
+      "pass": true,
+      "detail": "missing sibling .png"
+    },
+    {
+      "check": "evidence-png:figures/figureA1",
+      "pass": true,
+      "detail": "missing sibling .png"
+    },
+    {
+      "check": "evidence-png:tables/table1",
+      "pass": true,
+      "detail": "missing sibling .png"
+    },
+    {
+      "check": "evidence-png:tables/tableA1",
+      "pass": true,
+      "detail": "missing sibling .png"
+    },
+    {
+      "check": "yaml-parses",
+      "pass": true,
+      "detail": "16 nodes"
+    }
+  ],
+  "failures": [],
+  "counts": {
+    "claims": 8,
+    "experiments": 8,
+    "evidence_figures": 6,
+    "evidence_tables": 2,
+    "trace_nodes": 16,
+    "concepts": 10
+  },
+  "passed": true
+}
