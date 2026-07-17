@@ -2,6 +2,12 @@
 
 Project-local running ledger. Stable project identity, design, and durable methodological notes belong in `prj-memory.md`.
 
+## 2026-07-17 — Biological Psychiatry: CNNI submission
+- Completed/updated: project status milestone recorded.
+- Key files: `prj-memory.md`, `CHANGELOG.md`, `ara/PAPER.md`.
+- Result/state: *Nature Mental Health* desk rejection received on 2026-07-14; manuscript submitted to *Biological Psychiatry: Cognitive Neuroscience and Neuroimaging* on 2026-07-17.
+- Next: await editorial decision.
+
 ## 2026-06-23 — ARA bootstrap
 - Completed/updated: bootstrapped project-local Agent-Native Research Artifact under `ara/` via the project-ara-workflow + ara-compiler.
 - Key files: `ara/` (PAPER.md, logic/, src/, data/, trace/, evidence/, validation/), `code/bootstrap_ara_20260623.py`, `prj-memory.md`, research-index `projects.yaml`.

@@ -2,7 +2,7 @@
 title: "Intact Priors but Prolonged Updating: Distractor Suppression in Autism under Perfect Predictability"
 authors: ["Yun Wai Foo", "Sonja Coenen", "Christine M. Falter-Wagner", "Zhuanghua Shi"]
 year: 2026
-venue: "Manuscript under review (transferred to Nature Mental Health, 2026-06-18; previously submitted to PNAS Nexus, Psychological Science)"
+venue: "Manuscript under review at Biological Psychiatry: Cognitive Neuroscience and Neuroimaging (submitted 2026-07-17; desk rejected by Nature Mental Health 2026-07-14; previously submitted to PNAS Nexus and Psychological Science)"
 doi: "Not assigned (unpublished); repository: https://github.com/msenselab/distractor-control-in-autism"
 ara_version: "1.0"
 domain: "Cognitive neuroscience / experimental psychology — visual attention, predictive processing in autism"
