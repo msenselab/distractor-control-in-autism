@@ -2,6 +2,12 @@
 
 Project-local running ledger. Stable project identity, design, and durable methodological notes belong in `prj-memory.md`.
 
+## 2026-07-28 — Biological Psychiatry: Global Open Science submission
+- Completed/updated: reworked the cover letter and recorded the new submission milestone.
+- Key files: `docs/cover-letter-BPGOS.md`, `prj-memory.md`, `CHANGELOG.md`, `ara/PAPER.md`.
+- Result/state: *Biological Psychiatry: Cognitive Neuroscience and Neuroimaging* desk rejection received on 2026-07-24; manuscript submitted to *Biological Psychiatry: Global Open Science* on 2026-07-28.
+- Next: await editorial decision.
+
 ## 2026-07-17 — Biological Psychiatry: CNNI submission
 - Completed/updated: project status milestone recorded.
 - Key files: `prj-memory.md`, `CHANGELOG.md`, `ara/PAPER.md`.
