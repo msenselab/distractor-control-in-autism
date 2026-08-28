@@ -2,6 +2,12 @@
 
 Project-local running ledger. Stable project identity, design, and durable methodological notes belong in `prj-memory.md`.
 
+## 2026-08-26 — Out for peer review
+- Completed/updated: recorded the journal-portal status milestone.
+- Key files: `prj-memory.md`, `CHANGELOG.md`, `ara/PAPER.md`.
+- Result/state: *Biological Psychiatry: Global Open Science* portal status changed to “Out for Peer Review.”
+- Next: await the peer-review decision.
+
 ## 2026-07-28 — Biological Psychiatry: Global Open Science submission
 - Completed/updated: reworked the cover letter and recorded the new submission milestone.
 - Key files: `docs/cover-letter-BPGOS.md`, `prj-memory.md`, `CHANGELOG.md`, `ara/PAPER.md`.

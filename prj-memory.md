@@ -1,6 +1,6 @@
 # Project Memory — distractor-control-in-autism
 
-*Last updated: 2026-07-28*
+*Last updated: 2026-08-26*
 
 Agent-native artifact: ara/PAPER.md (ARA Seal Level 1 validated — ara/validation/level1_report.json; reproducible generator: code/bootstrap_ara_20260623.py)
 
@@ -15,7 +15,8 @@ Agent-native artifact: ara/PAPER.md (ARA Seal Level 1 validated — ara/validati
 - 2026-07-14: Manuscript desk rejected by Nature Mental Health.
 - 2026-07-17: Manuscript submitted to Biological Psychiatry: Cognitive Neuroscience and Neuroimaging.
 - 2026-07-24: Manuscript desk rejected by Biological Psychiatry: Cognitive Neuroscience and Neuroimaging.
-- 2026-07-28: Cover letter reworked; manuscript submitted to Biological Psychiatry: Global Open Science; awaiting editorial decision.
+- 2026-07-28: Cover letter reworked; manuscript submitted to Biological Psychiatry: Global Open Science.
+- 2026-08-26: Journal portal status changed to “Out for Peer Review.”
 
 ## Data Structure Gotchas
 <!-- Things that are easy to get wrong about this dataset -->
